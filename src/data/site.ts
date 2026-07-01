@@ -3,33 +3,21 @@
 // Editing anything here updates it across all 14 pages at once.
 // ---------------------------------------------------------------------------
 
+// Contact / hours / social links are CMS-edited in content/settings.json
+import settings from '../../content/settings.json';
+// Live image sources are CMS-edited in content/media.json (list of {key, src, alt}).
+import mediaJson from '../../content/media.json';
+const MEDIA: Record<string, { src: string; alt: string }> = Object.fromEntries(
+  (mediaJson as { key: string; src: string; alt: string }[]).map((m) => [m.key, { src: m.src, alt: m.alt }]),
+);
+
 export const SITE = {
-  name: '스포츠클럽필립',
-  nameEn: 'Sports Club Phillip',
-  tagline: '분당 최대 토탈 휘트니스',
-  ceo: '정승만',
-  address: '경기도 성남시 내정로58',
-  bizNo: '207-81-50319',
-  phone: '031-728-7777',
-  fax: '031.728.7723',
-  email: 'master@ballykorea.co.kr',
-  hours: [
-    { d: '평일', t: 'AM 09:00 - PM 10:00' },
-    { d: '토요일', t: 'AM 09:00 - PM 09:00' },
-    { d: '일요일', t: 'PM 12:00 - PM 18:00' },
-    { d: '휴관일', t: '상담 불가' },
-  ],
+  ...settings.site,
+  hours: settings.hours as { d: string; t: string }[],
 };
 
-// External links
-export const EXTERNAL = {
-  naverBooking: 'https://m.booking.naver.com/booking/6/bizes/330673/items/3359134',
-  kakao: 'https://pf.kakao.com/_TLeGu',
-  instagram: 'https://www.instagram.com/sportsclub_phillip/',
-  facebook: 'https://www.facebook.com/sportsclubphillip',
-  naverBlog: 'https://blog.naver.com/ballydesign',
-  naverMap: 'https://naver.me/5A3IVUZi',
-};
+// External links (CMS: content/settings.json → external)
+export const EXTERNAL = settings.external;
 
 // Primary navigation with dropdowns (mirrors the original Wix menu)
 export type NavItem = { label: string; href: string; children?: { label: string; href: string }[] };
@@ -145,9 +133,8 @@ export const IMAGES = {
 export type ImgKey = keyof typeof IMAGES;
 
 export function imgSrc(key: ImgKey): string {
-  const d = IMAGES[key];
-  return USE_LOCAL_IMAGES ? `/images/${d.local}` : WIX + d.wix;
+  return MEDIA[key]?.src ?? WIX + IMAGES[key].wix;
 }
 export function imgAlt(key: ImgKey): string {
-  return IMAGES[key].alt;
+  return MEDIA[key]?.alt ?? IMAGES[key].alt;
 }

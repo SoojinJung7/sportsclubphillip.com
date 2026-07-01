@@ -1,0 +1,77 @@
+# Pages CMS configuration — https://pagescms.org
+# The designer signs in at app.pagescms.org with GitHub, opens this repo,
+# and edits everything below with a friendly UI (no code).
+
+media:
+  input: public/images
+  output: /images
+
+content:
+  - name: settings
+    label: 사이트 설정 (연락처·시간·SNS)
+    type: file
+    path: content/settings.json
+    fields:
+      - name: site
+        label: 기본 정보
+        type: object
+        fields:
+          - { name: name, label: 상호 (한글), type: string }
+          - { name: nameEn, label: 상호 (영문), type: string }
+          - { name: tagline, label: 태그라인, type: string }
+          - { name: ceo, label: 대표이사, type: string }
+          - { name: address, label: 주소, type: string }
+          - { name: bizNo, label: 사업자등록번호, type: string }
+          - { name: phone, label: 전화, type: string }
+          - { name: fax, label: 팩스, type: string }
+          - { name: email, label: 이메일, type: string }
+      - name: hours
+        label: 상담시간
+        type: object
+        list: true
+        fields:
+          - { name: d, label: 구분, type: string }
+          - { name: t, label: 시간, type: string }
+      - name: external
+        label: 외부 링크
+        type: object
+        fields:
+          - { name: naverBooking, label: 네이버 예약, type: string }
+          - { name: kakao, label: 카카오, type: string }
+          - { name: instagram, label: 인스타그램, type: string }
+          - { name: facebook, label: 페이스북, type: string }
+          - { name: naverBlog, label: 네이버 블로그, type: string }
+          - { name: naverMap, label: 네이버 지도, type: string }
+
+  - name: media
+    label: 이미지 (사진·월간 포스터)
+    type: file
+    path: content/media.json
+    list: true
+    view:
+      fields: [alt, src]
+    fields:
+      - { name: key, label: 코드 (수정하지 마세요), type: string, readonly: true }
+      - { name: alt, label: 설명, type: string }
+      - { name: src, label: 이미지 (업로드 또는 URL/경로), type: string }
+
+  - name: translations
+    label: 번역 (한국어 → English)
+    type: file
+    path: content/translations.json
+    list: true
+    view:
+      fields: [ko, en]
+    fields:
+      - { name: ko, label: 한국어 (원문 · 수정하면 매칭 깨짐), type: string, readonly: true }
+      - { name: en, label: English, type: text }
+
+  - name: popup
+    label: 홈 팝업
+    type: file
+    path: content/popup.json
+    fields:
+      - { name: enabled, label: 팝업 표시하기, type: boolean }
+      - { name: title, label: 제목, type: string }
+      - { name: image, label: 이미지 코드 (media의 key, 예: promoCurrent), type: string }
+      - { name: link, label: 링크 주소, type: string }

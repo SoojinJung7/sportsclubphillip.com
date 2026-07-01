@@ -1,34 +1,34 @@
 ---
-import { imgSrc, imgAlt } from '../data/site';
-interface Props {
-  href?: string;
-  title?: string;
-}
-const { href = '/promotion', title = '이달의 프로모션' } = Astro.props;
+// Content is CMS-edited in content/popup.json
+import popup from '../../content/popup.json';
+import { imgSrc, imgAlt, type ImgKey } from '../data/site';
+const { enabled, title, image, link } = popup;
+const imgKey = image as ImgKey;
 ---
 
+{enabled && (
 <div id="promo-popup" class="fixed z-[60] bottom-4 right-4 w-[280px] sm:w-[320px] hidden">
   <div class="bg-white rounded-xl shadow-2xl border border-line overflow-hidden">
     <div class="flex items-center justify-between px-4 py-2.5 bg-ink text-white">
       <span class="text-[13px] font-semibold tracking-wide">{title}</span>
       <button id="promo-close" aria-label="닫기" class="text-white/70 hover:text-white text-lg leading-none">&times;</button>
     </div>
-    <a href={href} class="block">
-      <img src={imgSrc('promoCurrent')} alt={imgAlt('promoCurrent')} class="w-full h-auto" loading="lazy" />
+    <a href={link} class="block">
+      <img src={imgSrc(imgKey)} alt={imgAlt(imgKey)} class="w-full h-auto" loading="lazy" />
     </a>
     <div class="flex items-center justify-between px-4 py-2.5 text-[12px] bg-cream">
       <button id="promo-hide-today" class="text-ink-soft hover:text-ink">오늘 하루 보지 않기</button>
-      <a href={href} class="font-semibold text-sand-dark hover:underline">자세히 보기 →</a>
+      <a href={link} class="font-semibold text-sand-dark hover:underline">자세히 보기 →</a>
     </div>
   </div>
 </div>
+)}
 
 <script>
   const KEY = 'scp-promo-popup-hidden-until';
   const popup = document.getElementById('promo-popup');
   const hiddenUntil = Number(localStorage.getItem(KEY) || 0);
   if (popup && Date.now() > hiddenUntil) {
-    // small delay so it eases in after load
     setTimeout(() => popup.classList.remove('hidden'), 600);
   }
   document.getElementById('promo-close')?.addEventListener('click', () => popup?.classList.add('hidden'));

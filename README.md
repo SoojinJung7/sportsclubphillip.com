@@ -27,23 +27,40 @@ public/
 scripts/download-images.sh  ← Wix 원본 이미지 일괄 다운로드
 ```
 
-## 이미지: Wix CDN → 로컬 전환 (Wix 해지 전 필수)
+## CMS — 디자이너가 코드 없이 편집하기 (Pages CMS)
 
-현재 이미지는 기존 Wix CDN(`static.wixstatic.com`)에서 바로 불러옵니다. Wix를 해지하기 전에 원본을 로컬로 옮기세요.
+이 저장소에는 **[Pages CMS](https://pagescms.org)** 설정(`.pages.yml`)이 포함되어 있습니다.
+서버·백엔드 세팅이 전혀 필요 없고, GitHub 로그인만으로 편집합니다.
 
-```bash
-bash scripts/download-images.sh        # 원본을 public/images/ 로 다운로드
-# 그런 다음 src/data/site.ts 에서:
-export const USE_LOCAL_IMAGES = true;  # false → true 로 변경
-```
+**최초 1회 연결:**
+1. <https://app.pagescms.org> 접속 → **Sign in with GitHub**
+2. `SoojinJung7/sportsclubphillip.com` 저장소 선택 (권한 승인)
+3. 끝 — 아래 항목을 UI로 편집하면 자동으로 커밋되고 사이트가 재배포됩니다.
 
-이 한 줄이면 사이트 전체가 로컬 이미지로 전환됩니다.
+**CMS에서 편집 가능한 것 (`content/` 폴더):**
+| 메뉴 | 내용 |
+|---|---|
+| **사이트 설정** | 전화·팩스·이메일·주소·대표이사·사업자번호, 상담시간, SNS/예약 링크 |
+| **이미지** | 로고·시설 사진·**월간 포스터(프로모션·스케줄·수영)** 등 모든 이미지 (업로드 또는 URL) |
+| **번역** | 모든 문구의 English 번역 (한국어 원문 → 영문) |
+| **홈 팝업** | 팝업 표시 여부·제목·이미지·링크 |
 
-## 콘텐츠 수정
+> 이미지 교체: **Media** 탭에서 새 파일 업로드 → 생성된 `/images/...` 경로를 해당 이미지의 `src`에 붙여넣기 (또는 외부 URL 입력).
 
-- 텍스트/연락처/메뉴: `src/data/site.ts` 및 각 `src/pages/*.astro`
-- 매월 바뀌는 포스터(프로모션·스케줄·수영): `site.ts` 의 해당 이미지 항목 교체
-- 향후 디자이너용 CMS(Sveltia/Decap 등)를 붙이면 코드 없이 편집 가능 (별도 설정 필요)
+`content/*.json` 을 코드에서 직접 편집해도 됩니다. `src/data/site.ts`·`src/i18n/dict.ts` 가 이 파일들을 읽습니다.
+
+## 이미지 저장소 & Wix 해지
+
+현재 이미지 `src`는 기존 Wix CDN(`static.wixstatic.com`) URL입니다 (Wix가 자동 리사이즈 → 빠름).
+원본은 `scripts/download-images.sh` 로 `public/images/` 에 백업해 두었습니다(대용량이라 git 제외).
+Wix 해지 전에는 이미지를 저장소로 옮겨야 하며, 그 방법은 위 CMS의 **이미지 업로드**가 가장 간단합니다
+(월간 포스터부터 새로 올리면 됩니다). 대용량 원본은 업로드 전에 압축/리사이즈를 권장합니다.
+
+## 페이지 본문(한국어) 수정
+
+각 페이지의 한국어 본문 문단은 아직 `src/pages/*.astro` 안에 있습니다.
+연락처·이미지·영문·팝업은 CMS로 즉시 편집되지만, 한국어 본문 문단까지 CMS로 빼는 작업은
+다음 단계로 확장 가능합니다 (원하시면 페이지별로 `content/`에 추가하겠습니다).
 
 ## 배포
 

@@ -1,0 +1,39 @@
+{
+  "site": {
+    "name": "스포츠클럽필립",
+    "nameEn": "Sports Club Phillip",
+    "tagline": "분당 최대 토탈 휘트니스",
+    "ceo": "정승만",
+    "address": "경기도 성남시 내정로58",
+    "bizNo": "207-81-50319",
+    "phone": "031-728-7777",
+    "fax": "031.728.7723",
+    "email": "master@ballykorea.co.kr"
+  },
+  "hours": [
+    {
+      "d": "평일",
+      "t": "AM 09:00 - PM 10:00"
+    },
+    {
+      "d": "토요일",
+      "t": "AM 09:00 - PM 09:00"
+    },
+    {
+      "d": "일요일",
+      "t": "PM 12:00 - PM 18:00"
+    },
+    {
+      "d": "휴관일",
+      "t": "상담 불가"
+    }
+  ],
+  "external": {
+    "naverBooking": "https://m.booking.naver.com/booking/6/bizes/330673/items/3359134",
+    "kakao": "https://pf.kakao.com/_TLeGu",
+    "instagram": "https://www.instagram.com/sportsclub_phillip/",
+    "facebook": "https://www.facebook.com/sportsclubphillip",
+    "naverBlog": "https://blog.naver.com/ballydesign",
+    "naverMap": "https://naver.me/5A3IVUZi"
+  }
+}
