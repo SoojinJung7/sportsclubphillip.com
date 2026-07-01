@@ -75,3 +75,560 @@ content:
       - { name: title, label: 제목, type: string }
       - { name: image, label: 이미지 코드 (media의 key, 예: promoCurrent), type: string }
       - { name: link, label: 링크 주소, type: string }
+
+  # ---- Page content (한국어 본문) — auto-generated ----
+  - name: page_about
+    label: 페이지 · about
+    type: file
+    path: content/pages/about.json
+    fields:
+      - name: title
+        label: title
+        type: string
+      - name: hero
+        label: hero
+        type: object
+        fields:
+          - name: title
+            label: title
+            type: string
+          - name: subtitle
+            label: subtitle
+            type: string
+      - name: brandStory
+        label: brandStory
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: p1
+            label: p1
+            type: text
+          - name: p2Prefix
+            label: p2Prefix
+            type: string
+          - name: p2Stance
+            label: p2Stance
+            type: string
+          - name: p2Mid
+            label: p2Mid
+            type: string
+          - name: p2Phillip
+            label: p2Phillip
+            type: string
+          - name: p2Suffix
+            label: p2Suffix
+            type: string
+      - name: history
+        label: history
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: items
+            label: items
+            type: string
+            list: true
+      - name: brands
+        label: brands
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: items
+            label: items
+            type: object
+            list: true
+            fields:
+              - name: name
+                label: name
+                type: string
+              - name: desc
+                label: desc
+                type: string
+  - name: page_academy
+    label: 페이지 · academy
+    type: file
+    path: content/pages/academy.json
+    fields:
+      - name: title
+        label: title
+        type: string
+      - name: hero
+        label: hero
+        type: object
+        fields:
+          - name: subtitle
+            label: subtitle
+            type: string
+      - name: divisions
+        label: divisions
+        type: string
+        list: true
+      - name: mission
+        label: mission
+        type: object
+        fields:
+          - name: eyebrow
+            label: eyebrow
+            type: string
+          - name: quote
+            label: quote
+            type: text
+      - name: divisionsHeading
+        label: divisionsHeading
+        type: string
+      - name: divisionMore
+        label: divisionMore
+        type: string
+      - name: gallery
+        label: gallery
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: caption
+            label: caption
+            type: string
+  - name: page_bally
+    label: 페이지 · bally
+    type: file
+    path: content/pages/bally.json
+    fields:
+      - name: pageTitle
+        label: pageTitle
+        type: string
+      - name: title
+        label: title
+        type: string
+      - name: subtitle
+        label: subtitle
+        type: string
+      - name: intro
+        label: intro
+        type: string
+      - name: paragraphs
+        label: paragraphs
+        type: string
+        list: true
+      - name: links
+        label: links
+        type: object
+        fields:
+          - name: schedule
+            label: schedule
+            type: string
+          - name: instagram
+            label: instagram
+            type: string
+  - name: page_blog
+    label: 페이지 · blog
+    type: file
+    path: content/pages/blog.json
+    fields:
+      - name: pageTitle
+        label: pageTitle
+        type: string
+      - name: title
+        label: title
+        type: string
+      - name: subtitle
+        label: subtitle
+        type: string
+      - name: body
+        label: body
+        type: string
+      - name: naverBlog
+        label: naverBlog
+        type: string
+      - name: instagram
+        label: instagram
+        type: string
+  - name: page_challenges
+    label: 페이지 · challenges
+    type: file
+    path: content/pages/challenges.json
+    fields:
+      - name: pageTitle
+        label: pageTitle
+        type: string
+      - name: title
+        label: title
+        type: string
+      - name: subtitle
+        label: subtitle
+        type: string
+      - name: programs
+        label: programs
+        type: object
+        list: true
+        fields:
+          - name: title
+            label: title
+            type: string
+          - name: badge
+            label: badge
+            type: string
+      - name: infoCta
+        label: infoCta
+        type: string
+      - name: back
+        label: back
+        type: string
+  - name: page_home
+    label: 페이지 · home
+    type: file
+    path: content/pages/home.json
+    fields:
+      - name: hero
+        label: hero
+        type: object
+        fields:
+          - name: eyebrow
+            label: eyebrow
+            type: string
+          - name: desc
+            label: desc
+            type: string
+          - name: ctaFacilities
+            label: ctaFacilities
+            type: string
+          - name: ctaBooking
+            label: ctaBooking
+            type: string
+      - name: mission
+        label: mission
+        type: object
+        fields:
+          - name: titleLine1
+            label: titleLine1
+            type: string
+          - name: titleLine2
+            label: titleLine2
+            type: string
+          - name: p1
+            label: p1
+            type: text
+          - name: p2
+            label: p2
+            type: text
+      - name: facilities
+        label: facilities
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: intro
+            label: intro
+            type: text
+          - name: ctaAll
+            label: ctaAll
+            type: string
+          - name: items
+            label: items
+            type: string
+            list: true
+      - name: programs
+        label: programs
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: items
+            label: items
+            type: object
+            list: true
+            fields:
+              - name: title
+                label: title
+                type: string
+              - name: desc
+                label: desc
+                type: string
+      - name: promo
+        label: promo
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: desc
+            label: desc
+            type: string
+          - name: cta
+            label: cta
+            type: string
+      - name: cta
+        label: cta
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: facilities
+            label: facilities
+            type: string
+          - name: booking
+            label: booking
+            type: string
+          - name: blog
+            label: blog
+            type: string
+          - name: programs
+            label: programs
+            type: string
+  - name: page_kpa
+    label: 페이지 · kpa
+    type: file
+    path: content/pages/kpa.json
+    fields:
+      - name: pageTitle
+        label: pageTitle
+        type: string
+      - name: title
+        label: title
+        type: string
+      - name: subtitle
+        label: subtitle
+        type: string
+      - name: intro
+        label: intro
+        type: string
+      - name: paragraphs
+        label: paragraphs
+        type: string
+        list: true
+      - name: links
+        label: links
+        type: object
+        fields:
+          - name: website
+            label: website
+            type: string
+  - name: page_operating
+    label: 페이지 · operating
+    type: file
+    path: content/pages/operating.json
+    fields:
+      - name: title
+        label: title
+        type: string
+      - name: hero
+        label: hero
+        type: object
+        fields:
+          - name: title
+            label: title
+            type: string
+          - name: subtitle
+            label: subtitle
+            type: string
+      - name: mapTitle
+        label: mapTitle
+        type: string
+      - name: naverMapCta
+        label: naverMapCta
+        type: string
+      - name: phoneLabel
+        label: phoneLabel
+        type: string
+      - name: hoursHeading
+        label: hoursHeading
+        type: string
+      - name: facilityHours
+        label: facilityHours
+        type: object
+        list: true
+        fields:
+          - name: name
+            label: name
+            type: string
+          - name: rows
+            label: rows
+            type: string
+            list: true
+      - name: notice
+        label: notice
+        type: object
+        fields:
+          - name: closedTitle
+            label: closedTitle
+            type: string
+          - name: closedText
+            label: closedText
+            type: string
+          - name: holiday
+            label: holiday
+            type: string
+      - name: supportHeading
+        label: supportHeading
+        type: string
+  - name: page_projects
+    label: 페이지 · projects
+    type: file
+    path: content/pages/projects.json
+    fields:
+      - name: title
+        label: title
+        type: string
+      - name: hero
+        label: hero
+        type: object
+        fields:
+          - name: title
+            label: title
+            type: string
+          - name: subtitle
+            label: subtitle
+            type: string
+      - name: facilities
+        label: facilities
+        type: object
+        list: true
+        fields:
+          - name: name
+            label: name
+            type: string
+          - name: desc
+            label: desc
+            type: text
+  - name: page_promotion
+    label: 페이지 · promotion
+    type: file
+    path: content/pages/promotion.json
+    fields:
+      - name: title
+        label: title
+        type: string
+      - name: hero
+        label: hero
+        type: object
+        fields:
+          - name: title
+            label: title
+            type: string
+          - name: subtitle
+            label: subtitle
+            type: string
+      - name: headline
+        label: headline
+        type: string
+      - name: ctaBooking
+        label: ctaBooking
+        type: string
+      - name: ctaCall
+        label: ctaCall
+        type: string
+  - name: page_schedule
+    label: 페이지 · schedule
+    type: file
+    path: content/pages/schedule.json
+    fields:
+      - name: title
+        label: title
+        type: string
+      - name: hero
+        label: hero
+        type: object
+        fields:
+          - name: title
+            label: title
+            type: string
+          - name: subtitle
+            label: subtitle
+            type: string
+      - name: operating
+        label: operating
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: notice
+            label: notice
+            type: string
+      - name: gx
+        label: gx
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: notice
+            label: notice
+            type: string
+  - name: page_swimminglesson
+    label: 페이지 · swimminglesson
+    type: file
+    path: content/pages/swimminglesson.json
+    fields:
+      - name: title
+        label: title
+        type: string
+      - name: hero
+        label: hero
+        type: object
+        fields:
+          - name: title
+            label: title
+            type: string
+          - name: subtitle
+            label: subtitle
+            type: string
+      - name: ctaInquiry
+        label: ctaInquiry
+        type: string
+      - name: schedule
+        label: schedule
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: notice
+            label: notice
+            type: string
+      - name: freeSwim
+        label: freeSwim
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: desc
+            label: desc
+            type: string
+  - name: page_thespiralbundang
+    label: 페이지 · thespiralbundang
+    type: file
+    path: content/pages/thespiralbundang.json
+    fields:
+      - name: pageTitle
+        label: pageTitle
+        type: string
+      - name: title
+        label: title
+        type: string
+      - name: subtitle
+        label: subtitle
+        type: string
+      - name: intro
+        label: intro
+        type: string
+      - name: paragraphs
+        label: paragraphs
+        type: string
+        list: true
+      - name: links
+        label: links
+        type: object
+        fields:
+          - name: inquiry
+            label: inquiry
+            type: string
