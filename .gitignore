@@ -1,3 +1,6 @@
+# downloaded original assets (large; localize+optimize at Wix cutover)
+public/images/
+
 # build output
 dist/
 # generated types
