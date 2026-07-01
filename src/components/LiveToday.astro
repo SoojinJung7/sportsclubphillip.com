@@ -89,16 +89,15 @@ import gx from '../../content/gx-schedule.json';
         else slots.push({ start: c.start, items: [c] });
       }
       const cur = slots.find((s) => nowMin >= toMin(s.start) && nowMin < toMin(s.start) + 50);
-      const next = slots.find((s) => toMin(s.start) > nowMin);
+      const upcoming = slots.filter((s) => toMin(s.start) > nowMin).slice(0, 2);
 
-      let html = '';
-      if (cur) html += card('지금 진행 중', cur.items, true);
-      if (next) {
-        const nextCard = card('다음 수업', next.items, false);
-        html += cur ? '<div class="mt-2 opacity-80">' + nextCard + '</div>' : nextCard;
-      }
-      if (!cur && !next) html += '<p class="text-[14px] text-white/70">오늘 예정된 GX 수업이 모두 끝났어요. 내일 또 만나요! 💪</p>';
-      summaryEl.innerHTML = html;
+      const rows = [];
+      if (cur) rows.push(card('수업 중', cur.items, true));
+      upcoming.forEach((s) => rows.push(card('다음 수업', s.items, false)));
+      if (!rows.length) rows.push('<p class="text-[14px] text-white/70">오늘 예정된 GX 수업이 모두 끝났어요. 내일 또 만나요! 💪</p>');
+      summaryEl.innerHTML = rows
+        .map((r, i) => (i === 0 ? r : '<div class="mt-2' + (i > 1 ? ' opacity-70' : '') + '">' + r + '</div>'))
+        .join('');
     }
 
     render();
