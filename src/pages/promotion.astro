@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { EXTERNAL, SITE, imgSrc, imgAlt } from '../data/site';
+// 매월 프로모션 포스터 교체: src/data/site.ts 의 promoCurrent 이미지를 바꾸면 됩니다.
+---
+
+<Base title="이달의 프로모션 ㅣ 스포츠클럽필립">
+  <PageHero eyebrow="Promotion" title="이달의 프로모션"
+    subtitle="매달 새롭게 준비된, 프라이빗한 스포츠 공간을 누릴 수 있는 특별한 제안" />
+
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-3xl px-5 lg:px-8 text-center">
+      <p class="text-lg lg:text-xl font-semibold text-ink reveal">한 달간 진행되는 아주 특별한 이벤트!</p>
+      <div class="mt-10 rounded-2xl overflow-hidden shadow-2xl reveal">
+        <img src={imgSrc('promoCurrent')} alt={imgAlt('promoCurrent')} class="w-full h-auto" />
+      </div>
+      <div class="mt-10 flex flex-wrap justify-center gap-3 reveal">
+        <a href={EXTERNAL.naverBooking} target="_blank" rel="noopener" class="px-8 py-3.5 text-[14px] font-semibold text-white bg-ink hover:bg-sand-dark rounded-full transition-colors">온라인예약</a>
+        <a href={`tel:${SITE.phone}`} class="px-8 py-3.5 text-[14px] font-semibold text-ink border border-line hover:border-sand rounded-full transition-colors">전화문의 {SITE.phone}</a>
+      </div>
+    </div>
+  </section>
+</Base>

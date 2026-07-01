@@ -1,0 +1,68 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { imgSrc, imgAlt } from '../data/site';
+
+const brands = [
+  { key: 'brandBally', name: '발리토탈휘트니스', desc: '글로벌 스포츠 대표 브랜드' },
+  { key: 'brandPivot', name: '아카데미 피봇', desc: '전문성 있는 인재 양성' },
+  { key: 'brandWellnesphilia', name: '웰니스필리아', desc: '마음과 몸의 조화' },
+] as const;
+
+const history = [
+  { year: '2025.03', text: '자이로토닉 교육센터 더 스파이럴 분당 설립' },
+  { year: '2024.02', text: "필라테스 스튜디오 ‘필라인필립 필라테스’ Re-Launching" },
+  { year: '2002 ~', text: '스포츠클럽필립, 분당 정자동에서 토탈 휘트니스의 역사를 이어오다' },
+];
+---
+
+<Base title="스포츠클럽필립 ㅣ 회사소개">
+  <PageHero eyebrow="About" title="회사소개" subtitle="건강한 몸에서부터 건전한 마음을 만드는, 필립 必立" />
+
+  <!-- Brand story -->
+  <section class="py-20 lg:py-28">
+    <div class="mx-auto max-w-4xl px-5 lg:px-8">
+      <p class="eyebrow text-[12px] text-sand-dark font-semibold text-center reveal">Brand Story</p>
+      <h2 class="mt-4 text-2xl lg:text-3xl font-bold text-center text-ink reveal">필립의 운영철학</h2>
+      <div class="mt-10 space-y-6 text-[15px] lg:text-[17px] leading-loose text-ink-soft reveal">
+        <p>예로부터 동양에서 최고의 가치 구현은 바로 사람다운 사람이 되는 것이었습니다. 건강한 몸에서 건전한 정신이 비롯되며, 바르게 선 몸과 마음이 곧 사람다움의 시작이라 여겼습니다.</p>
+        <p>정신과 육체의 바로 섬, <strong class="text-ink font-semibold">STANCE</strong>. 이것이 건강의 참 모습, <strong class="text-ink font-semibold">필립 必立</strong> 입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- History -->
+  <section class="py-20 lg:py-28 bg-cream">
+    <div class="mx-auto max-w-4xl px-5 lg:px-8">
+      <p class="eyebrow text-[12px] text-sand-dark font-semibold text-center reveal">History</p>
+      <h2 class="mt-4 text-2xl lg:text-3xl font-bold text-center text-ink reveal">필립의 연혁</h2>
+      <div class="mt-12 space-y-0">
+        {history.map((h) => (
+          <div class="flex gap-6 lg:gap-10 py-6 border-b border-line reveal">
+            <div class="w-24 lg:w-32 shrink-0 text-sand-dark font-bold text-[15px] lg:text-lg">{h.year}</div>
+            <div class="text-ink-soft text-[15px] lg:text-base leading-relaxed">{h.text}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Our brands -->
+  <section class="py-20 lg:py-28">
+    <div class="mx-auto max-w-6xl px-5 lg:px-8">
+      <p class="eyebrow text-[12px] text-sand-dark font-semibold text-center reveal">Our Brand</p>
+      <h2 class="mt-4 text-2xl lg:text-3xl font-bold text-center text-ink reveal">파생 / 협업 브랜드</h2>
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+        {brands.map((b) => (
+          <div class="text-center bg-white border border-line rounded-xl p-8 hover:shadow-lg transition-shadow reveal">
+            <div class="h-24 flex items-center justify-center">
+              <img src={imgSrc(b.key)} alt={imgAlt(b.key)} class="max-h-20 w-auto object-contain" />
+            </div>
+            <h3 class="mt-6 text-lg font-bold text-ink">{b.name}</h3>
+            <p class="mt-2 text-[14px] text-muted">{b.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { imgSrc, imgAlt } from '../data/site';
+
+const facilities = [
+  { key: 'facilityHealth', name: '헬스 / PT', en: 'Health & PT',
+    desc: '약 1,800m² 이상의 탁 트인 공간에 최첨단 수입 머신 50여 종을 갖춘 프리미엄 헬스존. 전문 트레이너의 1:1 퍼스널 트레이닝으로 목표에 꼭 맞는 운동을 설계합니다.' },
+  { key: 'facilityGolf', name: '스크린 골프', en: 'Screen Golf',
+    desc: '총 22개의 최첨단 프렌즈 스크린 골프 타석과 전문 설계된 넓고 쾌적한 전용 공간에서, 사계절 언제나 라운딩의 즐거움을 누릴 수 있습니다.' },
+  { key: 'facilitySwim', name: '수영 / 아쿠아', en: 'Swimming & Aqua',
+    desc: '25m × 5레인의 여유로운 규모와 최고급 인공 해수풀 시스템. 전문 코칭 기반의 정규 강습부터 자유수영, 아쿠아 프로그램까지 폭넓게 운영합니다.' },
+  { key: 'facilityGx', name: 'GX', en: 'Group Exercise',
+    desc: 'GX 전용 스튜디오는 전문 음향·조명 시스템과 충격 흡수 바닥재를 갖춰, 레즈밀·줌바·필라테스·요가 등 다양한 그룹 운동을 최상의 컨디션에서 즐길 수 있습니다.' },
+  { key: 'facilityAiCircuit', name: 'AI 서킷 트레이닝', en: 'AI Circuit',
+    desc: '독일 스마트 시스템인 밀론(MILON) 서킷 트레이닝 존을 도입하여, 개인별 데이터에 기반한 자동화된 순환 운동으로 짧은 시간에 효율적인 전신 운동을 완성합니다.' },
+  { key: 'facilityPilates', name: '필라테스 / 자이로토닉', en: 'Pilates & Gyrotonic',
+    desc: '3m의 높은 층고와 대형 유리창이 주는 개방감 속에서, 사단법인대한필라테스협회·더스파이럴분당·필라인필립이 함께하는 정통 기구 필라테스와 자이로토닉을 경험합니다.' },
+  { key: 'facilityYouth', name: '유소년 스포츠', en: 'Youth Sports',
+    desc: '유소년 스포츠 전용 공간을 제공하여, 보다 체계적이고 전문적인 교육을 진행합니다. 발리유소년스포츠클럽과 함께 아이들의 신체 발달과 사회성을 키웁니다.' },
+  { key: 'facilitySauna', name: '사우나', en: 'Sauna',
+    desc: '깔끔한 호텔급 인테리어의 샤워시설과 온탕·냉탕·열탕·이벤트탕 등 약 6개의 탕을 갖춘 프리미엄 사우나에서, 운동 후의 완벽한 휴식을 누리세요.' },
+] as const;
+---
+
+<Base title="프로그램 / 시설 둘러보기 ㅣ 스포츠클럽필립">
+  <PageHero eyebrow="Facilities / Programs" title="시설 둘러보기"
+    subtitle="당신의 라이프스타일을 완성하는, 고품격 스포츠 인프라를 제공합니다." />
+
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-6xl px-5 lg:px-8 space-y-20 lg:space-y-28">
+      {facilities.map((f, i) => (
+        <div class:list={['grid lg:grid-cols-2 gap-8 lg:gap-14 items-center reveal', i % 2 === 1 && 'lg:[&>*:first-child]:order-2']}>
+          <div class="rounded-2xl overflow-hidden shadow-lg aspect-[5/4]">
+            <img src={imgSrc(f.key)} alt={imgAlt(f.key)} class="w-full h-full object-cover" />
+          </div>
+          <div>
+            <p class="eyebrow text-[12px] text-sand-dark font-semibold">{f.en}</p>
+            <h2 class="mt-3 text-2xl lg:text-3xl font-bold text-ink">{f.name}</h2>
+            <div class="mt-4 w-10 h-px bg-sand"></div>
+            <p class="mt-5 text-[15px] lg:text-base leading-loose text-ink-soft">{f.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>

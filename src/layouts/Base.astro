@@ -1,0 +1,61 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE, imgSrc } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = `${SITE.tagline} ㅣ ${SITE.name}`,
+  description = '분당 정자동 토탈 휘트니스 스포츠클럽필립 — 헬스, PT, GX, 기구 필라테스, 스크린 골프, 수영장, 유소년 스포츠, 사우나까지 한 공간에서.',
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://sportsclubphillip.com').href;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imgSrc('logo')} />
+    <meta property="og:locale" content="ko_KR" />
+    <meta name="theme-color" content="#16130f" />
+    <link rel="icon" href={imgSrc('logo')} />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Reveal-on-scroll
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add('in');
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { threshold: 0.12 },
+      );
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>

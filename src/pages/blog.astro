@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { EXTERNAL } from '../data/site';
+---
+
+<Base title="블로그 ㅣ 스포츠클럽필립">
+  <PageHero eyebrow="Blog" title="블로그"
+    subtitle="필립의 소식과 운동 이야기를 네이버 블로그에서 만나보세요." />
+
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-2xl px-5 lg:px-8 text-center reveal">
+      <p class="text-[15px] lg:text-base leading-relaxed text-ink-soft">
+        스포츠클럽필립의 최신 소식, 프로모션, 프로그램 이야기는 공식 네이버 블로그에서 가장 빠르게 확인하실 수 있습니다.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href={EXTERNAL.naverBlog} target="_blank" rel="noopener" class="px-8 py-3.5 text-[14px] font-semibold text-white bg-ink hover:bg-sand-dark rounded-full transition-colors">네이버 블로그 바로가기</a>
+        <a href={EXTERNAL.instagram} target="_blank" rel="noopener" class="px-8 py-3.5 text-[14px] font-semibold text-ink border border-line hover:border-sand rounded-full transition-colors">인스타그램</a>
+      </div>
+    </div>
+  </section>
+</Base>

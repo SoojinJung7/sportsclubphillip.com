@@ -1,0 +1,79 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { imgSrc, imgAlt } from '../data/site';
+
+const divisions = [
+  { key: 'academyPivot', name: '아카데미 피봇', href: undefined },
+  { key: 'academyKpa', name: '사단법인대한필라테스협회', href: '/kpa' },
+  { key: 'academySfm', name: 'SFM 스포츠과학센터', href: undefined },
+  { key: 'academySpiral', name: '더스파이럴분당', href: '/thespiralbundang' },
+  { key: 'academyKcpt', name: 'SFM · KCPT 트레이너 아카데미', href: undefined },
+  { key: 'academyBally', name: '발리유소년스포츠클럽', href: '/bally' },
+  { key: 'academyPilatesInPhillip', name: '필라인필립', href: undefined },
+] as const;
+
+// Gallery (hotlinked from the current CDN; add to download-images.sh later to localize)
+const WIX = 'https://static.wixstatic.com/media/';
+const gallery = [
+  '6f7ec1_55b3f8b1b6784b07a5f785d1716440a6~mv2.jpg',
+  '6f7ec1_cc2a6b66758047aabf39157d65ae58e6~mv2.jpg',
+  '6f7ec1_546434c1c007416f924d85c7d6e8a545~mv2.jpg',
+  '6f7ec1_865da92fc0214612b48a0290cb32fcb3~mv2.jpg',
+  '6f7ec1_731d43d1fc63432cb5d8a9884dfcfda4~mv2.jpg',
+  '6f7ec1_486832601b044c8f9cc724f79b0a0f33~mv2.jpg',
+  '6f7ec1_abf886ea92bd4efcadf65bc8dfbc0a20~mv2.jpg',
+  '6f7ec1_7d92d2d8ca62478288584932c35c306e~mv2.jpg',
+];
+---
+
+<Base title="ACADEMY ㅣ 스포츠클럽필립">
+  <PageHero eyebrow="Academy" title="ACADEMY"
+    subtitle="스포츠 교육의 기준을 높이는, 차별화된 아카데미 프로그램을 제공합니다." />
+
+  <!-- Pivot mission -->
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-3xl px-5 lg:px-8 text-center reveal">
+      <p class="eyebrow text-[12px] text-sand-dark font-semibold">아카데미 피봇은</p>
+      <blockquote class="mt-6 text-lg lg:text-2xl font-semibold leading-relaxed text-ink">
+        “열린 마음으로 미래가치를 추구하며 재미있는 도전을 하며, 신뢰할 만한 교육 프로그램으로 전문성 있는 인재를 양성하는 교육 브랜드입니다.”
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- Divisions -->
+  <section class="py-16 lg:py-24 bg-cream">
+    <div class="mx-auto max-w-6xl px-5 lg:px-8">
+      <h2 class="text-center text-2xl lg:text-3xl font-bold text-ink reveal">교육 브랜드</h2>
+      <div class="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-5">
+        {divisions.map((d) => {
+          const Tag = d.href ? 'a' : 'div';
+          return (
+            <Tag href={d.href} class:list={['group bg-white border border-line rounded-xl p-6 flex flex-col items-center justify-center text-center reveal', d.href && 'hover:shadow-lg hover:border-sand transition-all']}>
+              <div class="h-16 flex items-center justify-center">
+                <img src={imgSrc(d.key)} alt={imgAlt(d.key)} class="max-h-14 w-auto object-contain" />
+              </div>
+              <h3 class="mt-4 text-[13px] lg:text-[14px] font-semibold text-ink">{d.name}</h3>
+              {d.href && <span class="mt-1 text-[11px] text-sand-dark opacity-0 group-hover:opacity-100 transition-opacity">자세히 →</span>}
+            </Tag>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-6xl px-5 lg:px-8">
+      <p class="eyebrow text-[12px] text-sand-dark font-semibold text-center reveal">Gallery</p>
+      <h2 class="mt-3 text-center text-2xl lg:text-3xl font-bold text-ink reveal">아카데미 현장</h2>
+      <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">
+        {gallery.map((g) => (
+          <div class="aspect-square rounded-lg overflow-hidden reveal">
+            <img src={WIX + g} alt="아카데미 현장" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

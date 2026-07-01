@@ -1,0 +1,97 @@
+---
+import { NAV, EXTERNAL, imgSrc, imgAlt } from '../data/site';
+const { pathname } = Astro.url;
+const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
+---
+
+<header id="site-header" class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur border-b border-line/60 transition-shadow duration-300">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8">
+    <div class="flex items-center justify-between h-20 lg:h-24">
+      <!-- Logo -->
+      <a href="/" class="flex items-center shrink-0" aria-label={imgAlt('logo')}>
+        <img src={imgSrc('logo')} alt={imgAlt('logo')} class="h-10 lg:h-12 w-auto" />
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden lg:flex items-center gap-1" aria-label="주요 메뉴">
+        {NAV.map((item) => (
+          <div class="relative group">
+            <a
+              href={item.href}
+              class:list={[
+                'px-4 py-2 text-[13px] tracking-[0.12em] font-medium transition-colors',
+                isActive(item.href) ? 'text-sand-dark' : 'text-ink hover:text-sand-dark',
+              ]}
+            >
+              {item.label}
+            </a>
+            {item.children && (
+              <div class="absolute left-0 top-full pt-2 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200">
+                <div class="min-w-[220px] bg-white border border-line shadow-xl rounded-md py-2">
+                  {item.children.map((c) => (
+                    <a href={c.href} class="block px-5 py-2.5 text-[13px] text-ink-soft hover:text-sand-dark hover:bg-cream transition-colors">
+                      {c.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+        <a href={EXTERNAL.naverBooking} target="_blank" rel="noopener"
+           class="ml-3 px-5 py-2.5 text-[13px] tracking-[0.1em] font-semibold text-white bg-ink hover:bg-sand-dark rounded-full transition-colors">
+          온라인예약
+        </a>
+      </nav>
+
+      <!-- Mobile toggle -->
+      <button id="menu-toggle" class="lg:hidden p-2 -mr-2 text-ink" aria-label="메뉴 열기" aria-expanded="false">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="lg:hidden hidden bg-white border-t border-line max-h-[calc(100vh-5rem)] overflow-y-auto">
+    <nav class="px-5 py-4" aria-label="모바일 메뉴">
+      {NAV.map((item) => (
+        <div class="border-b border-line/60 last:border-0">
+          <a href={item.href} class="block py-3.5 text-[15px] font-semibold tracking-wide text-ink">{item.label}</a>
+          {item.children && (
+            <div class="pb-3 pl-3 space-y-1">
+              {item.children.map((c) => (
+                <a href={c.href} class="block py-2 text-[14px] text-ink-soft">— {c.label}</a>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+      <a href={EXTERNAL.naverBooking} target="_blank" rel="noopener"
+         class="block mt-4 px-5 py-3.5 text-center text-[15px] font-semibold text-white bg-ink rounded-full">
+        온라인예약
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('site-header');
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+
+  const applyHeader = () => {
+    if (!header) return;
+    header.classList.toggle('shadow-sm', window.scrollY > 20);
+  };
+  window.addEventListener('scroll', applyHeader, { passive: true });
+  applyHeader();
+
+  toggle?.addEventListener('click', () => {
+    const open = menu?.classList.toggle('hidden') === false;
+    menu?.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    applyHeader();
+  });
+</script>

@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from './PageHero.astro';
+import { imgSrc, imgAlt, type ImgKey } from '../data/site';
+
+interface Props {
+  pageTitle: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  logo: ImgKey;
+  intro: string;
+  paragraphs: string[];
+  links?: { label: string; href: string; external?: boolean }[];
+}
+const { pageTitle, eyebrow, title, subtitle, logo, intro, paragraphs, links = [] } = Astro.props;
+---
+
+<Base title={pageTitle}>
+  <PageHero eyebrow={eyebrow} title={title} subtitle={subtitle} />
+
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-3xl px-5 lg:px-8">
+      <div class="text-center reveal">
+        <div class="h-24 flex items-center justify-center">
+          <img src={imgSrc(logo)} alt={imgAlt(logo)} class="max-h-20 w-auto object-contain" />
+        </div>
+        <p class="mt-8 eyebrow text-[12px] text-sand-dark font-semibold">Our Brand</p>
+        <h2 class="mt-3 text-xl lg:text-2xl font-bold text-ink">{intro}</h2>
+        <div class="mt-6 w-10 h-px bg-sand mx-auto"></div>
+      </div>
+
+      <div class="mt-10 space-y-6 text-[15px] lg:text-[17px] leading-loose text-ink-soft reveal">
+        {paragraphs.map((p) => <p>{p}</p>)}
+      </div>
+
+      {links.length > 0 && (
+        <div class="mt-10 flex flex-wrap justify-center gap-3 reveal">
+          {links.map((l, i) => (
+            <a href={l.href} target={l.external ? '_blank' : undefined} rel={l.external ? 'noopener' : undefined}
+               class:list={[
+                 'px-8 py-3.5 text-[14px] font-semibold rounded-full transition-colors',
+                 i === 0 ? 'text-white bg-ink hover:bg-sand-dark' : 'text-ink border border-line hover:border-sand',
+               ]}>
+              {l.label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</Base>

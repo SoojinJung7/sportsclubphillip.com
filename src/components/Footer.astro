@@ -1,0 +1,52 @@
+---
+import { SITE, SOCIALS, imgSrc } from '../data/site';
+---
+
+<footer class="bg-ink text-white/80">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8 py-16">
+    <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
+      <!-- Brand + business -->
+      <div>
+        <img src={imgSrc('logo')} alt={SITE.name} class="h-11 w-auto brightness-0 invert opacity-90" />
+        <p class="mt-6 text-[13px] leading-relaxed text-white/60">
+          {SITE.name} <span class="text-white/40">(대표이사: {SITE.ceo})</span><br />
+          주소: {SITE.address}<br />
+          사업자등록번호: {SITE.bizNo}
+        </p>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h3 class="text-[11px] tracking-[0.25em] text-sand font-semibold">CONTACT US</h3>
+        <ul class="mt-5 space-y-2 text-[14px] text-white/70">
+          <li>Phone. <a href={`tel:${SITE.phone}`} class="hover:text-white">{SITE.phone}</a></li>
+          <li>Fax. {SITE.fax}</li>
+          <li>E-mail. <a href={`mailto:${SITE.email}`} class="hover:text-white">{SITE.email}</a></li>
+        </ul>
+        <div class="mt-6 flex items-center gap-3">
+          {SOCIALS.map((s) => (
+            <a href={s.href} target="_blank" rel="noopener" aria-label={s.label}
+               class="w-9 h-9 rounded-full bg-white/10 hover:bg-sand transition-colors flex items-center justify-center">
+              <img src={imgSrc(s.img)} alt={s.label} class="w-4.5 h-4.5 object-contain" />
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Hours -->
+      <div>
+        <h3 class="text-[11px] tracking-[0.25em] text-sand font-semibold">CUSTOMER CENTER</h3>
+        <p class="mt-5 text-[13px] text-white/50">상담시간</p>
+        <ul class="mt-2 space-y-1.5 text-[14px] text-white/70">
+          {SITE.hours.map((h) => (
+            <li class="flex gap-4"><span class="w-14 text-white/50">{h.d}</span><span>{h.t}</span></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-14 pt-6 border-t border-white/10 text-[12px] text-white/40">
+      Copyright© sportsclubphillip All Rights Reserved.
+    </div>
+  </div>
+</footer>
