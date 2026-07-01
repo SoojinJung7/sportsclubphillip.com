@@ -1,5 +1,5 @@
 ---
-// "오늘의 라이브" — real-time KST clock + today's GX timeline + open status.
+// "오늘의 라이브" — real-time KST clock + open status + current/next GX class.
 // Schedule is CMS-editable in content/gx-schedule.json
 import gx from '../../content/gx-schedule.json';
 ---
@@ -24,25 +24,8 @@ import gx from '../../content/gx-schedule.json';
         <span id="lt-badge" class="ml-auto px-3 py-1.5 rounded-full text-[12px] font-semibold bg-white/10">···</span>
       </div>
 
-      <!-- Timeline bar -->
-      <div id="lt-timeline" class="mt-5 hidden">
-        <div class="relative overflow-x-auto">
-          <div class="min-w-[560px]">
-            <!-- hour ticks -->
-            <div id="lt-ticks" class="relative h-4 text-[10px] text-white/40"></div>
-            <!-- track with class segments -->
-            <div id="lt-track" class="relative h-9 rounded-md bg-white/5 border border-white/10"></div>
-          </div>
-        </div>
-        <div class="mt-2 flex items-center gap-4 text-[11px] text-white/45">
-          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:#e0b878"></span>3F 무료</span>
-          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:#5b9bd5"></span>4F 유료</span>
-          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-0.5 bg-red-500"></span>지금</span>
-        </div>
-      </div>
-
-      <!-- Now / Next summary -->
-      <div id="lt-summary" class="mt-4 hidden"></div>
+      <!-- Current / next class -->
+      <div id="lt-summary" class="mt-4"></div>
     </div>
   </div>
 </section>
@@ -53,7 +36,6 @@ import gx from '../../content/gx-schedule.json';
     if (!root) return;
     const DAY = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     const KO = ['일', '월', '화', '수', '목', '금', '토'];
-    const START = 540, END = 1260, SPAN = END - START; // 09:00–21:00
     const pad = (n) => String(n).padStart(2, '0');
     const toMin = (t) => { const p = t.split(':'); return +p[0] * 60 + +p[1]; };
     const kst = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
@@ -61,44 +43,20 @@ import gx from '../../content/gx-schedule.json';
     const clockEl = document.getElementById('lt-clock');
     const dateEl = document.getElementById('lt-date');
     const badgeEl = document.getElementById('lt-badge');
-    const timelineEl = document.getElementById('lt-timeline');
-    const ticksEl = document.getElementById('lt-ticks');
-    const trackEl = document.getElementById('lt-track');
     const summaryEl = document.getElementById('lt-summary');
 
-    // hour ticks 09..21
-    let ticks = '';
-    for (let h = 9; h <= 21; h += 2) {
-      const left = ((h * 60 - START) / SPAN) * 100;
-      ticks += '<span style="position:absolute;left:' + left + '%;transform:translateX(-50%)">' + pad(h) + '</span>';
-      ticks += '<span style="position:absolute;top:100%;left:' + left + '%;width:1px;height:44px;background:rgba(255,255,255,.08)"></span>';
+    function classHTML(c) {
+      return '<span class="inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full" style="background:'
+        + (c.paid ? '#5b9bd5' : '#e0b878') + '"></span><b class="font-semibold">' + c.name + '</b>'
+        + '<span class="text-white/55 text-[13px]">' + (c.instructor || '') + ' · ' + c.floor + (c.paid ? ' · 유료' : '') + '</span></span>';
     }
-    ticksEl.innerHTML = ticks;
-
-    let builtDay = null;
-    function buildDay(dayKey) {
-      const list = (SCHEDULE[dayKey] || []).slice().sort((a, b) => toMin(a.start) - toMin(b.start));
-      if (!list.length) {
-        timelineEl.classList.add('hidden');
-        summaryEl.classList.add('hidden');
-        trackEl.innerHTML = '';
-        return list;
-      }
-      timelineEl.classList.remove('hidden');
-      summaryEl.classList.remove('hidden');
-      const w = (50 / SPAN) * 100;
-      let html = '';
-      list.forEach((c, i) => {
-        const left = Math.max(0, ((toMin(c.start) - START) / SPAN) * 100);
-        const color = c.paid ? '#5b9bd5' : '#e0b878';
-        const lane = c.paid ? 2 : 26; // stack 4F above 3F within the 36px track
-        html += '<div data-seg="' + i + '" title="' + c.start + ' ' + c.name + ' · ' + (c.instructor || '') + ' · ' + c.floor + '"'
-          + ' style="position:absolute;left:' + left + '%;width:' + w + '%;top:' + lane + 'px;height:8px;background:' + color + ';border-radius:3px;opacity:.85"></div>';
-      });
-      // now marker
-      html += '<div id="lt-now" style="position:absolute;top:-3px;bottom:-3px;width:2px;background:#ef4444;box-shadow:0 0 8px #ef4444;z-index:5"><span style="position:absolute;top:-4px;left:-3px;width:8px;height:8px;border-radius:50%;background:#ef4444"></span></div>';
-      trackEl.innerHTML = html;
-      return list;
+    function card(label, list, live) {
+      const time = list[0].start;
+      const items = list.map(classHTML).join('<span class="mx-2 text-white/25">/</span>');
+      return '<div class="flex flex-wrap items-center gap-x-3 gap-y-2">'
+        + '<span class="px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide ' + (live ? 'bg-red-500 text-white' : 'bg-sand text-ink') + '">' + label + '</span>'
+        + '<span class="text-[16px] font-bold tabular-nums">' + time + '</span>'
+        + '<span class="text-[14px] flex flex-wrap items-center gap-x-1 gap-y-1">' + items + '</span></div>';
     }
 
     function render() {
@@ -117,45 +75,30 @@ import gx from '../../content/gx-schedule.json';
       badgeEl.className = 'ml-auto px-3 py-1.5 rounded-full text-[12px] font-semibold '
         + (open ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-white/60');
 
-      if (builtDay !== dayKey) { buildDay(dayKey); builtDay = dayKey; }
       const list = (SCHEDULE[dayKey] || []).slice().sort((a, b) => toMin(a.start) - toMin(b.start));
-
       if (!list.length) {
-        summaryEl.classList.remove('hidden');
         summaryEl.innerHTML = '<p class="text-[14px] text-white/70">' + root.dataset.emptyMsg + '</p>';
         return;
       }
 
-      // now marker position
-      const nowEl = document.getElementById('lt-now');
-      if (nowEl) {
-        const p = Math.max(0, Math.min(100, ((nowMin - START) / SPAN) * 100));
-        nowEl.style.left = p + '%';
-        nowEl.style.display = nowMin < START - 30 || nowMin > END + 30 ? 'none' : 'block';
-      }
-
-      // current / next
-      let cur = null, next = null;
+      // group into time slots, find current & next
+      const slots = [];
       for (const c of list) {
-        const s = toMin(c.start);
-        if (nowMin >= s && nowMin < s + 50) { cur = c; }
-        if (s > nowMin && !next) { next = c; }
+        const last = slots[slots.length - 1];
+        if (last && last.start === c.start) last.items.push(c);
+        else slots.push({ start: c.start, items: [c] });
       }
-      // group concurrent classes at same start
-      const at = (c) => list.filter((x) => x.start === c.start);
-      function card(label, c, live) {
-        const group = at(c);
-        const names = group.map((g) =>
-          '<span class="inline-flex items-center gap-1.5 mr-3"><span class="w-1.5 h-1.5 rounded-full" style="background:' + (g.paid ? '#5b9bd5' : '#e0b878') + '"></span>'
-          + '<b class="font-semibold">' + g.name + '</b> <span class="text-white/50 text-[12px]">' + (g.instructor || '') + ' · ' + g.floor + (g.paid ? ' · 유료' : '') + '</span></span>').join('');
-        return '<div class="flex flex-wrap items-center gap-x-3 gap-y-1">'
-          + '<span class="px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide ' + (live ? 'bg-red-500 text-white' : 'bg-sand text-ink') + '">' + label + '</span>'
-          + '<span class="text-[15px] font-bold tabular-nums">' + c.start + '</span>'
-          + '<span class="text-[14px]">' + names + '</span></div>';
+      const cur = slots.find((s) => nowMin >= toMin(s.start) && nowMin < toMin(s.start) + 50);
+      const next = slots.find((s) => toMin(s.start) > nowMin);
+
+      let html = '';
+      if (cur) html += card('지금 진행 중', cur.items, true);
+      if (next) {
+        const nextCard = card('다음 수업', next.items, false);
+        html += cur ? '<div class="mt-2 opacity-80">' + nextCard + '</div>' : nextCard;
       }
-      if (cur) summaryEl.innerHTML = card('지금 진행 중', cur, true);
-      else if (next) summaryEl.innerHTML = card('다음 수업', next, false);
-      else summaryEl.innerHTML = '<p class="text-[14px] text-white/70">오늘 예정된 GX 수업이 모두 끝났어요. 내일 또 만나요! 💪</p>';
+      if (!cur && !next) html += '<p class="text-[14px] text-white/70">오늘 예정된 GX 수업이 모두 끝났어요. 내일 또 만나요! 💪</p>';
+      summaryEl.innerHTML = html;
     }
 
     render();
