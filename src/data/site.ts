@@ -14,7 +14,7 @@ export const SITE = {
   fax: '031.728.7723',
   email: 'master@ballykorea.co.kr',
   hours: [
-    { d: '평   일', t: 'AM 09:00 - PM 10:00' },
+    { d: '평일', t: 'AM 09:00 - PM 10:00' },
     { d: '토요일', t: 'AM 09:00 - PM 09:00' },
     { d: '일요일', t: 'PM 12:00 - PM 18:00' },
     { d: '휴관일', t: '상담 불가' },

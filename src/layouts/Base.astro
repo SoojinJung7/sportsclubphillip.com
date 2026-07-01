@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE, imgSrc } from '../data/site';
+import { EN } from '../i18n/dict';
 
 interface Props {
   title?: string;
@@ -41,6 +42,44 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://sportsclubp
       <slot />
     </main>
     <Footer />
+
+    <!-- Client-side KR/EN toggle -->
+    <script is:inline define:vars={{ DICT: EN }}>
+      (function () {
+        const KEY = 'scp-lang';
+        let records = null;
+        function collect() {
+          records = [];
+          const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+          let n;
+          while ((n = walker.nextNode())) {
+            const raw = n.nodeValue;
+            if (!raw) continue;
+            const key = raw.trim();
+            if (key && Object.prototype.hasOwnProperty.call(DICT, key)) {
+              records.push({ node: n, ko: raw, key: key });
+            }
+          }
+        }
+        function apply(lang) {
+          if (!records) collect();
+          for (const r of records) {
+            r.node.nodeValue = lang === 'en' ? r.ko.replace(r.key, DICT[r.key]) : r.ko;
+          }
+          document.documentElement.lang = lang === 'en' ? 'en' : 'ko';
+          document.querySelectorAll('[data-lang-btn]').forEach(function (b) {
+            b.classList.toggle('lang-active', b.getAttribute('data-lang-btn') === lang);
+          });
+        }
+        window.__setLang = function (lang) {
+          try { localStorage.setItem(KEY, lang); } catch (e) {}
+          apply(lang);
+        };
+        const saved = (function () { try { return localStorage.getItem(KEY); } catch (e) { return null; } })() || 'ko';
+        if (document.readyState !== 'loading') apply(saved);
+        else document.addEventListener('DOMContentLoaded', function () { apply(saved); });
+      })();
+    </script>
 
     <script>
       // Reveal-on-scroll

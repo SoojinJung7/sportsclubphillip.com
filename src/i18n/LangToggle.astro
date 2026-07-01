@@ -1,0 +1,18 @@
+---
+// Client-side KR / EN toggle. Flags + label. Persists to localStorage.
+---
+<div class="flex items-center rounded-full border border-line overflow-hidden text-[12px] font-semibold select-none">
+  <button type="button" data-lang-btn="ko" onclick="window.__setLang && window.__setLang('ko')"
+    class="lang-btn px-2.5 py-1.5 flex items-center gap-1 transition-colors" aria-label="한국어">
+    <span aria-hidden="true">🇰🇷</span><span>KR</span>
+  </button>
+  <button type="button" data-lang-btn="en" onclick="window.__setLang && window.__setLang('en')"
+    class="lang-btn px-2.5 py-1.5 flex items-center gap-1 transition-colors" aria-label="English">
+    <span aria-hidden="true">🇺🇸</span><span>EN</span>
+  </button>
+</div>
+
+<style is:global>
+  .lang-btn { color: var(--color-muted); background: transparent; }
+  .lang-btn.lang-active { color: #fff; background: var(--color-ink); }
+</style>

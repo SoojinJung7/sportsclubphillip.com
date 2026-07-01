@@ -1,5 +1,6 @@
 ---
 import { NAV, EXTERNAL, imgSrc, imgAlt } from '../data/site';
+import LangToggle from '../i18n/LangToggle.astro';
 const { pathname } = Astro.url;
 const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
 ---
@@ -38,6 +39,7 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
             )}
           </div>
         ))}
+        <div class="ml-3"><LangToggle /></div>
         <a href={EXTERNAL.naverBooking} target="_blank" rel="noopener"
            class="ml-3 px-5 py-2.5 text-[13px] tracking-[0.1em] font-semibold text-white bg-ink hover:bg-sand-dark rounded-full transition-colors">
           온라인예약
@@ -45,11 +47,14 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
       </nav>
 
       <!-- Mobile toggle -->
-      <button id="menu-toggle" class="lg:hidden p-2 -mr-2 text-ink" aria-label="메뉴 열기" aria-expanded="false">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-          <path stroke-linecap="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-        </svg>
-      </button>
+      <div class="lg:hidden flex items-center gap-2">
+        <LangToggle />
+        <button id="menu-toggle" class="p-2 -mr-2 text-ink" aria-label="메뉴 열기" aria-expanded="false">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 
