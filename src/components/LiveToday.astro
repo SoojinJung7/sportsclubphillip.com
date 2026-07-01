@@ -1,0 +1,164 @@
+---
+// "오늘의 라이브" — real-time KST clock + today's GX timeline + open status.
+// Schedule is CMS-editable in content/gx-schedule.json
+import gx from '../../content/gx-schedule.json';
+---
+
+<section class="relative -mt-1 bg-ink text-white">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8 py-6 lg:py-7">
+    <div id="live-today" data-empty-msg="오늘은 GX 수업이 없어요 · 헬스장은 05:30–23:00 운영">
+      <!-- Header row -->
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <span class="inline-flex items-center gap-2 text-[12px] font-bold tracking-[0.2em] text-sand">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-70"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+          </span>
+          LIVE · 오늘의 필립
+        </span>
+        <span class="flex items-baseline gap-2">
+          <span id="lt-clock" class="text-xl lg:text-2xl font-bold tabular-nums tracking-tight">--:--:--</span>
+          <span class="text-[11px] text-white/50">KST</span>
+          <span id="lt-date" class="text-[13px] text-white/60 ml-1"></span>
+        </span>
+        <span id="lt-badge" class="ml-auto px-3 py-1.5 rounded-full text-[12px] font-semibold bg-white/10">···</span>
+      </div>
+
+      <!-- Timeline bar -->
+      <div id="lt-timeline" class="mt-5 hidden">
+        <div class="relative overflow-x-auto">
+          <div class="min-w-[560px]">
+            <!-- hour ticks -->
+            <div id="lt-ticks" class="relative h-4 text-[10px] text-white/40"></div>
+            <!-- track with class segments -->
+            <div id="lt-track" class="relative h-9 rounded-md bg-white/5 border border-white/10"></div>
+          </div>
+        </div>
+        <div class="mt-2 flex items-center gap-4 text-[11px] text-white/45">
+          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:#e0b878"></span>3F 무료</span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm" style="background:#5b9bd5"></span>4F 유료</span>
+          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-0.5 bg-red-500"></span>지금</span>
+        </div>
+      </div>
+
+      <!-- Now / Next summary -->
+      <div id="lt-summary" class="mt-4 hidden"></div>
+    </div>
+  </div>
+</section>
+
+<script is:inline define:vars={{ SCHEDULE: gx.days }}>
+  (function () {
+    const root = document.getElementById('live-today');
+    if (!root) return;
+    const DAY = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const KO = ['일', '월', '화', '수', '목', '금', '토'];
+    const START = 540, END = 1260, SPAN = END - START; // 09:00–21:00
+    const pad = (n) => String(n).padStart(2, '0');
+    const toMin = (t) => { const p = t.split(':'); return +p[0] * 60 + +p[1]; };
+    const kst = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+
+    const clockEl = document.getElementById('lt-clock');
+    const dateEl = document.getElementById('lt-date');
+    const badgeEl = document.getElementById('lt-badge');
+    const timelineEl = document.getElementById('lt-timeline');
+    const ticksEl = document.getElementById('lt-ticks');
+    const trackEl = document.getElementById('lt-track');
+    const summaryEl = document.getElementById('lt-summary');
+
+    // hour ticks 09..21
+    let ticks = '';
+    for (let h = 9; h <= 21; h += 2) {
+      const left = ((h * 60 - START) / SPAN) * 100;
+      ticks += '<span style="position:absolute;left:' + left + '%;transform:translateX(-50%)">' + pad(h) + '</span>';
+      ticks += '<span style="position:absolute;top:100%;left:' + left + '%;width:1px;height:44px;background:rgba(255,255,255,.08)"></span>';
+    }
+    ticksEl.innerHTML = ticks;
+
+    let builtDay = null;
+    function buildDay(dayKey) {
+      const list = (SCHEDULE[dayKey] || []).slice().sort((a, b) => toMin(a.start) - toMin(b.start));
+      if (!list.length) {
+        timelineEl.classList.add('hidden');
+        summaryEl.classList.add('hidden');
+        trackEl.innerHTML = '';
+        return list;
+      }
+      timelineEl.classList.remove('hidden');
+      summaryEl.classList.remove('hidden');
+      const w = (50 / SPAN) * 100;
+      let html = '';
+      list.forEach((c, i) => {
+        const left = Math.max(0, ((toMin(c.start) - START) / SPAN) * 100);
+        const color = c.paid ? '#5b9bd5' : '#e0b878';
+        const lane = c.paid ? 2 : 26; // stack 4F above 3F within the 36px track
+        html += '<div data-seg="' + i + '" title="' + c.start + ' ' + c.name + ' · ' + (c.instructor || '') + ' · ' + c.floor + '"'
+          + ' style="position:absolute;left:' + left + '%;width:' + w + '%;top:' + lane + 'px;height:8px;background:' + color + ';border-radius:3px;opacity:.85"></div>';
+      });
+      // now marker
+      html += '<div id="lt-now" style="position:absolute;top:-3px;bottom:-3px;width:2px;background:#ef4444;box-shadow:0 0 8px #ef4444;z-index:5"><span style="position:absolute;top:-4px;left:-3px;width:8px;height:8px;border-radius:50%;background:#ef4444"></span></div>';
+      trackEl.innerHTML = html;
+      return list;
+    }
+
+    function render() {
+      const d = kst();
+      const dayKey = DAY[d.getDay()];
+      const nowMin = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
+
+      clockEl.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+      dateEl.textContent = (d.getMonth() + 1) + '.' + d.getDate() + ' (' + KO[d.getDay()] + ')';
+
+      // open status (gym 05:30–23:00; closed 1st/3rd/5th Sundays)
+      const nth = Math.ceil(d.getDate() / 7);
+      const closedDay = d.getDay() === 0 && (nth === 1 || nth === 3 || nth === 5);
+      const open = !closedDay && nowMin >= 330 && nowMin < 1380;
+      badgeEl.textContent = closedDay ? '오늘 휴관일' : open ? '● 지금 영업 중' : '영업 종료';
+      badgeEl.className = 'ml-auto px-3 py-1.5 rounded-full text-[12px] font-semibold '
+        + (open ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-white/60');
+
+      if (builtDay !== dayKey) { buildDay(dayKey); builtDay = dayKey; }
+      const list = (SCHEDULE[dayKey] || []).slice().sort((a, b) => toMin(a.start) - toMin(b.start));
+
+      if (!list.length) {
+        summaryEl.classList.remove('hidden');
+        summaryEl.innerHTML = '<p class="text-[14px] text-white/70">' + root.dataset.emptyMsg + '</p>';
+        return;
+      }
+
+      // now marker position
+      const nowEl = document.getElementById('lt-now');
+      if (nowEl) {
+        const p = Math.max(0, Math.min(100, ((nowMin - START) / SPAN) * 100));
+        nowEl.style.left = p + '%';
+        nowEl.style.display = nowMin < START - 30 || nowMin > END + 30 ? 'none' : 'block';
+      }
+
+      // current / next
+      let cur = null, next = null;
+      for (const c of list) {
+        const s = toMin(c.start);
+        if (nowMin >= s && nowMin < s + 50) { cur = c; }
+        if (s > nowMin && !next) { next = c; }
+      }
+      // group concurrent classes at same start
+      const at = (c) => list.filter((x) => x.start === c.start);
+      function card(label, c, live) {
+        const group = at(c);
+        const names = group.map((g) =>
+          '<span class="inline-flex items-center gap-1.5 mr-3"><span class="w-1.5 h-1.5 rounded-full" style="background:' + (g.paid ? '#5b9bd5' : '#e0b878') + '"></span>'
+          + '<b class="font-semibold">' + g.name + '</b> <span class="text-white/50 text-[12px]">' + (g.instructor || '') + ' · ' + g.floor + (g.paid ? ' · 유료' : '') + '</span></span>').join('');
+        return '<div class="flex flex-wrap items-center gap-x-3 gap-y-1">'
+          + '<span class="px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide ' + (live ? 'bg-red-500 text-white' : 'bg-sand text-ink') + '">' + label + '</span>'
+          + '<span class="text-[15px] font-bold tabular-nums">' + c.start + '</span>'
+          + '<span class="text-[14px]">' + names + '</span></div>';
+      }
+      if (cur) summaryEl.innerHTML = card('지금 진행 중', cur, true);
+      else if (next) summaryEl.innerHTML = card('다음 수업', next, false);
+      else summaryEl.innerHTML = '<p class="text-[14px] text-white/70">오늘 예정된 GX 수업이 모두 끝났어요. 내일 또 만나요! 💪</p>';
+    }
+
+    render();
+    setInterval(render, 1000);
+  })();
+</script>

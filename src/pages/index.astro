@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PromoPopup from '../components/PromoPopup.astro';
+import LiveToday from '../components/LiveToday.astro';
 import { EXTERNAL, imgSrc, imgAlt } from '../data/site';
 import c from '../../content/pages/home.json';
 
@@ -46,6 +47,9 @@ const programs = [
     </div>
     <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-[11px] tracking-[0.3em] animate-pulse">SCROLL</div>
   </section>
+
+  <!-- ============================ LIVE TODAY ============================ -->
+  <LiveToday />
 
   <!-- ============================ MISSION ============================ -->
   <section class="py-24 lg:py-32">

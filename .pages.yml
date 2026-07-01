@@ -632,3 +632,86 @@ content:
           - name: inquiry
             label: inquiry
             type: string
+
+  - name: gx_schedule
+    label: GX 스케줄 (오늘의 라이브)
+    type: file
+    path: content/gx-schedule.json
+    fields:
+      - { name: month, label: 월, type: string }
+      - { name: location, label: 지점, type: string }
+      - { name: note, label: 안내, type: string }
+      - name: days
+        label: 요일별 수업
+        type: object
+        fields:
+      - name: mon
+        label: 월
+        type: object
+        list: true
+        fields:
+          - { name: start, label: 시작시간, type: string }
+          - { name: name, label: 수업명, type: string }
+          - { name: instructor, label: 강사, type: string }
+          - { name: floor, label: 층, type: string }
+          - { name: paid, label: 유료, type: boolean }
+      - name: tue
+        label: 화
+        type: object
+        list: true
+        fields:
+          - { name: start, label: 시작시간, type: string }
+          - { name: name, label: 수업명, type: string }
+          - { name: instructor, label: 강사, type: string }
+          - { name: floor, label: 층, type: string }
+          - { name: paid, label: 유료, type: boolean }
+      - name: wed
+        label: 수
+        type: object
+        list: true
+        fields:
+          - { name: start, label: 시작시간, type: string }
+          - { name: name, label: 수업명, type: string }
+          - { name: instructor, label: 강사, type: string }
+          - { name: floor, label: 층, type: string }
+          - { name: paid, label: 유료, type: boolean }
+      - name: thu
+        label: 목
+        type: object
+        list: true
+        fields:
+          - { name: start, label: 시작시간, type: string }
+          - { name: name, label: 수업명, type: string }
+          - { name: instructor, label: 강사, type: string }
+          - { name: floor, label: 층, type: string }
+          - { name: paid, label: 유료, type: boolean }
+      - name: fri
+        label: 금
+        type: object
+        list: true
+        fields:
+          - { name: start, label: 시작시간, type: string }
+          - { name: name, label: 수업명, type: string }
+          - { name: instructor, label: 강사, type: string }
+          - { name: floor, label: 층, type: string }
+          - { name: paid, label: 유료, type: boolean }
+      - name: sat
+        label: 토
+        type: object
+        list: true
+        fields:
+          - { name: start, label: 시작시간, type: string }
+          - { name: name, label: 수업명, type: string }
+          - { name: instructor, label: 강사, type: string }
+          - { name: floor, label: 층, type: string }
+          - { name: paid, label: 유료, type: boolean }
+      - name: sun
+        label: 일
+        type: object
+        list: true
+        fields:
+          - { name: start, label: 시작시간, type: string }
+          - { name: name, label: 수업명, type: string }
+          - { name: instructor, label: 강사, type: string }
+          - { name: floor, label: 층, type: string }
+          - { name: paid, label: 유료, type: boolean }

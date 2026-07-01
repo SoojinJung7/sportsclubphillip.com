@@ -1,0 +1,54 @@
+{
+  "month": "07 July",
+  "location": "정자 본점",
+  "note": "★ Fithop, Dynamic ZUMBA, 방송댄스는 유료 클래스입니다.",
+  "days": {
+    "mon": [
+      { "start": "09:00", "name": "Dynamic ZUMBA", "instructor": "문경필", "floor": "4F", "paid": true },
+      { "start": "09:00", "name": "빈야사요가", "instructor": "김혜경", "floor": "3F", "paid": false },
+      { "start": "10:00", "name": "BODYPUMP", "instructor": "J", "floor": "3F", "paid": false },
+      { "start": "11:00", "name": "BODYBALANCE", "instructor": "J", "floor": "3F", "paid": false },
+      { "start": "16:00", "name": "PILATES", "instructor": "김미영", "floor": "3F", "paid": false },
+      { "start": "19:00", "name": "Body Flex", "instructor": "storm", "floor": "3F", "paid": false },
+      { "start": "20:00", "name": "STRETCH", "instructor": "storm", "floor": "3F", "paid": false }
+    ],
+    "tue": [
+      { "start": "09:00", "name": "Core Stretch", "instructor": "Storm", "floor": "3F", "paid": false },
+      { "start": "10:00", "name": "BODYCOMBAT", "instructor": "Storm", "floor": "3F", "paid": false },
+      { "start": "11:00", "name": "빈야사요가", "instructor": "김혜경", "floor": "3F", "paid": false },
+      { "start": "16:00", "name": "Vinyasa Yoga", "instructor": "윤두리", "floor": "3F", "paid": false },
+      { "start": "19:00", "name": "BODYCOMBAT", "instructor": "Angela", "floor": "3F", "paid": false },
+      { "start": "20:00", "name": "BODYBALANCE", "instructor": "Angela", "floor": "3F", "paid": false }
+    ],
+    "wed": [
+      { "start": "09:00", "name": "Fithop", "instructor": "김설희", "floor": "4F", "paid": true },
+      { "start": "09:00", "name": "Hatha Yoga", "instructor": "김선정", "floor": "3F", "paid": false },
+      { "start": "10:00", "name": "방송댄스", "instructor": "최희애", "floor": "4F", "paid": true },
+      { "start": "10:00", "name": "CORE", "instructor": "Angela", "floor": "3F", "paid": false },
+      { "start": "11:00", "name": "BODYBALANCE", "instructor": "Angela", "floor": "3F", "paid": false },
+      { "start": "16:00", "name": "PILATES", "instructor": "김미영", "floor": "3F", "paid": false },
+      { "start": "19:00", "name": "빈야사요가", "instructor": "김혜경", "floor": "3F", "paid": false },
+      { "start": "20:00", "name": "ZUMBA fitness", "instructor": "남건희", "floor": "3F", "paid": false }
+    ],
+    "thu": [
+      { "start": "09:00", "name": "Hatha-Vinyasa Yoga", "instructor": "김소연", "floor": "3F", "paid": false },
+      { "start": "10:00", "name": "BODYPUMP", "instructor": "Amy", "floor": "3F", "paid": false },
+      { "start": "11:00", "name": "Core Stretch", "instructor": "Amy", "floor": "3F", "paid": false },
+      { "start": "16:00", "name": "Hatha-Vinyasa Yoga", "instructor": "김선정", "floor": "3F", "paid": false },
+      { "start": "19:00", "name": "BODYPUMP", "instructor": "Hyun-Ju", "floor": "3F", "paid": false },
+      { "start": "20:00", "name": "STRETCH", "instructor": "Hyun-Ju", "floor": "3F", "paid": false }
+    ],
+    "fri": [
+      { "start": "09:00", "name": "Dynamic ZUMBA", "instructor": "김설희", "floor": "4F", "paid": true },
+      { "start": "09:00", "name": "빈야사요가", "instructor": "혜신", "floor": "3F", "paid": false },
+      { "start": "10:00", "name": "방송댄스", "instructor": "최희애", "floor": "4F", "paid": true },
+      { "start": "10:00", "name": "BODYCOMBAT", "instructor": "Angela", "floor": "3F", "paid": false },
+      { "start": "11:00", "name": "Power Stretch", "instructor": "Angela", "floor": "3F", "paid": false },
+      { "start": "16:00", "name": "빈야사요가", "instructor": "김혜경", "floor": "3F", "paid": false },
+      { "start": "19:00", "name": "BODYPUMP", "instructor": "Storm", "floor": "3F", "paid": false },
+      { "start": "20:00", "name": "BODYCOMBAT", "instructor": "Storm", "floor": "3F", "paid": false }
+    ],
+    "sat": [],
+    "sun": []
+  }
+}
