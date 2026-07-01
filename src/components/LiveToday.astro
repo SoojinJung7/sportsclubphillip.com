@@ -1,12 +1,13 @@
 ---
-// "오늘의 라이브" — real-time KST clock + open status + current/next GX class.
-// Schedule is CMS-editable in content/gx-schedule.json
+// "오늘의 라이브" — real-time KST clock + open status + today's GX & Swimming.
+// Schedules are CMS-editable in content/gx-schedule.json & content/swimming-schedule.json
 import gx from '../../content/gx-schedule.json';
+import swim from '../../content/swimming-schedule.json';
 ---
 
 <section class="relative -mt-1 bg-ink text-white">
   <div class="mx-auto max-w-7xl px-5 lg:px-8 py-6 lg:py-7">
-    <div id="live-today" data-empty-msg="오늘은 GX 수업이 없어요 · 헬스장은 05:30–23:00 운영">
+    <div id="live-today">
       <!-- Header row -->
       <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
         <span class="inline-flex items-center gap-2 text-[12px] font-bold tracking-[0.2em] text-sand">
@@ -24,13 +25,26 @@ import gx from '../../content/gx-schedule.json';
         <span id="lt-badge" class="ml-auto px-3 py-1.5 rounded-full text-[12px] font-semibold bg-white/10">···</span>
       </div>
 
-      <!-- Current / next class -->
-      <div id="lt-summary" class="mt-4"></div>
+      <!-- Two columns: GX | Swimming (stacks on mobile) -->
+      <div class="mt-6 grid gap-x-10 gap-y-6 lg:grid-cols-2">
+        <div>
+          <h3 class="flex items-center gap-2 text-[12px] font-bold tracking-[0.15em] text-white/75 mb-3">
+            <span class="w-2 h-2 rounded-full" style="background:#e0b878"></span>GX 클래스
+          </h3>
+          <div id="lt-gx"></div>
+        </div>
+        <div class="lg:border-l lg:border-white/10 lg:pl-10">
+          <h3 class="flex items-center gap-2 text-[12px] font-bold tracking-[0.15em] text-white/75 mb-3">
+            <span class="w-2 h-2 rounded-full" style="background:#22c1cc"></span>수영 강습
+          </h3>
+          <div id="lt-swim"></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<script is:inline define:vars={{ SCHEDULE: gx.days }}>
+<script is:inline define:vars={{ GX: gx.days, SWIM: swim.days }}>
   (function () {
     const root = document.getElementById('live-today');
     if (!root) return;
@@ -43,21 +57,46 @@ import gx from '../../content/gx-schedule.json';
     const clockEl = document.getElementById('lt-clock');
     const dateEl = document.getElementById('lt-date');
     const badgeEl = document.getElementById('lt-badge');
-    const summaryEl = document.getElementById('lt-summary');
+    const gxEl = document.getElementById('lt-gx');
+    const swimEl = document.getElementById('lt-swim');
 
-    function classHTML(c) {
+    const dur = 50; // default class length (min) for "in progress" window
+    const swimDur = 60;
+
+    function classHTML(c, colorFn) {
+      const meta = [c.instructor, c.floor, c.paid ? '유료' : null].filter(Boolean).join(' · ');
       return '<span class="inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full" style="background:'
-        + (c.paid ? '#5b9bd5' : '#e0b878') + '"></span><b class="font-semibold">' + c.name + '</b>'
-        + '<span class="text-white/55 text-[13px]">' + (c.instructor || '') + ' · ' + c.floor + (c.paid ? ' · 유료' : '') + '</span></span>';
+        + colorFn(c) + '"></span><b class="font-semibold">' + c.name + '</b>'
+        + (meta ? '<span class="text-white/55 text-[13px]">' + meta + '</span>' : '') + '</span>';
     }
-    function card(label, list, live) {
-      const time = list[0].start;
-      const items = list.map(classHTML).join('<span class="mx-2 text-white/25">/</span>');
-      return '<div class="flex flex-wrap items-center gap-x-3 gap-y-2">'
-        + '<span class="px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide ' + (live ? 'bg-red-500 text-white' : 'bg-sand text-ink') + '">' + label + '</span>'
-        + '<span class="text-[16px] font-bold tabular-nums">' + time + '</span>'
+    function card(label, list, live, colorFn, chipClass) {
+      const items = list.map((c) => classHTML(c, colorFn)).join('<span class="mx-1.5 text-white/25">/</span>');
+      return '<div class="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">'
+        + '<span class="px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide ' + (live ? 'bg-red-500 text-white' : chipClass) + '">' + label + '</span>'
+        + '<span class="text-[16px] font-bold tabular-nums">' + list[0].start + '</span>'
         + '<span class="text-[14px] flex flex-wrap items-center gap-x-1 gap-y-1">' + items + '</span></div>';
     }
+
+    function track(el, sched, dayKey, nowMin, upLabel, colorFn, chipClass, slotDur, emptyHtml) {
+      const list = (sched[dayKey] || []).slice().sort((a, b) => toMin(a.start) - toMin(b.start));
+      if (!list.length) { el.innerHTML = emptyHtml; return; }
+      const slots = [];
+      for (const c of list) {
+        const last = slots[slots.length - 1];
+        if (last && last.start === c.start) last.items.push(c);
+        else slots.push({ start: c.start, items: [c] });
+      }
+      const cur = slots.find((s) => nowMin >= toMin(s.start) && nowMin < toMin(s.start) + slotDur);
+      const upcoming = slots.filter((s) => toMin(s.start) > nowMin).slice(0, 2);
+      const rows = [];
+      if (cur) rows.push(card('진행 중', cur.items, true, colorFn, chipClass));
+      upcoming.forEach((s) => rows.push(card(upLabel, s.items, false, colorFn, chipClass)));
+      if (!rows.length) rows.push('<p class="text-[14px] text-white/60">오늘 예정된 수업이 모두 끝났어요 💪</p>');
+      el.innerHTML = rows.map((r, i) => (i === 0 ? r : '<div class="mt-2' + (i > 1 ? ' opacity-70' : '') + '">' + r + '</div>')).join('');
+    }
+
+    const gxColor = (c) => (c.paid ? '#5b9bd5' : '#e0b878');
+    const swimColor = () => '#22c1cc';
 
     function render() {
       const d = kst();
@@ -67,7 +106,6 @@ import gx from '../../content/gx-schedule.json';
       clockEl.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
       dateEl.textContent = (d.getMonth() + 1) + '.' + d.getDate() + ' (' + KO[d.getDay()] + ')';
 
-      // open status (gym 05:30–23:00; closed 1st/3rd/5th Sundays)
       const nth = Math.ceil(d.getDate() / 7);
       const closedDay = d.getDay() === 0 && (nth === 1 || nth === 3 || nth === 5);
       const open = !closedDay && nowMin >= 330 && nowMin < 1380;
@@ -75,29 +113,10 @@ import gx from '../../content/gx-schedule.json';
       badgeEl.className = 'ml-auto px-3 py-1.5 rounded-full text-[12px] font-semibold '
         + (open ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-white/60');
 
-      const list = (SCHEDULE[dayKey] || []).slice().sort((a, b) => toMin(a.start) - toMin(b.start));
-      if (!list.length) {
-        summaryEl.innerHTML = '<p class="text-[14px] text-white/70">' + root.dataset.emptyMsg + '</p>';
-        return;
-      }
-
-      // group into time slots, find current & next
-      const slots = [];
-      for (const c of list) {
-        const last = slots[slots.length - 1];
-        if (last && last.start === c.start) last.items.push(c);
-        else slots.push({ start: c.start, items: [c] });
-      }
-      const cur = slots.find((s) => nowMin >= toMin(s.start) && nowMin < toMin(s.start) + 50);
-      const upcoming = slots.filter((s) => toMin(s.start) > nowMin).slice(0, 2);
-
-      const rows = [];
-      if (cur) rows.push(card('수업 중', cur.items, true));
-      upcoming.forEach((s) => rows.push(card('다음 수업', s.items, false)));
-      if (!rows.length) rows.push('<p class="text-[14px] text-white/70">오늘 예정된 GX 수업이 모두 끝났어요. 내일 또 만나요! 💪</p>');
-      summaryEl.innerHTML = rows
-        .map((r, i) => (i === 0 ? r : '<div class="mt-2' + (i > 1 ? ' opacity-70' : '') + '">' + r + '</div>'))
-        .join('');
+      track(gxEl, GX, dayKey, nowMin, '예정 GX', gxColor, 'bg-sand text-ink', dur,
+        '<p class="text-[14px] text-white/60">오늘은 GX 수업이 없어요 💤</p>');
+      track(swimEl, SWIM, dayKey, nowMin, '예정 수영', swimColor, 'bg-[#22c1cc] text-ink', swimDur,
+        '<p class="text-[14px] text-white/60">오늘은 수영 강습이 없어요 💤</p>');
     }
 
     render();

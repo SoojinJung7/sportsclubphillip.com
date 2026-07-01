@@ -1,0 +1,75 @@
+{
+  "month": "7월",
+  "note": "수영장 시설 및 프로그램은 멤버십만 이용 가능합니다.",
+  "days": {
+    "mon": [
+      { "start": "06:00", "name": "성인 수영", "instructor": "초급~중급", "floor": "15명" },
+      { "start": "07:00", "name": "성인 수영", "instructor": "연수·교정", "floor": "15명" },
+      { "start": "09:00", "name": "성인 수영", "instructor": "주부반 · 연수·교정", "floor": "15명" },
+      { "start": "10:00", "name": "성인 수영", "instructor": "주부반 · 연수·교정", "floor": "15명" },
+      { "start": "11:00", "name": "성인 수영", "instructor": "주부반 · 초급~중급", "floor": "15명" },
+      { "start": "14:00", "name": "아쿠아로빅", "instructor": "", "floor": "85명" },
+      { "start": "16:00", "name": "어린이 수영", "instructor": "연수·상급", "floor": "12명" },
+      { "start": "17:00", "name": "어린이 수영", "instructor": "연수·교정", "floor": "12명" },
+      { "start": "19:30", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "20:30", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "21:30", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" }
+    ],
+    "tue": [
+      { "start": "06:00", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "07:00", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "09:00", "name": "성인 수영", "instructor": "주부반 · 신규~중급", "floor": "15명" },
+      { "start": "10:00", "name": "성인 수영", "instructor": "주부반 · 연수·교정", "floor": "15명" },
+      { "start": "11:00", "name": "아쿠아로빅", "instructor": "", "floor": "85명" },
+      { "start": "12:00", "name": "아쿠아로빅", "instructor": "", "floor": "70명" },
+      { "start": "16:00", "name": "어린이 수영", "instructor": "초급", "floor": "12명" },
+      { "start": "17:00", "name": "어린이 수영", "instructor": "연수·상급·중급", "floor": "12명" },
+      { "start": "19:30", "name": "성인 수영", "instructor": "초급~중급", "floor": "15명" },
+      { "start": "20:30", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "21:30", "name": "성인 수영", "instructor": "초급~중급", "floor": "15명" }
+    ],
+    "wed": [
+      { "start": "06:00", "name": "성인 수영", "instructor": "초급~중급", "floor": "15명" },
+      { "start": "07:00", "name": "성인 수영", "instructor": "연수·교정", "floor": "15명" },
+      { "start": "09:00", "name": "성인 수영", "instructor": "주부반 · 연수·교정", "floor": "15명" },
+      { "start": "10:00", "name": "성인 수영", "instructor": "주부반 · 연수·교정", "floor": "15명" },
+      { "start": "11:00", "name": "성인 수영", "instructor": "주부반 · 초급~중급", "floor": "15명" },
+      { "start": "14:00", "name": "아쿠아로빅", "instructor": "", "floor": "85명" },
+      { "start": "16:00", "name": "어린이 수영", "instructor": "연수·상급", "floor": "12명" },
+      { "start": "17:00", "name": "어린이 수영", "instructor": "연수·교정", "floor": "12명" },
+      { "start": "19:30", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "20:30", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "21:30", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" }
+    ],
+    "thu": [
+      { "start": "06:00", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "07:00", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "09:00", "name": "성인 수영", "instructor": "주부반 · 신규~중급", "floor": "15명" },
+      { "start": "10:00", "name": "성인 수영", "instructor": "주부반 · 연수·교정", "floor": "15명" },
+      { "start": "11:00", "name": "아쿠아로빅", "instructor": "", "floor": "85명" },
+      { "start": "12:00", "name": "아쿠아로빅", "instructor": "", "floor": "70명" },
+      { "start": "16:00", "name": "어린이 수영", "instructor": "초급", "floor": "12명" },
+      { "start": "17:00", "name": "어린이 수영", "instructor": "연수·상급·중급", "floor": "12명" },
+      { "start": "19:30", "name": "성인 수영", "instructor": "초급~중급", "floor": "15명" },
+      { "start": "20:30", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "21:30", "name": "성인 수영", "instructor": "초급~중급", "floor": "15명" }
+    ],
+    "fri": [
+      { "start": "06:00", "name": "성인 수영", "instructor": "초급~중급", "floor": "15명" },
+      { "start": "07:00", "name": "성인 수영", "instructor": "연수·교정", "floor": "15명" },
+      { "start": "09:00", "name": "성인 수영", "instructor": "주부반 · 연수·교정", "floor": "15명" },
+      { "start": "10:00", "name": "성인 수영", "instructor": "주부반 · 연수·교정", "floor": "15명" },
+      { "start": "11:00", "name": "성인 수영", "instructor": "주부반 · 초급~중급", "floor": "15명" },
+      { "start": "14:00", "name": "아쿠아로빅", "instructor": "", "floor": "85명" },
+      { "start": "16:00", "name": "어린이 수영", "instructor": "교정·상급", "floor": "6명" },
+      { "start": "17:00", "name": "어린이 수영", "instructor": "연수·상급", "floor": "6명" },
+      { "start": "19:30", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "20:30", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" },
+      { "start": "21:30", "name": "성인 수영", "instructor": "초급~상급", "floor": "15명" }
+    ],
+    "sat": [
+      { "start": "11:00", "name": "아쿠아로빅", "instructor": "", "floor": "85명" }
+    ],
+    "sun": []
+  }
+}
