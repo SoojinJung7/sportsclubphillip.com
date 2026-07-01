@@ -733,60 +733,60 @@ content:
         list: true
         fields:
           - { name: start, label: 시작시간, type: string }
-          - { name: name, label: 수업명, type: string }
-          - { name: instructor, label: 레벨/구분, type: string }
-          - { name: floor, label: 강사, type: string }
+          - { name: name, label: 구분, type: string }
+          - { name: level, label: 반, type: string }
+          - { name: instructor, label: 강사, type: string }
       - name: tue
         label: 화
         type: object
         list: true
         fields:
           - { name: start, label: 시작시간, type: string }
-          - { name: name, label: 수업명, type: string }
-          - { name: instructor, label: 레벨/구분, type: string }
-          - { name: floor, label: 강사, type: string }
+          - { name: name, label: 구분, type: string }
+          - { name: level, label: 반, type: string }
+          - { name: instructor, label: 강사, type: string }
       - name: wed
         label: 수
         type: object
         list: true
         fields:
           - { name: start, label: 시작시간, type: string }
-          - { name: name, label: 수업명, type: string }
-          - { name: instructor, label: 레벨/구분, type: string }
-          - { name: floor, label: 강사, type: string }
+          - { name: name, label: 구분, type: string }
+          - { name: level, label: 반, type: string }
+          - { name: instructor, label: 강사, type: string }
       - name: thu
         label: 목
         type: object
         list: true
         fields:
           - { name: start, label: 시작시간, type: string }
-          - { name: name, label: 수업명, type: string }
-          - { name: instructor, label: 레벨/구분, type: string }
-          - { name: floor, label: 강사, type: string }
+          - { name: name, label: 구분, type: string }
+          - { name: level, label: 반, type: string }
+          - { name: instructor, label: 강사, type: string }
       - name: fri
         label: 금
         type: object
         list: true
         fields:
           - { name: start, label: 시작시간, type: string }
-          - { name: name, label: 수업명, type: string }
-          - { name: instructor, label: 레벨/구분, type: string }
-          - { name: floor, label: 강사, type: string }
+          - { name: name, label: 구분, type: string }
+          - { name: level, label: 반, type: string }
+          - { name: instructor, label: 강사, type: string }
       - name: sat
         label: 토
         type: object
         list: true
         fields:
           - { name: start, label: 시작시간, type: string }
-          - { name: name, label: 수업명, type: string }
-          - { name: instructor, label: 레벨/구분, type: string }
-          - { name: floor, label: 강사, type: string }
+          - { name: name, label: 구분, type: string }
+          - { name: level, label: 반, type: string }
+          - { name: instructor, label: 강사, type: string }
       - name: sun
         label: 일
         type: object
         list: true
         fields:
           - { name: start, label: 시작시간, type: string }
-          - { name: name, label: 수업명, type: string }
-          - { name: instructor, label: 레벨/구분, type: string }
-          - { name: floor, label: 강사, type: string }
+          - { name: name, label: 구분, type: string }
+          - { name: level, label: 반, type: string }
+          - { name: instructor, label: 강사, type: string }

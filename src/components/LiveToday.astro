@@ -50,6 +50,7 @@ import swim from '../../content/swimming-schedule.json';
     if (!root) return;
     const DAY = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     const KO = ['일', '월', '화', '수', '목', '금', '토'];
+    const SLOT = 50; // minutes considered "in progress"
     const pad = (n) => String(n).padStart(2, '0');
     const toMin = (t) => { const p = t.split(':'); return +p[0] * 60 + +p[1]; };
     const kst = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
@@ -60,24 +61,35 @@ import swim from '../../content/swimming-schedule.json';
     const gxEl = document.getElementById('lt-gx');
     const swimEl = document.getElementById('lt-swim');
 
-    const dur = 50; // default class length (min) for "in progress" window
-    const swimDur = 60;
+    const chip = (label, live, cls) =>
+      '<span class="px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide ' + (live ? 'bg-red-500 text-white' : cls) + '">' + label + '</span>';
+    const time = (t) => '<span class="text-[16px] font-bold tabular-nums">' + t + '</span>';
 
-    function classHTML(c, colorFn) {
-      const meta = [c.instructor, c.floor, c.paid ? '유료' : null].filter(Boolean).join(' · ');
-      return '<span class="inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full" style="background:'
-        + colorFn(c) + '"></span><b class="font-semibold">' + c.name + '</b>'
-        + (meta ? '<span class="text-white/55 text-[13px]">' + meta + '</span>' : '') + '</span>';
-    }
-    function card(label, list, live, colorFn, chipClass) {
-      const items = list.map((c) => classHTML(c, colorFn)).join('<span class="mx-1.5 text-white/25">/</span>');
-      return '<div class="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">'
-        + '<span class="px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide ' + (live ? 'bg-red-500 text-white' : chipClass) + '">' + label + '</span>'
-        + '<span class="text-[16px] font-bold tabular-nums">' + list[0].start + '</span>'
-        + '<span class="text-[14px] flex flex-wrap items-center gap-x-1 gap-y-1">' + items + '</span></div>';
+    // GX: each class = dot + name + (instructor · floor · 유료)
+    function gxCard(label, list, live) {
+      const items = list.map((c) => {
+        const meta = [c.instructor, c.floor, c.paid ? '유료' : null].filter(Boolean).join(' · ');
+        return '<span class="inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full" style="background:'
+          + (c.paid ? '#5b9bd5' : '#e0b878') + '"></span><b class="font-semibold">' + c.name + '</b>'
+          + (meta ? '<span class="text-white/55 text-[13px]">' + meta + '</span>' : '') + '</span>';
+      }).join('<span class="mx-1.5 text-white/25">/</span>');
+      return '<div class="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">' + chip(label, live, 'bg-sand text-ink')
+        + time(list[0].start) + '<span class="text-[14px] flex flex-wrap items-center gap-x-1 gap-y-1">' + items + '</span></div>';
     }
 
-    function track(el, sched, dayKey, nowMin, upLabel, colorFn, chipClass, slotDur, emptyHtml) {
+    // Swim: group name once, then "반 강사" pairs
+    function swimCard(label, list, live) {
+      const items = list.map((c) => {
+        const lv = c.level ? '<b class="font-medium text-white/85">' + c.level + '</b> ' : '';
+        return '<span class="whitespace-nowrap">' + lv + '<span class="text-white/55">' + (c.instructor || '') + '</span></span>';
+      }).join('<span class="mx-1.5 text-white/20">·</span>');
+      return '<div class="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">' + chip(label, live, 'bg-[#22c1cc] text-ink')
+        + time(list[0].start)
+        + '<span class="inline-flex items-center gap-1.5 text-[14px]"><span class="w-1.5 h-1.5 rounded-full" style="background:#22c1cc"></span><b class="font-semibold">' + list[0].name + '</b></span>'
+        + '<span class="text-[13px] flex flex-wrap items-center gap-x-1 gap-y-1">' + items + '</span></div>';
+    }
+
+    function track(el, sched, dayKey, nowMin, upLabel, cardFn, emptyHtml) {
       const list = (sched[dayKey] || []).slice().sort((a, b) => toMin(a.start) - toMin(b.start));
       if (!list.length) { el.innerHTML = emptyHtml; return; }
       const slots = [];
@@ -86,17 +98,14 @@ import swim from '../../content/swimming-schedule.json';
         if (last && last.start === c.start) last.items.push(c);
         else slots.push({ start: c.start, items: [c] });
       }
-      const cur = slots.find((s) => nowMin >= toMin(s.start) && nowMin < toMin(s.start) + slotDur);
+      const cur = slots.find((s) => nowMin >= toMin(s.start) && nowMin < toMin(s.start) + SLOT);
       const upcoming = slots.filter((s) => toMin(s.start) > nowMin).slice(0, 2);
       const rows = [];
-      if (cur) rows.push(card('진행 중', cur.items, true, colorFn, chipClass));
-      upcoming.forEach((s) => rows.push(card(upLabel, s.items, false, colorFn, chipClass)));
+      if (cur) rows.push(cardFn('진행 중', cur.items, true));
+      upcoming.forEach((s) => rows.push(cardFn(upLabel, s.items, false)));
       if (!rows.length) rows.push('<p class="text-[14px] text-white/60">오늘 예정된 수업이 모두 끝났어요 💪</p>');
       el.innerHTML = rows.map((r, i) => (i === 0 ? r : '<div class="mt-2' + (i > 1 ? ' opacity-70' : '') + '">' + r + '</div>')).join('');
     }
-
-    const gxColor = (c) => (c.paid ? '#5b9bd5' : '#e0b878');
-    const swimColor = () => '#22c1cc';
 
     function render() {
       const d = kst();
@@ -113,10 +122,8 @@ import swim from '../../content/swimming-schedule.json';
       badgeEl.className = 'ml-auto px-3 py-1.5 rounded-full text-[12px] font-semibold '
         + (open ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-white/60');
 
-      track(gxEl, GX, dayKey, nowMin, '예정 GX', gxColor, 'bg-sand text-ink', dur,
-        '<p class="text-[14px] text-white/60">오늘은 GX 수업이 없어요 💤</p>');
-      track(swimEl, SWIM, dayKey, nowMin, '예정 수영', swimColor, 'bg-[#22c1cc] text-ink', swimDur,
-        '<p class="text-[14px] text-white/60">오늘은 수영 강습이 없어요 💤</p>');
+      track(gxEl, GX, dayKey, nowMin, '예정 GX', gxCard, '<p class="text-[14px] text-white/60">오늘은 GX 수업이 없어요 💤</p>');
+      track(swimEl, SWIM, dayKey, nowMin, '예정 수영', swimCard, '<p class="text-[14px] text-white/60">오늘은 수영 강습이 없어요 💤</p>');
     }
 
     render();
