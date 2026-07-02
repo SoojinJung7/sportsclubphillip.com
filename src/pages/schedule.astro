@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import { imgSrc, imgAlt } from '../data/site';
+import Img from '../components/Img.astro';
 import c from '../../content/pages/schedule.json';
 // 매월 스케줄 포스터 교체: site.ts 의 scheduleOperating / scheduleGx 이미지를 교체하세요.
 ---
@@ -16,7 +16,7 @@ import c from '../../content/pages/schedule.json';
         <h2 class="text-xl lg:text-2xl font-bold text-ink text-center">{c.operating.heading}</h2>
         <p class="mt-3 text-center text-[13px] text-muted">{c.operating.notice}</p>
         <div class="mt-8 rounded-2xl overflow-hidden shadow-xl border border-line">
-          <img src={imgSrc('scheduleOperating')} alt={imgAlt('scheduleOperating')} class="w-full h-auto" />
+          <Img k="scheduleOperating" class="w-full h-auto" />
         </div>
       </div>
 
@@ -24,7 +24,7 @@ import c from '../../content/pages/schedule.json';
         <h2 class="text-xl lg:text-2xl font-bold text-ink text-center">{c.gx.heading}</h2>
         <p class="mt-3 text-center text-[13px] text-muted">{c.gx.notice}</p>
         <div class="mt-8 rounded-2xl overflow-hidden shadow-xl border border-line">
-          <img src={imgSrc('scheduleGx')} alt={imgAlt('scheduleGx')} class="w-full h-auto" />
+          <Img k="scheduleGx" class="w-full h-auto" />
         </div>
       </div>
     </div>

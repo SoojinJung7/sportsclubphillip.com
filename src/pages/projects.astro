@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import { imgSrc, imgAlt } from '../data/site';
+import Img from '../components/Img.astro';
 import c from '../../content/pages/projects.json';
 
 const facilities = [
@@ -25,7 +25,7 @@ const facilities = [
       {facilities.map((f, i) => (
         <div class:list={['grid lg:grid-cols-2 gap-8 lg:gap-14 items-center reveal', i % 2 === 1 && 'lg:[&>*:first-child]:order-2']}>
           <div class="rounded-2xl overflow-hidden shadow-lg aspect-[5/4]">
-            <img src={imgSrc(f.key)} alt={imgAlt(f.key)} class="w-full h-full object-cover" />
+            <Img k={f.key} class="w-full h-full object-cover" />
           </div>
           <div>
             <p class="eyebrow text-[12px] text-sand-dark font-semibold">{f.en}</p>

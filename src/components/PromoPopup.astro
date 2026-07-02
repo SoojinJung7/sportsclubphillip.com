@@ -1,7 +1,8 @@
 ---
 // Content is CMS-edited in content/popup.json
 import popup from '../../content/popup.json';
-import { imgSrc, imgAlt, type ImgKey } from '../data/site';
+import { type ImgKey } from '../data/site';
+import Img from './Img.astro';
 const { enabled, title, image, link } = popup;
 const imgKey = image as ImgKey;
 ---
@@ -14,7 +15,7 @@ const imgKey = image as ImgKey;
       <button id="promo-close" aria-label="닫기" class="text-white/70 hover:text-white text-lg leading-none">&times;</button>
     </div>
     <a href={link} class="block">
-      <img src={imgSrc(imgKey)} alt={imgAlt(imgKey)} class="w-full h-auto" loading="lazy" />
+      <Img k={imgKey} class="w-full h-auto" />
     </a>
     <div class="flex items-center justify-between px-4 py-2.5 text-[12px] bg-cream">
       <button id="promo-hide-today" class="text-ink-soft hover:text-ink">오늘 하루 보지 않기</button>

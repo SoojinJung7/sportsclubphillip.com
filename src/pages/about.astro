@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import { imgSrc, imgAlt } from '../data/site';
+import Img from '../components/Img.astro';
 import c from '../../content/pages/about.json';
 
 const brands = [
@@ -57,7 +57,7 @@ const history = [
         {brands.map((b, i) => (
           <div class="text-center bg-white border border-line rounded-xl p-8 hover:shadow-lg transition-shadow reveal">
             <div class="h-24 flex items-center justify-center">
-              <img src={imgSrc(b.key)} alt={imgAlt(b.key)} class="max-h-20 w-auto object-contain" />
+              <Img k={b.key} class="max-h-20 w-auto object-contain" />
             </div>
             <h3 class="mt-6 text-lg font-bold text-ink">{c.brands.items[i].name}</h3>
             <p class="mt-2 text-[14px] text-muted">{c.brands.items[i].desc}</p>

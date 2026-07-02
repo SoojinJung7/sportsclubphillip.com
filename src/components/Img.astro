@@ -1,0 +1,29 @@
+---
+// Renders a site image by its key. Prefers the build-time optimized local asset
+// (astro:assets → responsive WebP); falls back to the remote URL from site.ts
+// (CMS override / Wix CDN) if the local file is missing. `alt` defaults to the
+// CMS-editable alt text but can be overridden per usage.
+import { Image } from 'astro:assets';
+import { localImg, imgSrc, imgAlt, type ImgKey } from '../data/site';
+
+interface Props {
+  k: ImgKey;
+  alt?: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  widths?: number[];
+  sizes?: string;
+}
+const { k, alt, class: className, loading = 'lazy', widths, sizes } = Astro.props;
+const meta = localImg(k);
+const altText = alt ?? imgAlt(k);
+// astro:assets requires `sizes` whenever `widths` is given.
+const responsive = widths && sizes ? { widths, sizes } : {};
+---
+{
+  meta ? (
+    <Image src={meta} alt={altText} class={className} loading={loading} {...responsive} />
+  ) : (
+    <img src={imgSrc(k)} alt={altText} class={className} loading={loading} />
+  )
+}

@@ -67,14 +67,25 @@ export const SOCIALS = [
 
 // ---------------------------------------------------------------------------
 // Image sources.
-// Currently the original brand/facility assets are served from the Wix CDN.
-// After you run `bash scripts/download-images.sh` (needs network approval) the
-// files land in /public/images — then set USE_LOCAL_IMAGES = true below and the
-// whole site switches to the local copies. That's the only change needed
-// before you cancel Wix.
+// Brand/facility assets are served LOCALLY: optimized originals live in
+// src/assets/images and astro:assets emits responsive WebP at build time.
+// `localImg(key)` returns the build-time ImageMetadata for the <Image>
+// component (see src/components/Img.astro). The Wix CDN URL in each entry is
+// kept only as a last-resort fallback for any key whose local file is absent.
+//
+// To refresh a photo: drop the new original into public/images (or straight
+// into src/assets/images) and run `node scripts/optimize-images.mjs`.
 // ---------------------------------------------------------------------------
-export const USE_LOCAL_IMAGES = false;
 const WIX = 'https://static.wixstatic.com/media/';
+
+// Build-time map of local optimized assets, keyed by filename (e.g. 'logo-main.png').
+import type { ImageMetadata } from 'astro';
+const localAssets = import.meta.glob<{ default: ImageMetadata }>('../assets/images/*.{png,jpg,jpeg}', {
+  eager: true,
+});
+const LOCAL: Record<string, ImageMetadata> = Object.fromEntries(
+  Object.entries(localAssets).map(([p, mod]) => [p.split('/').pop()!, mod.default]),
+);
 
 type ImgDef = { wix: string; local: string; alt: string };
 const D = (wix: string, local: string, alt: string): ImgDef => ({ wix, local, alt });
@@ -132,6 +143,12 @@ export const IMAGES = {
 
 export type ImgKey = keyof typeof IMAGES;
 
+// Build-time optimized local asset for a key (undefined if the file is absent —
+// the caller then falls back to imgSrc()). Used by src/components/Img.astro.
+export function localImg(key: ImgKey): ImageMetadata | undefined {
+  return LOCAL[IMAGES[key].local];
+}
+// Last-resort remote URL (CMS override in media.json, else the Wix CDN original).
 export function imgSrc(key: ImgKey): string {
   return MEDIA[key]?.src ?? WIX + IMAGES[key].wix;
 }

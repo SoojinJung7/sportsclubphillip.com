@@ -2,7 +2,8 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE, imgSrc } from '../data/site';
+import { getImage } from 'astro:assets';
+import { SITE, imgSrc, localImg } from '../data/site';
 import { EN } from '../i18n/dict';
 
 interface Props {
@@ -13,7 +14,13 @@ const {
   title = `${SITE.tagline} ㅣ ${SITE.name}`,
   description = '분당 정자동 토탈 휘트니스 스포츠클럽필립 — 헬스, PT, GX, 기구 필라테스, 스크린 골프, 수영장, 유소년 스포츠, 사우나까지 한 공간에서.',
 } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://sportsclubphillip.com').href;
+const site = Astro.site ?? 'https://sportsclubphillip.com';
+const canonical = new URL(Astro.url.pathname, site).href;
+// Local logo → PNG for the favicon (broad support) and an absolute og:image URL.
+const logoMeta = localImg('logo');
+const logoPng = logoMeta ? await getImage({ src: logoMeta, format: 'png', width: 512 }) : null;
+const faviconHref = logoPng?.src ?? imgSrc('logo');
+const ogImage = logoPng ? new URL(logoPng.src, site).href : imgSrc('logo');
 ---
 
 <!doctype html>
@@ -27,10 +34,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://sportsclubp
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={imgSrc('logo')} />
+    <meta property="og:image" content={ogImage} />
     <meta property="og:locale" content="ko_KR" />
     <meta name="theme-color" content="#16130f" />
-    <link rel="icon" href={imgSrc('logo')} />
+    <link rel="icon" href={faviconHref} />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"

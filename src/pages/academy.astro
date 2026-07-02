@@ -1,7 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import { imgSrc, imgAlt } from '../data/site';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Img from '../components/Img.astro';
 import c from '../../content/pages/academy.json';
 
 const divisions = [
@@ -14,18 +16,14 @@ const divisions = [
   { key: 'academyPilatesInPhillip', href: undefined },
 ] as const;
 
-// Gallery (hotlinked from the current CDN; add to download-images.sh later to localize)
-const WIX = 'https://static.wixstatic.com/media/';
-const gallery = [
-  '6f7ec1_55b3f8b1b6784b07a5f785d1716440a6~mv2.jpg',
-  '6f7ec1_cc2a6b66758047aabf39157d65ae58e6~mv2.jpg',
-  '6f7ec1_546434c1c007416f924d85c7d6e8a545~mv2.jpg',
-  '6f7ec1_865da92fc0214612b48a0290cb32fcb3~mv2.jpg',
-  '6f7ec1_731d43d1fc63432cb5d8a9884dfcfda4~mv2.jpg',
-  '6f7ec1_486832601b044c8f9cc724f79b0a0f33~mv2.jpg',
-  '6f7ec1_abf886ea92bd4efcadf65bc8dfbc0a20~mv2.jpg',
-  '6f7ec1_7d92d2d8ca62478288584932c35c306e~mv2.jpg',
-];
+// Gallery — optimized local assets (academy-gallery-1..8.jpg), sorted by name.
+const galleryAssets = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/images/academy-gallery-*.jpg',
+  { eager: true },
+);
+const gallery = Object.keys(galleryAssets)
+  .sort()
+  .map((k) => galleryAssets[k].default);
 ---
 
 <Base title={c.title}>
@@ -52,7 +50,7 @@ const gallery = [
           return (
             <Tag href={d.href} class:list={['group bg-white border border-line rounded-xl p-6 flex flex-col items-center justify-center text-center reveal', d.href && 'hover:shadow-lg hover:border-sand transition-all']}>
               <div class="h-16 flex items-center justify-center">
-                <img src={imgSrc(d.key)} alt={imgAlt(d.key)} class="max-h-14 w-auto object-contain" />
+                <Img k={d.key} class="max-h-14 w-auto object-contain" />
               </div>
               <h3 class="mt-4 text-[13px] lg:text-[14px] font-semibold text-ink">{c.divisions[i]}</h3>
               {d.href && <span class="mt-1 text-[11px] text-sand-dark opacity-0 group-hover:opacity-100 transition-opacity">{c.divisionMore}</span>}
@@ -71,7 +69,7 @@ const gallery = [
       <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">
         {gallery.map((g) => (
           <div class="aspect-square rounded-lg overflow-hidden reveal">
-            <img src={WIX + g} alt={c.gallery.caption} loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            <Image src={g} alt={c.gallery.caption} loading="lazy" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
           </div>
         ))}
       </div>

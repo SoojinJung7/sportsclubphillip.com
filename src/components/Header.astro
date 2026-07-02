@@ -1,5 +1,6 @@
 ---
-import { NAV, EXTERNAL, imgSrc, imgAlt } from '../data/site';
+import { NAV, EXTERNAL, imgAlt } from '../data/site';
+import Img from './Img.astro';
 import LangToggle from '../i18n/LangToggle.astro';
 const { pathname } = Astro.url;
 const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
@@ -10,7 +11,7 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
     <div class="flex items-center justify-between h-20 lg:h-24">
       <!-- Logo -->
       <a href="/" class="flex items-center shrink-0" aria-label={imgAlt('logo')}>
-        <img src={imgSrc('logo')} alt={imgAlt('logo')} class="h-10 lg:h-12 w-auto" />
+        <Img k="logo" class="h-10 lg:h-12 w-auto" loading="eager" />
       </a>
 
       <!-- Desktop nav -->
