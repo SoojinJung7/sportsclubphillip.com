@@ -2,9 +2,12 @@
 import Base from '../layouts/Base.astro';
 import PromoPopup from '../components/PromoPopup.astro';
 import LiveToday from '../components/LiveToday.astro';
+import FacilityStatus from '../components/FacilityStatus.astro';
 import { EXTERNAL } from '../data/site';
 import Img from '../components/Img.astro';
 import c from '../../content/pages/home.json';
+// 운영시간·휴관 안내는 운영시간 페이지와 동일 소스를 재사용 (한 곳만 고치면 양쪽 반영)
+import op from '../../content/pages/operating.json';
 
 const facilities = [
   { key: 'facilityHealth', href: '/projects' },
@@ -26,7 +29,9 @@ const programs = [
 
 <Base>
   <!-- ============================ HERO ============================ -->
-  <section class="relative min-h-[92vh] flex items-center overflow-hidden">
+  <!-- lg:pt-24 offsets the fixed header (lg:h-24) so the text centers within the
+       visible area below it — equal top/bottom margin on desktop; mobile unchanged. -->
+  <section class="relative min-h-[76vh] flex items-center overflow-hidden lg:pt-24">
     <div class="absolute inset-0">
       <Img k="homeAiWide" class="w-full h-full object-cover" loading="eager" />
       <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/20"></div>
@@ -157,6 +162,60 @@ const programs = [
           <span class="block text-lg font-bold text-ink">{c.cta.programs}</span>
           <span class="mt-1 block text-[12px] text-muted">Programs</span>
         </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 영업 안내 (OPERATING) ============================ -->
+  <section id="operating-info" class="relative overflow-hidden py-20 lg:py-28 bg-gradient-to-b from-cream to-[#ece4d6]">
+    <!-- warm sand accents -->
+    <div class="pointer-events-none absolute -top-32 -right-24 h-96 w-96 rounded-full bg-sand/10 blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-sand/10 blur-3xl"></div>
+
+    <div class="relative mx-auto max-w-7xl px-5 lg:px-8">
+      <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+        <!-- LEFT — live operating status -->
+        <div class="reveal">
+          <p class="eyebrow text-[12px] font-semibold text-sand-dark">{c.operating.eyebrow}</p>
+          <h2 class="mt-4 text-2xl lg:text-4xl font-bold text-ink">{c.operating.heading}</h2>
+          <p class="mt-4 max-w-md text-[15px] leading-relaxed text-ink-soft">{c.operating.intro}</p>
+
+          <!-- real-time facility status -->
+          <p class="mt-9 mb-3 flex items-center gap-2 text-[11px] font-semibold tracking-[0.2em] text-muted">
+            <span class="relative flex h-2 w-2">
+              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-70"></span>
+              <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+            </span>
+            {c.operating.statusHeading}
+          </p>
+          <FacilityStatus />
+
+          <!-- closed-day / holiday notice -->
+          <div class="mt-6 rounded-xl border border-sand/30 bg-sand/[0.06] px-5 py-4">
+            <p class="flex flex-wrap items-baseline gap-x-1.5 text-[13px]">
+              <span class="font-semibold text-sand-dark">{op.notice.closedTitle}</span>
+              <span class="text-ink-soft">{op.notice.closedText}</span>
+            </p>
+            <p class="mt-1.5 text-[13px] leading-relaxed text-ink-soft">{op.notice.holiday}</p>
+          </div>
+
+          <!-- CTAs -->
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="/operating" class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-[13px] font-semibold text-white transition-colors hover:bg-sand-dark">
+              {c.operating.ctaOperating} <span aria-hidden="true">→</span>
+            </a>
+            <a href="/schedule" class="inline-flex items-center gap-2 rounded-full border border-ink/20 px-6 py-3 text-[13px] font-semibold text-ink transition-colors hover:border-sand hover:text-sand-dark">
+              {c.operating.ctaSchedule}
+            </a>
+          </div>
+        </div>
+
+        <!-- RIGHT — operating schedule poster -->
+        <div class="reveal">
+          <a href="/schedule" class="group block overflow-hidden rounded-2xl border border-line bg-white shadow-xl transition-shadow hover:shadow-2xl">
+            <Img k="scheduleOperating" class="w-full h-auto transition-transform duration-700 group-hover:scale-[1.02]" />
+          </a>
+        </div>
       </div>
     </div>
   </section>

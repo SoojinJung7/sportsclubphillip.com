@@ -5,6 +5,15 @@
     "ctaFacilities": "시설 둘러보기",
     "ctaBooking": "온라인예약"
   },
+  "operating": {
+    "eyebrow": "Operating Info",
+    "heading": "영업 안내",
+    "intro": "매달 새롭게 안내되는 영업일과 이용시간입니다. 방문 전 꼭 확인해 주세요.",
+    "statusHeading": "실시간 영업 현황",
+    "hoursHeading": "이용시간",
+    "ctaOperating": "오시는 길 · 운영시간",
+    "ctaSchedule": "전체 스케줄 보기"
+  },
   "mission": {
     "titleLine1": "피트니스를 넘어,",
     "titleLine2": "라이프스타일로.",

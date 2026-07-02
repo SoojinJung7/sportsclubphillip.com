@@ -22,7 +22,10 @@ import swim from '../../content/swimming-schedule.json';
           <span class="text-[11px] text-white/50">KST</span>
           <span id="lt-date" class="text-[13px] text-white/60 ml-1"></span>
         </span>
-        <span id="lt-badge" class="ml-auto px-3 py-1.5 rounded-full text-[12px] font-semibold bg-white/10">···</span>
+        <span class="ml-auto flex items-center gap-2">
+          <span id="lt-sauna" class="px-3 py-1.5 rounded-full text-[12px] font-semibold bg-white/10">···</span>
+          <span id="lt-badge" class="px-3 py-1.5 rounded-full text-[12px] font-semibold bg-white/10">···</span>
+        </span>
       </div>
 
       <!-- Two columns: GX | Swimming (stacks on mobile) -->
@@ -58,7 +61,12 @@ import swim from '../../content/swimming-schedule.json';
     const clockEl = document.getElementById('lt-clock');
     const dateEl = document.getElementById('lt-date');
     const badgeEl = document.getElementById('lt-badge');
+    const saunaEl = document.getElementById('lt-sauna');
     const gxEl = document.getElementById('lt-gx');
+
+    // Sauna = 목욕장업 05:30–23:00 (daily; 찜질방 운영 종료). Closed on the
+    // facility's closed days. Source: 월간 운영 안내.
+    const SAUNA = ['05:30', '23:00'];
     const swimEl = document.getElementById('lt-swim');
 
     const chip = (label, live, cls) =>
@@ -119,8 +127,14 @@ import swim from '../../content/swimming-schedule.json';
       const closedDay = d.getDay() === 0 && (nth === 1 || nth === 3 || nth === 5);
       const open = !closedDay && nowMin >= 330 && nowMin < 1380;
       badgeEl.textContent = closedDay ? '오늘 휴관일' : open ? '● 지금 영업 중' : '영업 종료';
-      badgeEl.className = 'ml-auto px-3 py-1.5 rounded-full text-[12px] font-semibold '
+      badgeEl.className = 'px-3 py-1.5 rounded-full text-[12px] font-semibold '
         + (open ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-white/60');
+
+      // Sauna badge — own hours, closed on the facility's closed days.
+      const saunaOpen = !closedDay && nowMin >= toMin(SAUNA[0]) && nowMin < toMin(SAUNA[1]);
+      saunaEl.textContent = saunaOpen ? '♨️ 사우나 영업 중' : '♨️ 사우나 운영 종료';
+      saunaEl.className = 'px-3 py-1.5 rounded-full text-[12px] font-semibold '
+        + (saunaOpen ? 'bg-amber-500/20 text-amber-200' : 'bg-white/10 text-white/60');
 
       track(gxEl, GX, dayKey, nowMin, '예정 GX', gxCard, '<p class="text-[14px] text-white/60">오늘은 GX 수업이 없어요 💤</p>');
       track(swimEl, SWIM, dayKey, nowMin, '예정 수영', swimCard, '<p class="text-[14px] text-white/60">오늘은 수영 강습이 없어요 💤</p>');
