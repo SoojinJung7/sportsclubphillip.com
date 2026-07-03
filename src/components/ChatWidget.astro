@@ -1,0 +1,342 @@
+---
+// ---------------------------------------------------------------------------
+// 홈페이지 실시간 채팅 위젯 (손님용).
+// 규격: 필립톡 저장소 specs/WEBCHAT_CONTRACT.md v1 (2026-07-03).
+//   · 위젯은 필립톡의 HTTP API만 호출한다 (Supabase는 전혀 모름).
+//   · POST {PHILLIPTALK_URL}/api/webchat/message    — 손님 메시지 보내기
+//   · GET  {PHILLIPTALK_URL}/api/webchat/messages    — 답장 폴링(3초)
+//   · 방문자 토큰(web_ + 32자+ 랜덤)을 localStorage['scp-chat-token']에 저장.
+//
+// ⚙️ 필립톡 배포 주소는 아래 PHILLIPTALK_URL 한 곳만 바꾸면 됩니다.
+//    (필립톡을 Vercel에 올린 뒤 실제 주소로 교체 — 예: https://to-philip.vercel.app)
+// ---------------------------------------------------------------------------
+const PHILLIPTALK_URL = 'https://to-philip.vercel.app';
+
+// 위젯 UI 문구 (한/영). 상단 언어 토글(<html lang> 변경)을 관찰해 바꿉니다.
+const STRINGS = {
+  ko: {
+    open: '상담 문의',
+    title: '스포츠클럽필립 상담',
+    subtitle: '궁금한 점을 남겨주시면 답변드려요',
+    close: '닫기',
+    namePh: '이름 (선택)',
+    contactPh: '연락처 — 전화 또는 이메일 (선택)',
+    start: '상담 시작',
+    inputPh: '메시지를 입력하세요…',
+    send: '보내기',
+    greeting: '안녕하세요! 스포츠클럽필립입니다 😊 무엇을 도와드릴까요?',
+    offline: '지금은 상담 가능 시간이 아니에요. 메시지를 남겨주시면 곧 답변드릴게요.',
+    intro: '이름과 연락처를 남겨주시면 더 빠르게 도와드릴 수 있어요. (건너뛰어도 됩니다)',
+    sending: '전송 중…',
+    error: '전송에 실패했어요. 잠시 후 다시 시도해 주세요.',
+  },
+  en: {
+    open: 'Chat',
+    title: 'Sports Club Phillip',
+    subtitle: 'Leave a message and we’ll reply',
+    close: 'Close',
+    namePh: 'Name (optional)',
+    contactPh: 'Contact — phone or email (optional)',
+    start: 'Start chat',
+    inputPh: 'Type a message…',
+    send: 'Send',
+    greeting: 'Hello! This is Sports Club Phillip 😊 How can we help?',
+    offline: 'We’re outside consultation hours right now. Leave a message and we’ll reply soon.',
+    intro: 'Share your name and contact so we can help faster. (You can skip this.)',
+    sending: 'Sending…',
+    error: 'Failed to send. Please try again in a moment.',
+  },
+};
+---
+
+<div
+  id="scp-chat"
+  data-phillip-url={PHILLIPTALK_URL}
+  class="fixed bottom-5 right-5 z-[9999] font-sans"
+>
+  <!-- 플로팅 상담 버튼 -->
+  <button
+    id="scp-chat-toggle"
+    type="button"
+    aria-label="상담 문의"
+    class="group flex items-center gap-2 rounded-full bg-ink px-4 py-3 text-white shadow-lg shadow-black/20 transition hover:bg-sand-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-sand"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12Z"/></svg>
+    <span data-t="open" class="text-[14px] font-semibold">상담 문의</span>
+    <span id="scp-chat-badge" class="hidden h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
+  </button>
+
+  <!-- 채팅 패널 -->
+  <section
+    id="scp-chat-panel"
+    class="pointer-events-none absolute bottom-0 right-0 flex h-[70vh] max-h-[560px] w-[min(360px,calc(100vw-2.5rem))] translate-y-3 flex-col overflow-hidden rounded-2xl border border-line bg-cream opacity-0 shadow-2xl shadow-black/25 transition-all duration-200"
+    aria-hidden="true"
+  >
+    <!-- 헤더 -->
+    <header class="flex items-center justify-between gap-3 bg-ink px-4 py-3 text-white">
+      <div class="min-w-0">
+        <p data-t="title" class="truncate text-[15px] font-bold">스포츠클럽필립 상담</p>
+        <p data-t="subtitle" class="truncate text-[12px] text-white/70">궁금한 점을 남겨주시면 답변드려요</p>
+      </div>
+      <button id="scp-chat-close" type="button" aria-label="닫기" class="rounded-full p-1.5 text-white/80 transition hover:bg-white/10 hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+
+    <!-- 상담시간 외 안내 -->
+    <p id="scp-chat-offline" data-t="offline" class="hidden border-b border-amber-200 bg-amber-50 px-4 py-2.5 text-[12px] leading-snug text-amber-800">
+      지금은 상담 가능 시간이 아니에요. 메시지를 남겨주시면 곧 답변드릴게요.
+    </p>
+
+    <!-- 메시지 영역 -->
+    <div id="scp-chat-log" class="flex-1 space-y-2.5 overflow-y-auto px-3.5 py-3.5"></div>
+
+    <!-- 첫 문의 폼 (이름/연락처) -->
+    <form id="scp-chat-intro" class="space-y-2 border-t border-line bg-white px-3.5 py-3">
+      <p data-t="intro" class="text-[12px] leading-snug text-muted">이름과 연락처를 남겨주시면 더 빠르게 도와드릴 수 있어요. (건너뛰어도 됩니다)</p>
+      <input id="scp-chat-name" type="text" placeholder="이름 (선택)" autocomplete="name" class="w-full rounded-lg border border-line bg-cream px-3 py-2 text-[14px] text-ink outline-none focus:border-sand" />
+      <input id="scp-chat-contact" type="text" placeholder="연락처 — 전화 또는 이메일 (선택)" autocomplete="tel" class="w-full rounded-lg border border-line bg-cream px-3 py-2 text-[14px] text-ink outline-none focus:border-sand" />
+      <button data-t="start" type="submit" class="w-full rounded-lg bg-sand px-3 py-2 text-[14px] font-semibold text-white transition hover:bg-sand-dark">상담 시작</button>
+    </form>
+
+    <!-- 메시지 입력 -->
+    <form id="scp-chat-send" class="hidden items-end gap-2 border-t border-line bg-white px-3 py-2.5">
+      <textarea id="scp-chat-input" rows="1" placeholder="메시지를 입력하세요…" class="max-h-28 flex-1 resize-none rounded-xl border border-line bg-cream px-3 py-2 text-[14px] leading-snug text-ink outline-none focus:border-sand"></textarea>
+      <button data-t="send" type="submit" aria-label="보내기" class="shrink-0 rounded-xl bg-sand p-2.5 text-white transition hover:bg-sand-dark disabled:opacity-50">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12l16-8-6 16-3-6-7-2Z"/></svg>
+      </button>
+    </form>
+  </section>
+</div>
+
+<style>
+  #scp-chat-panel.scp-open { pointer-events: auto; opacity: 1; transform: translateY(0); }
+  .scp-bubble { max-width: 82%; padding: 0.5rem 0.75rem; border-radius: 1rem; font-size: 14px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+  .scp-in  { margin-left: auto; background: var(--color-sand); color: #fff; border-bottom-right-radius: 0.25rem; }
+  .scp-out { margin-right: auto; background: #fff; color: var(--color-ink); border: 1px solid var(--color-line); border-bottom-left-radius: 0.25rem; }
+  .scp-row { display: flex; }
+  .scp-time { margin-top: 2px; font-size: 10px; color: var(--color-muted); }
+</style>
+
+<script is:inline define:vars={{ PHILLIPTALK_URL, STRINGS }}>
+  (function () {
+    var root = document.getElementById('scp-chat');
+    if (!root) return;
+    var API = (root.getAttribute('data-phillip-url') || PHILLIPTALK_URL).replace(/\/+$/, '');
+
+    var toggle = document.getElementById('scp-chat-toggle');
+    var panel = document.getElementById('scp-chat-panel');
+    var closeBtn = document.getElementById('scp-chat-close');
+    var badge = document.getElementById('scp-chat-badge');
+    var offlineEl = document.getElementById('scp-chat-offline');
+    var log = document.getElementById('scp-chat-log');
+    var introForm = document.getElementById('scp-chat-intro');
+    var sendForm = document.getElementById('scp-chat-send');
+    var nameInput = document.getElementById('scp-chat-name');
+    var contactInput = document.getElementById('scp-chat-contact');
+    var textInput = document.getElementById('scp-chat-input');
+
+    // ---- 언어 (상단 토글이 바꾸는 <html lang>을 따라감) -------------------
+    function lang() { return document.documentElement.lang === 'en' ? 'en' : 'ko'; }
+    function applyStrings() {
+      var s = STRINGS[lang()];
+      root.querySelectorAll('[data-t]').forEach(function (el) {
+        var k = el.getAttribute('data-t');
+        if (s[k] != null) el.textContent = s[k];
+      });
+      nameInput.placeholder = s.namePh;
+      contactInput.placeholder = s.contactPh;
+      textInput.placeholder = s.inputPh;
+      toggle.setAttribute('aria-label', s.open);
+    }
+    new MutationObserver(applyStrings).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    applyStrings();
+
+    // ---- 방문자 토큰 -----------------------------------------------------
+    var TOKEN_KEY = 'scp-chat-token';
+    function makeToken() {
+      var bytes = new Uint8Array(32);
+      crypto.getRandomValues(bytes);
+      var b64 = btoa(String.fromCharCode.apply(null, bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      return 'web_' + b64;
+    }
+    function token() {
+      var t;
+      try { t = localStorage.getItem(TOKEN_KEY); } catch (e) {}
+      if (!t) { t = makeToken(); try { localStorage.setItem(TOKEN_KEY, t); } catch (e) {} }
+      return t;
+    }
+
+    // ---- 상담 가능 시간 (KST). 프론트 데스크 기준: 평일 09–22, 토 09–21, --
+    // 일 12–18. 휴관일(매월 1·3·5째주 일요일)은 상담 불가 안내. 안내일 뿐,
+    // 시간 밖에도 메시지는 저장됨(규격 요건 6).
+    function isOffHours() {
+      var d = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+      var day = d.getDay();
+      var min = d.getHours() * 60 + d.getMinutes();
+      var nth = Math.ceil(d.getDate() / 7);
+      if (day === 0 && (nth === 1 || nth === 3 || nth === 5)) return true; // 휴관일
+      var win = day === 0 ? [720, 1080] : day === 6 ? [540, 1260] : [540, 1320];
+      return min < win[0] || min >= win[1];
+    }
+
+    // ---- 메시지 렌더 -----------------------------------------------------
+    var seen = {};          // 서버 메시지 id 중복 방지
+    var since = '';         // 마지막으로 받은 createdAt → 다음 폴링의 since
+    var started = false;    // 폼 제출 후 대화 모드
+    var poller = null;
+
+    function fmtTime(iso) {
+      try {
+        return new Date(iso).toLocaleTimeString(lang() === 'en' ? 'en-US' : 'ko-KR',
+          { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Seoul' });
+      } catch (e) { return ''; }
+    }
+    function addBubble(dir, body, iso) {
+      var row = document.createElement('div');
+      row.className = 'scp-row';
+      var wrap = document.createElement('div');
+      wrap.style.maxWidth = '82%';
+      // 손님(in)=오른쪽, 스튜디오(out)=왼쪽
+      if (dir === 'in') { wrap.style.marginLeft = 'auto'; } else { wrap.style.marginRight = 'auto'; }
+      var b = document.createElement('div');
+      b.className = 'scp-bubble ' + (dir === 'in' ? 'scp-in' : 'scp-out');
+      b.textContent = body;
+      wrap.appendChild(b);
+      if (iso) {
+        var t = document.createElement('div');
+        t.className = 'scp-time';
+        t.style.textAlign = dir === 'in' ? 'right' : 'left';
+        t.textContent = fmtTime(iso);
+        wrap.appendChild(t);
+      }
+      row.appendChild(wrap);
+      log.appendChild(row);
+    }
+    function scrollDown() { log.scrollTop = log.scrollHeight; }
+
+    function greet() {
+      var g = document.createElement('div');
+      g.className = 'scp-row';
+      var b = document.createElement('div');
+      b.className = 'scp-bubble scp-out';
+      b.setAttribute('data-t', 'greeting');
+      b.textContent = STRINGS[lang()].greeting;
+      g.appendChild(b);
+      log.appendChild(g);
+    }
+
+    // ---- 폴링(답장 받아오기) --------------------------------------------
+    function poll() {
+      var url = API + '/api/webchat/messages?token=' + encodeURIComponent(token())
+        + (since ? '&since=' + encodeURIComponent(since) : '');
+      return fetch(url, { method: 'GET' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (!data || !data.messages) return;
+          var added = false, gotReply = false;
+          data.messages.forEach(function (m) {
+            if (m.id && seen[m.id]) return;
+            if (m.id) seen[m.id] = true;
+            addBubble(m.direction, m.body, m.createdAt);
+            if (m.createdAt && m.createdAt > since) since = m.createdAt;
+            added = true;
+            if (m.direction === 'out') gotReply = true;
+          });
+          if (added) scrollDown();
+          if (gotReply && !panel.classList.contains('scp-open')) badge.classList.remove('hidden');
+        })
+        .catch(function () {});
+    }
+    function startPolling() { if (!poller) { poll(); poller = setInterval(poll, 3000); } }
+    function stopPolling() { if (poller) { clearInterval(poller); poller = null; } }
+
+    // ---- 열기/닫기 -------------------------------------------------------
+    function open() {
+      panel.classList.add('scp-open');
+      panel.setAttribute('aria-hidden', 'false');
+      badge.classList.add('hidden');
+      offlineEl.classList.toggle('hidden', !isOffHours());
+      if (started) startPolling();
+      scrollDown();
+    }
+    function close() {
+      panel.classList.remove('scp-open');
+      panel.setAttribute('aria-hidden', 'true');
+      stopPolling(); // 규격: 닫으면 폴링 멈춤
+    }
+    toggle.addEventListener('click', function () {
+      panel.classList.contains('scp-open') ? close() : open();
+    });
+    closeBtn.addEventListener('click', close);
+
+    // 이전에 대화한 적 있으면(토큰 존재) 바로 대화 모드로 복원
+    var hadToken = false;
+    try { hadToken = !!localStorage.getItem(TOKEN_KEY); } catch (e) {}
+    function enterChat() {
+      started = true;
+      introForm.classList.add('hidden');
+      sendForm.classList.remove('hidden');
+      sendForm.classList.add('flex');
+    }
+    if (hadToken) { enterChat(); greet(); }
+    else { greet(); }
+
+    // ---- 첫 문의 폼 제출 → 대화 모드 ------------------------------------
+    introForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      enterChat();
+      if (panel.classList.contains('scp-open')) startPolling();
+      textInput.focus();
+    });
+
+    // ---- 전송 -----------------------------------------------------------
+    function sendText(text) {
+      var body = { token: token(), text: text, page: location.pathname };
+      var nm = (nameInput.value || '').trim();
+      var ct = (contactInput.value || '').trim();
+      if (nm) body.name = nm;      // 서버가 처음 한 번만 채움(덮어쓰지 않음)
+      if (ct) body.contact = ct;
+      return fetch(API + '/api/webchat/message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }).then(function (r) {
+        if (!r.ok) throw new Error('send failed');
+        return r.json();
+      });
+    }
+    sendForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var text = (textInput.value || '').trim();
+      if (!text) return;
+      var sendBtn = sendForm.querySelector('button');
+      textInput.value = '';
+      textInput.style.height = 'auto';
+      sendBtn.disabled = true;
+      sendText(text)
+        .then(function () {
+          startPolling();
+          poll(); // 방금 보낸 메시지를 곧바로 반영(3초 기다리지 않게)
+        })
+        .catch(function () {
+          var e2 = document.createElement('div');
+          e2.className = 'scp-time';
+          e2.style.textAlign = 'center';
+          e2.textContent = STRINGS[lang()].error;
+          log.appendChild(e2);
+          scrollDown();
+        })
+        .finally(function () { sendBtn.disabled = false; });
+    });
+
+    // Enter=전송, Shift+Enter=줄바꿈, 입력창 자동 높이
+    textInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendForm.requestSubmit(); }
+    });
+    textInput.addEventListener('input', function () {
+      textInput.style.height = 'auto';
+      textInput.style.height = Math.min(textInput.scrollHeight, 112) + 'px';
+    });
+  })();
+</script>
