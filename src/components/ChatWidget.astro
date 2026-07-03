@@ -29,6 +29,9 @@ const STRINGS = {
     intro: '이름과 연락처를 남겨주시면 더 빠르게 도와드릴 수 있어요. (건너뛰어도 됩니다)',
     sending: '전송 중…',
     error: '전송에 실패했어요. 잠시 후 다시 시도해 주세요.',
+    statusOnline: '보통 몇 분 내 답장',
+    statusOffline: '지금은 상담 시간이 아니에요',
+    quicks: ['이용시간', '수영 강습', 'PT 상담', '가격 문의'],
   },
   en: {
     open: 'Chat',
@@ -45,6 +48,9 @@ const STRINGS = {
     intro: 'Share your name and contact so we can help faster. (You can skip this.)',
     sending: 'Sending…',
     error: 'Failed to send. Please try again in a moment.',
+    statusOnline: 'Usually replies in a few minutes',
+    statusOffline: 'Outside consultation hours',
+    quicks: ['Hours', 'Swim lessons', 'PT consult', 'Pricing'],
   },
 };
 ---
@@ -69,16 +75,20 @@ const STRINGS = {
   <!-- 채팅 패널 -->
   <section
     id="scp-chat-panel"
-    class="pointer-events-none absolute bottom-0 right-0 flex h-[70vh] max-h-[560px] w-[min(360px,calc(100vw-2.5rem))] translate-y-3 flex-col overflow-hidden rounded-2xl border border-line bg-cream opacity-0 shadow-2xl shadow-black/25 transition-all duration-200"
+    class="scp-panel pointer-events-none absolute bottom-0 right-0 flex h-[70vh] max-h-[560px] w-[min(360px,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-2xl border border-line bg-cream shadow-2xl shadow-black/25"
     aria-hidden="true"
   >
     <!-- 헤더 -->
-    <header class="flex items-center justify-between gap-3 bg-ink px-4 py-3 text-white">
-      <div class="min-w-0">
-        <p data-t="title" class="truncate text-[15px] font-bold">스포츠클럽필립 상담</p>
-        <p data-t="subtitle" class="truncate text-[12px] text-white/70">궁금한 점을 남겨주시면 답변드려요</p>
+    <header class="flex items-center gap-3 bg-ink px-4 py-3 text-white">
+      <div class="scp-avatar" aria-hidden="true">P</div>
+      <div class="min-w-0 flex-1">
+        <p data-t="title" class="truncate text-[15px] font-bold">스포츠클럽필립</p>
+        <p class="flex items-center gap-1.5 truncate text-[12px] text-white/70">
+          <span id="scp-presence-dot" class="scp-pdot"></span>
+          <span id="scp-presence-text">보통 몇 분 내 답장</span>
+        </p>
       </div>
-      <button id="scp-chat-close" type="button" aria-label="닫기" class="rounded-full p-1.5 text-white/80 transition hover:bg-white/10 hover:text-white">
+      <button id="scp-chat-close" type="button" aria-label="닫기" class="shrink-0 rounded-full p-1.5 text-white/80 transition hover:bg-white/10 hover:text-white">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
     </header>
@@ -110,12 +120,57 @@ const STRINGS = {
 </div>
 
 <style>
-  #scp-chat-panel.scp-open { pointer-events: auto; opacity: 1; transform: translateY(0); }
-  .scp-bubble { max-width: 82%; padding: 0.5rem 0.75rem; border-radius: 1rem; font-size: 14px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
-  .scp-in  { margin-left: auto; background: var(--color-sand); color: #fff; border-bottom-right-radius: 0.25rem; }
-  .scp-out { margin-right: auto; background: #fff; color: var(--color-ink); border: 1px solid var(--color-line); border-bottom-left-radius: 0.25rem; }
-  .scp-row { display: flex; }
-  .scp-time { margin-top: 2px; font-size: 10px; color: var(--color-muted); }
+  /* ---- 열림/닫힘: 오른쪽 아래에서 부드럽게 펼쳐짐 (인스타 느낌) ---- */
+  #scp-chat-panel {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+    transform-origin: bottom right;
+    transition: opacity 0.18s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #scp-chat-panel.scp-open { pointer-events: auto; opacity: 1; transform: none; }
+  #scp-chat-toggle { transition: transform 0.15s ease, background-color 0.2s ease; }
+  #scp-chat-toggle:active { transform: scale(0.96); }
+
+  /* ---- 헤더 아바타 & 접속 상태 점 ---- */
+  .scp-avatar {
+    flex: none; width: 38px; height: 38px; border-radius: 50%;
+    background: var(--color-sand); color: var(--color-ink);
+    display: grid; place-items: center; font-weight: 800; font-size: 16px;
+  }
+  .scp-pdot { width: 7px; height: 7px; border-radius: 50%; background: #34c759; flex: none; box-shadow: 0 0 0 2px rgba(52,199,89,.22); }
+  .scp-pdot.off { background: #d98a3d; box-shadow: 0 0 0 2px rgba(217,138,61,.22); }
+
+  /* ---- 말풍선 ---- */
+  .scp-row { display: flex; align-items: flex-end; gap: 7px; animation: scp-pop 0.26s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .scp-row.is-in { justify-content: flex-end; }
+  .scp-col { display: flex; flex-direction: column; max-width: 78%; }
+  .scp-bubble { padding: 0.5rem 0.8rem; font-size: 14px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+  .scp-in  { background: var(--color-sand); color: #fff; border-radius: 16px 16px 5px 16px; }
+  .scp-out { background: #fff; color: var(--color-ink); border: 1px solid var(--color-line); border-radius: 16px 16px 16px 5px; }
+  .scp-time { margin-top: 3px; font-size: 10px; color: var(--color-muted); }
+
+  /* ---- 필립 아바타 (인스타처럼 왼쪽 동그라미) ---- */
+  .scp-msg-avatar {
+    flex: none; width: 26px; height: 26px; border-radius: 50%;
+    background: var(--color-sand); color: var(--color-ink);
+    display: grid; place-items: center; font-weight: 800; font-size: 12px; align-self: flex-end;
+  }
+  .scp-msg-avatar.spacer { visibility: hidden; }
+
+  /* ---- 빠른질문 칩 ---- */
+  .scp-quicks { display: flex; flex-wrap: wrap; gap: 7px; padding: 4px 0 2px 33px; animation: scp-pop 0.26s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .scp-quicks button {
+    cursor: pointer; font-family: inherit; font-size: 12.5px; font-weight: 600;
+    background: #fff; color: var(--color-sand-dark); border: 1px solid #d8c7a6; border-radius: 999px; padding: 7px 13px;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .scp-quicks button:hover { background: var(--color-sand); color: #fff; border-color: var(--color-sand); }
+
+  @keyframes scp-pop { from { opacity: 0; transform: translateY(7px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    #scp-chat-panel, #scp-chat-toggle, .scp-row, .scp-quicks { transition: none; animation: none; }
+  }
 </style>
 
 <script is:inline define:vars={{ PHILLIPTALK_URL, STRINGS }}>
@@ -148,6 +203,7 @@ const STRINGS = {
       contactInput.placeholder = s.contactPh;
       textInput.placeholder = s.inputPh;
       toggle.setAttribute('aria-label', s.open);
+      updatePresence();
     }
     new MutationObserver(applyStrings).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
     applyStrings();
@@ -192,38 +248,82 @@ const STRINGS = {
           { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Seoul' });
       } catch (e) { return ''; }
     }
+    function makeAvatar() {
+      var a = document.createElement('div');
+      a.className = 'scp-msg-avatar';
+      a.setAttribute('aria-hidden', 'true');
+      a.textContent = 'P';
+      return a;
+    }
+    // 인스타처럼: 연속된 필립(out) 말풍선은 '마지막 하나'에만 아바타를 보이고
+    // 나머지는 자리만 비워 정렬을 맞춘다.
+    function regroupAvatars() {
+      var rows = log.querySelectorAll('.scp-row');
+      rows.forEach(function (row, i) {
+        if (row.classList.contains('is-in')) return;
+        var av = row.querySelector('.scp-msg-avatar');
+        if (!av) return;
+        var next = rows[i + 1];
+        var lastOfGroup = !next || next.classList.contains('is-in');
+        av.classList.toggle('spacer', !lastOfGroup);
+      });
+    }
     function addBubble(dir, body, iso) {
       var row = document.createElement('div');
-      row.className = 'scp-row';
-      var wrap = document.createElement('div');
-      wrap.style.maxWidth = '82%';
-      // 손님(in)=오른쪽, 스튜디오(out)=왼쪽
-      if (dir === 'in') { wrap.style.marginLeft = 'auto'; } else { wrap.style.marginRight = 'auto'; }
+      row.className = 'scp-row' + (dir === 'in' ? ' is-in' : '');
+      if (dir === 'out') row.appendChild(makeAvatar()); // 필립 아바타(왼쪽)
+      var col = document.createElement('div');
+      col.className = 'scp-col';
       var b = document.createElement('div');
       b.className = 'scp-bubble ' + (dir === 'in' ? 'scp-in' : 'scp-out');
       b.textContent = body;
-      wrap.appendChild(b);
+      col.appendChild(b);
       if (iso) {
         var t = document.createElement('div');
         t.className = 'scp-time';
         t.style.textAlign = dir === 'in' ? 'right' : 'left';
         t.textContent = fmtTime(iso);
-        wrap.appendChild(t);
+        col.appendChild(t);
       }
-      row.appendChild(wrap);
+      row.appendChild(col);
       log.appendChild(row);
+      regroupAvatars();
+      return b;
     }
     function scrollDown() { log.scrollTop = log.scrollHeight; }
 
+    // 빠른질문 칩 — 클릭하면 그 문구로 바로 문의가 전송됨
+    function buildQuicks() {
+      var wrap = document.createElement('div');
+      wrap.className = 'scp-quicks';
+      wrap.id = 'scp-quicks';
+      (STRINGS[lang()].quicks || []).forEach(function (label) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = label;
+        btn.addEventListener('click', function () { doSend(label); });
+        wrap.appendChild(btn);
+      });
+      return wrap;
+    }
+    function removeQuicks() {
+      var q = document.getElementById('scp-quicks');
+      if (q) q.remove();
+    }
     function greet() {
-      var g = document.createElement('div');
-      g.className = 'scp-row';
-      var b = document.createElement('div');
-      b.className = 'scp-bubble scp-out';
-      b.setAttribute('data-t', 'greeting');
-      b.textContent = STRINGS[lang()].greeting;
-      g.appendChild(b);
-      log.appendChild(g);
+      var gb = addBubble('out', STRINGS[lang()].greeting);
+      gb.setAttribute('data-t', 'greeting');
+      log.appendChild(buildQuicks());
+      regroupAvatars();
+    }
+
+    // ---- 접속 상태(헤더) — 상담시간 안/밖에 따라 초록/주황 점 + 문구 ----
+    function updatePresence() {
+      var off = isOffHours();
+      var dot = document.getElementById('scp-presence-dot');
+      var txt = document.getElementById('scp-presence-text');
+      if (dot) dot.classList.toggle('off', off);
+      if (txt) txt.textContent = off ? STRINGS[lang()].statusOffline : STRINGS[lang()].statusOnline;
     }
 
     // ---- 폴링(답장 받아오기) --------------------------------------------
@@ -257,6 +357,7 @@ const STRINGS = {
       panel.setAttribute('aria-hidden', 'false');
       badge.classList.add('hidden');
       offlineEl.classList.toggle('hidden', !isOffHours());
+      updatePresence();
       if (started) startPolling();
       scrollDown();
     }
@@ -306,14 +407,14 @@ const STRINGS = {
         return r.json();
       });
     }
-    sendForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var text = (textInput.value || '').trim();
+    // ---- 전송 (입력창 + 빠른질문 공용) ----
+    function doSend(text) {
+      text = (text || '').trim();
       if (!text) return;
+      removeQuicks();
+      if (!started) enterChat(); // 빠른질문만 눌러도 대화 모드로 전환
       var sendBtn = sendForm.querySelector('button');
-      textInput.value = '';
-      textInput.style.height = 'auto';
-      sendBtn.disabled = true;
+      if (sendBtn) sendBtn.disabled = true;
       sendText(text)
         .then(function () {
           startPolling();
@@ -327,7 +428,15 @@ const STRINGS = {
           log.appendChild(e2);
           scrollDown();
         })
-        .finally(function () { sendBtn.disabled = false; });
+        .finally(function () { if (sendBtn) sendBtn.disabled = false; });
+    }
+    sendForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var text = (textInput.value || '').trim();
+      if (!text) return;
+      textInput.value = '';
+      textInput.style.height = 'auto';
+      doSend(text);
     });
 
     // Enter=전송, Shift+Enter=줄바꿈, 입력창 자동 높이
