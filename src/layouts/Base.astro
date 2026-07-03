@@ -20,7 +20,8 @@ const canonical = new URL(Astro.url.pathname, site).href;
 // Local logo → PNG for the favicon (broad support) and an absolute og:image URL.
 const logoMeta = localImg('logo');
 const logoPng = logoMeta ? await getImage({ src: logoMeta, format: 'png', width: 512 }) : null;
-const faviconHref = logoPng?.src ?? imgSrc('logo');
+// 파비콘은 public/favicon.png (빨간 '필립' 아이콘). og:image는 로고 유지.
+const faviconHref = '/favicon.png';
 const ogImage = logoPng ? new URL(logoPng.src, site).href : imgSrc('logo');
 ---
 
@@ -38,7 +39,8 @@ const ogImage = logoPng ? new URL(logoPng.src, site).href : imgSrc('logo');
     <meta property="og:image" content={ogImage} />
     <meta property="og:locale" content="ko_KR" />
     <meta name="theme-color" content="#16130f" />
-    <link rel="icon" href={faviconHref} />
+    <link rel="icon" type="image/png" href={faviconHref} />
+    <link rel="apple-touch-icon" href={faviconHref} />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
