@@ -16,7 +16,7 @@ const PHILLIPTALK_URL = 'https://to-philip.vercel.app';
 const STRINGS = {
   ko: {
     open: '상담 문의',
-    title: '스포츠클럽필립 상담',
+    title: '스포츠클럽필립',
     subtitle: '궁금한 점을 남겨주시면 답변드려요',
     close: '닫기',
     namePh: '이름 (선택)',
@@ -119,7 +119,8 @@ const STRINGS = {
   </section>
 </div>
 
-<style>
+<style is:global>
+  /* 위젯 말풍선·아바타는 JS로 생성되므로 전역 스타일이어야 적용됨(클래스는 모두 scp- 접두) */
   /* ---- 열림/닫힘: 오른쪽 아래에서 부드럽게 펼쳐짐 (인스타 느낌) ---- */
   #scp-chat-panel {
     opacity: 0;
