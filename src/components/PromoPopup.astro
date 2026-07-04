@@ -1,40 +1,53 @@
 ---
-// Content is CMS-edited in content/popup.json
+// 이달의 프로모션 포스터 팝업.
+//  · 웹(데스크톱): 히어로 우측에 포스터 '사진만' 착 부착(제목 바 없음). 스크롤 시 함께 지나감.
+//  · 모바일: 화면 중앙에 크게(≈전체의 60%) 짠 뜨는 모달 + 딤 배경.
+//  · 닫기: 아래 '닫기' 버튼(모바일은 배경 탭으로도) → 이번 방문 동안 다시 안 뜸(sessionStorage).
+// 내용은 content/popup.json 에서 CMS 편집(enabled / image / link).
 import popup from '../../content/popup.json';
 import { type ImgKey } from '../data/site';
 import Img from './Img.astro';
-const { enabled, title, image, link } = popup;
+const { enabled, image, link } = popup;
 const imgKey = image as ImgKey;
 ---
 
 {enabled && (
-<div id="promo-popup" class="fixed lg:absolute z-[60] bottom-4 left-4 lg:bottom-auto lg:left-auto lg:right-6 lg:top-1/2 lg:-translate-y-1/2 w-[250px] sm:w-[300px] lg:w-[330px] hidden">
-  <div class="bg-white rounded-xl shadow-2xl border border-line overflow-hidden">
-    <div class="flex items-center justify-between px-4 py-2.5 bg-ink text-white">
-      <span class="text-[13px] font-semibold tracking-wide">{title}</span>
-      <button id="promo-close" aria-label="닫기" class="text-white/70 hover:text-white text-lg leading-none">&times;</button>
-    </div>
-    <a href={link} class="block">
+<div id="promo-popup" class="hidden">
+  <!-- 모바일 딤 배경 (탭하면 닫힘). 데스크톱은 표시 안 함 -->
+  <div id="promo-backdrop" class="fixed inset-0 z-[59] bg-black/55 lg:hidden"></div>
+
+  <!-- 포스터: 모바일=화면 중앙 모달(약 60%), 데스크톱=히어로 우측 '착' 부착 -->
+  <div class="fixed left-1/2 top-1/2 z-[60] w-[80vw] max-w-[360px] -translate-x-1/2 -translate-y-1/2
+              lg:absolute lg:left-auto lg:right-8 lg:top-1/2 lg:w-[360px] lg:max-w-none lg:translate-x-0 lg:-translate-y-1/2">
+    <a id="promo-poster" href={link} class="block overflow-hidden rounded-2xl shadow-2xl ring-1 ring-black/10">
       <Img k={imgKey} class="w-full h-auto" />
     </a>
-    <div class="flex items-center justify-between px-4 py-2.5 text-[12px] bg-cream">
-      <button id="promo-hide-today" class="text-ink-soft hover:text-ink">오늘 하루 보지 않기</button>
-      <a href={link} class="font-semibold text-sand-dark hover:underline">자세히 보기 →</a>
+    <div class="mt-2.5 flex justify-center">
+      <button id="promo-close" aria-label="닫기"
+        class="rounded-full bg-white/15 px-5 py-1.5 text-[12.5px] font-medium text-white backdrop-blur transition hover:bg-white/30 lg:bg-black/45 lg:hover:bg-black/65">
+        닫기
+      </button>
     </div>
   </div>
 </div>
 )}
 
+<style>
+  #promo-poster.promo-anim { animation: promo-pop 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  @keyframes promo-pop { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { #promo-poster.promo-anim { animation: none; } }
+</style>
+
 <script>
-  const KEY = 'scp-promo-popup-hidden-until';
+  const KEY = 'scp-promo-closed'; // 이번 방문(탭) 동안 닫힘 유지
   const popup = document.getElementById('promo-popup');
-  const hiddenUntil = Number(localStorage.getItem(KEY) || 0);
-  if (popup && Date.now() > hiddenUntil) {
-    setTimeout(() => popup.classList.remove('hidden'), 600);
+  const poster = document.getElementById('promo-poster');
+  function hide() { popup?.classList.add('hidden'); try { sessionStorage.setItem(KEY, '1'); } catch (e) {} }
+  let closed = false;
+  try { closed = sessionStorage.getItem(KEY) === '1'; } catch (e) {}
+  if (popup && !closed) {
+    setTimeout(() => { popup.classList.remove('hidden'); poster?.classList.add('promo-anim'); }, 600);
   }
-  document.getElementById('promo-close')?.addEventListener('click', () => popup?.classList.add('hidden'));
-  document.getElementById('promo-hide-today')?.addEventListener('click', () => {
-    localStorage.setItem(KEY, String(Date.now() + 24 * 60 * 60 * 1000));
-    popup?.classList.add('hidden');
-  });
+  document.getElementById('promo-close')?.addEventListener('click', (e) => { e.preventDefault(); hide(); });
+  document.getElementById('promo-backdrop')?.addEventListener('click', hide);
 </script>
