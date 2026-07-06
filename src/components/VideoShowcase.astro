@@ -1,0 +1,107 @@
+---
+// "PHILLIP LIFE" 영상 섹션 — CMS 편집(content/videos.json). 최대 5개까지,
+// 각 항목은 YouTube(youtube: 영상ID) 또는 업로드 영상(video: /videos/파일.mp4).
+// 2개 이상이면 점(dot) 캐러셀이 나타나고 클릭으로 전환됩니다.
+import data from '../../content/videos.json';
+const YT = 'https://www.youtube-nocookie.com/embed/';
+
+// keep only filled items, cap at 5
+const SLIDES = (data.items || [])
+  .filter((s) => s.youtube || s.video)
+  .slice(0, 5);
+
+const many = SLIDES.length > 1;
+const total = String(SLIDES.length).padStart(2, '0');
+const first = SLIDES[0];
+const embed = (s) => YT + s.youtube + '?rel=0&modestbranding=1';
+---
+
+<section id="phillip-life" class="border-t border-white/10 bg-ink text-white pt-10 pb-20 lg:pt-14 lg:pb-28">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8">
+    <div class="mb-10 lg:mb-14">
+      <p class="eyebrow text-[12px] font-semibold text-sand">Video</p>
+      <h2 class="mt-3 text-2xl lg:text-4xl font-bold tracking-tight">{data.heading}</h2>
+      {data.subtitle && <p class="mt-3 text-[14px] text-white/55">{data.subtitle}</p>}
+    </div>
+
+    {first && (
+      <div class="grid items-center gap-8 lg:grid-cols-[1.55fr_1fr] lg:gap-12">
+        <!-- player -->
+        <div class="reveal overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl">
+          <div id="plPlayer" class="aspect-video">
+            {first.youtube ? (
+              <iframe class="h-full w-full" src={embed(first)} title={first.titleKo}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+            ) : (
+              <video class="h-full w-full object-cover" src={first.video} poster={first.poster || undefined}
+                controls muted playsinline preload="metadata" controlslist="nodownload" disablepictureinpicture></video>
+            )}
+          </div>
+        </div>
+
+        <!-- content -->
+        <div class="reveal">
+          {many && <span id="plIndex" class="text-[12px] font-bold tracking-[0.25em] text-sand">01 / {total}</span>}
+          <h3 id="plTitle" class={`text-xl lg:text-2xl font-bold leading-snug ${many ? 'mt-4' : ''}`}
+            data-ko={first.titleKo} data-en={first.titleEn}>{first.titleKo}</h3>
+          <p id="plBody" class="mt-5 text-[14px] lg:text-[15px] leading-relaxed text-white/70"
+            data-ko={first.bodyKo} data-en={first.bodyEn}>{first.bodyKo}</p>
+          {many && (
+            <div id="plDots" class="mt-8 flex items-center gap-3" aria-label="영상 선택">
+              {SLIDES.map((_, i) => (
+                <button type="button" aria-label={`영상 ${i + 1}`}
+                  class:list={['pl-dot h-2.5 rounded-full transition-all', i === 0 ? 'w-8 bg-sand' : 'w-2.5 bg-white/25 hover:bg-white/50']}></button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+<script is:inline define:vars={{ SLIDES, YT }}>
+  (function () {
+    const player = document.getElementById('plPlayer');
+    const titleEl = document.getElementById('plTitle');
+    const bodyEl = document.getElementById('plBody');
+    const indexEl = document.getElementById('plIndex');
+    const dots = [...document.querySelectorAll('#plDots .pl-dot')];
+    if (!player || !SLIDES.length) return;
+
+    const lang = () => { try { return localStorage.getItem('scp-lang') === 'en' ? 'en' : 'ko'; } catch (e) { return 'ko'; } };
+    const total = String(SLIDES.length).padStart(2, '0');
+    let cur = 0;
+
+    const esc = (t) => (t || '').replace(/"/g, '&quot;');
+    function playerHTML(s) {
+      const title = esc(lang() === 'en' ? s.titleEn : s.titleKo);
+      if (s.youtube) {
+        return '<iframe class="h-full w-full" src="' + YT + s.youtube + '?rel=0&modestbranding=1" title="' + title +
+          '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"' +
+          ' referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>';
+      }
+      return '<video class="h-full w-full object-cover" src="' + s.video + '"' + (s.poster ? ' poster="' + s.poster + '"' : '') +
+        ' controls muted playsinline preload="metadata" controlslist="nodownload" disablepictureinpicture></video>';
+    }
+    function paintText() {
+      const s = SLIDES[cur], en = lang() === 'en';
+      titleEl.textContent = en ? s.titleEn : s.titleKo;
+      bodyEl.textContent = en ? s.bodyEn : s.bodyKo;
+    }
+    function show(i) {
+      cur = i;
+      player.innerHTML = playerHTML(SLIDES[i]);
+      if (indexEl) indexEl.textContent = String(i + 1).padStart(2, '0') + ' / ' + total;
+      paintText();
+      dots.forEach((d, j) => {
+        d.className = 'pl-dot h-2.5 rounded-full transition-all ' + (j === i ? 'w-8 bg-sand' : 'w-2.5 bg-white/25 hover:bg-white/50');
+      });
+    }
+
+    dots.forEach((d, i) => d.addEventListener('click', () => show(i)));
+    document.querySelectorAll('[data-lang-btn]').forEach((b) => b.addEventListener('click', () => setTimeout(() => { if (SLIDES[cur].youtube) player.innerHTML = playerHTML(SLIDES[cur]); paintText(); }, 0)));
+    paintText();
+  })();
+</script>

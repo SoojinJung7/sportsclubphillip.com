@@ -3,8 +3,15 @@
 # and edits everything below with a friendly UI (no code).
 
 media:
-  input: public/images
-  output: /images
+  - name: images
+    input: public/images
+    output: /images
+  - name: videos
+    label: 영상 파일
+    input: public/videos
+    output: /videos
+    extensions: [mp4, webm, mov]
+    categories: [video]
 
 content:
   - name: settings
@@ -75,6 +82,28 @@ content:
       - { name: title, label: 제목, type: string }
       - { name: image, label: 이미지 코드 (media의 key, 예: promoCurrent), type: string }
       - { name: link, label: 링크 주소, type: string }
+
+  - name: videos
+    label: 영상 (홈 PHILLIP LIFE · 최대 5개)
+    type: file
+    path: content/videos.json
+    fields:
+      - { name: heading, label: 섹션 제목, type: string }
+      - { name: subtitle, label: 섹션 부제, type: string }
+      - name: items
+        label: 영상 목록 (최대 5개 · 위→아래 순서로 노출)
+        type: object
+        list: { max: 5 }
+        view:
+          fields: [titleKo, video, youtube]
+        fields:
+          - { name: video, label: 영상 파일 (업로드 또는 경로, 예: /videos/파일.mp4), type: image, options: { media: videos } }
+          - { name: youtube, label: 또는 YouTube 영상 ID (파일 대신 사용, 예: eCuJvyyHrsQ), type: string }
+          - { name: poster, label: 썸네일 이미지 (선택 · 업로드 또는 경로), type: string }
+          - { name: titleKo, label: 제목 (한국어), type: string }
+          - { name: titleEn, label: 제목 (English), type: string }
+          - { name: bodyKo, label: 설명 (한국어), type: text }
+          - { name: bodyEn, label: 설명 (English), type: text }
 
   # ---- Page content (한국어 본문) — auto-generated ----
   - name: page_about
