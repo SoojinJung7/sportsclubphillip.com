@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // Custom domain (apex) served by GitHub Pages → base is '/'
 export default defineConfig({
-  site: 'https://sportsclubphillip.com',
+  site: 'https://www.sportsclubphillip.com',
   base: '/',
   i18n: {
     locales: ['ko', 'en'],
