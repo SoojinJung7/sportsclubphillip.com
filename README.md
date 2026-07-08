@@ -44,29 +44,29 @@ scripts/optimize-images.mjs   ← public/images 원본 → src/assets/images 리
 | 메뉴 | 내용 |
 |---|---|
 | **사이트 설정** | 전화·팩스·이메일·주소·대표이사·사업자번호, 상담시간, SNS/예약 링크 |
-| **이미지(대체 텍스트·URL)** | 로고·시설 사진·**월간 포스터** 등의 alt 문구, 필요 시 외부 URL로 교체 |
+| **사진** | 로고·시설 사진·**월간 포스터(영업안내·GX·수영·프로모션)** 등 모든 사진을 **파일 업로드로 교체** + 대체 텍스트 |
+| **영상** | 홈 PHILLIP LIFE 영상(최대 5개) — 파일 업로드 또는 YouTube ID |
 | **번역** | 모든 문구의 English 번역 (한국어 원문 → 영문) |
 | **홈 팝업** | 팝업 표시 여부·제목·이미지·링크 |
 
-> 이미지 파일 자체는 `src/assets/images/` 에서 관리합니다(아래 참고). CMS의 이미지 항목은 대체 텍스트(alt)와,
-> 특정 이미지를 외부 URL로 덮어쓰고 싶을 때 쓰는 `src` 필드입니다.
+> **사진 교체**: CMS의 **사진** 메뉴에서 원하는 항목의 "사진 교체"에 파일을 업로드하면 끝입니다
+> (`public/uploads/` 로 저장 → 그 사진이 즉시 반영). 비워두면 내장 기본 사진이 쓰입니다.
+> academy 갤러리 사진도 **페이지 · academy → gallery → 갤러리 사진**에서 업로드 교체 가능합니다.
 
 `content/*.json` 을 코드에서 직접 편집해도 됩니다. `src/data/site.ts`·`src/i18n/dict.ts` 가 이 파일들을 읽습니다.
 
-## 이미지 저장소 & Wix 해지
+## 이미지 구조 (편집 우선순위)
 
-모든 이미지는 **로컬**에서 제공됩니다 — Wix 의존성이 없습니다.
-`src/assets/images/` 의 최적화 원본을 빌드 시 [astro:assets](https://docs.astro.build/en/guides/images/)
-가 반응형 **WebP** 로 변환합니다 (`<Img>` / `src/components/Img.astro`).
+`<Img>`(`src/components/Img.astro`)가 이 순서로 사진을 고릅니다:
+1. **CMS 업로드** — `content/media.json` 의 `src` 가 채워져 있으면(=`public/uploads/…` 업로드) 그 사진을 씁니다.
+2. **내장 기본** — 비어 있으면 `src/assets/images/` 의 최적화 원본을 빌드 시
+   [astro:assets](https://docs.astro.build/en/guides/images/) 가 반응형 **WebP** 로 변환해 씁니다.
 
-**이미지 교체 방법:**
-1. Wix 원본은 `scripts/download-images.sh` 로 `public/images/` 에 백업돼 있습니다(대용량, git 제외).
-2. 새/교체 이미지를 `public/images/` 에 넣고 `node scripts/optimize-images.mjs` 실행
-   → 장변 폭 1600px 로 리사이즈 + 재인코딩된 사본이 `src/assets/images/` 로 들어갑니다.
-3. `npm run build` 로 확인 후 커밋. (파일명은 `src/data/site.ts` 의 `IMAGES` 맵 `local` 값과 일치해야 함)
+즉 **평소엔 최적화된 기본 사진**이 나오고, CMS에서 파일을 올리면 **그 사진으로 즉시 교체**됩니다.
 
-> 만약 어떤 이미지를 잠깐 외부 URL로 바꾸고 싶으면 CMS(또는 `content/media.json`)의 해당 `src` 를
-> 절대 URL로 넣으면 로컬 최적화본 대신 그 URL이 쓰입니다(폴백 경로).
+**기본 사진을 코드로 바꾸려면**(선택): 새 이미지를 `public/images/` 에 넣고 `node scripts/optimize-images.mjs`
+실행 → `src/assets/images/` 로 리사이즈·재인코딩된 사본이 들어갑니다(파일명은 `src/data/site.ts` `IMAGES` 맵의
+`local` 값과 일치). 대부분은 **CMS 업로드로 충분**하므로 이 과정은 거의 필요 없습니다.
 
 ## 페이지 본문(한국어) 수정
 

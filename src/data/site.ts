@@ -148,9 +148,18 @@ export type ImgKey = keyof typeof IMAGES;
 export function localImg(key: ImgKey): ImageMetadata | undefined {
   return LOCAL[IMAGES[key].local];
 }
-// Last-resort remote URL (CMS override in media.json, else the Wix CDN original).
+// CMS upload / override: if content/media.json has a real src for this key
+// (an uploaded /uploads/… path or a custom URL — NOT the vestigial Wix default
+// and not empty), that wins over the built-in optimized asset. This is what
+// makes every photo replaceable from Pages CMS. Returns null when unset.
+export function imgOverride(key: ImgKey): string | null {
+  const src = MEDIA[key]?.src?.trim();
+  if (src && !src.startsWith(WIX)) return src;
+  return null;
+}
+// Last-resort remote URL (empty/override → its value, else the Wix CDN original).
 export function imgSrc(key: ImgKey): string {
-  return MEDIA[key]?.src ?? WIX + IMAGES[key].wix;
+  return MEDIA[key]?.src?.trim() || WIX + IMAGES[key].wix;
 }
 export function imgAlt(key: ImgKey): string {
   return MEDIA[key]?.alt ?? IMAGES[key].alt;

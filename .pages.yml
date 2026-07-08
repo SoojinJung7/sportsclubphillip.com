@@ -4,8 +4,11 @@
 
 media:
   - name: images
-    input: public/images
-    output: /images
+    label: 사진 파일
+    input: public/uploads
+    output: /uploads
+    extensions: [jpg, jpeg, png, webp, gif, svg]
+    categories: [image]
   - name: videos
     label: 영상 파일
     input: public/videos
@@ -51,16 +54,19 @@ content:
           - { name: naverMap, label: 네이버 지도, type: string }
 
   - name: media
-    label: 이미지 (사진·월간 포스터)
+    label: 사진 (시설·브랜드·월간 포스터)
     type: file
     path: content/media.json
     list: true
     view:
-      fields: [alt, src]
+      fields: [key, alt, src]
     fields:
       - { name: key, label: 코드 (수정하지 마세요), type: string, readonly: true }
-      - { name: alt, label: 설명, type: string }
-      - { name: src, label: 이미지 (업로드 또는 URL/경로), type: string }
+      - { name: alt, label: 설명 (대체 텍스트), type: string }
+      - name: src
+        label: 사진 교체 (파일 업로드 · 비워두면 기본 사진 사용)
+        type: image
+        options: { media: images }
 
   - name: translations
     label: 번역 (한국어 → English)
@@ -223,6 +229,11 @@ content:
           - name: caption
             label: caption
             type: string
+          - name: images
+            label: 갤러리 사진 (업로드 · 비우면 기본 8장)
+            type: image
+            list: true
+            options: { media: images }
   - name: page_bally
     label: 페이지 · bally
     type: file
