@@ -103,7 +103,7 @@ content:
         view:
           fields: [titleKo, video, youtube]
         fields:
-          - { name: video, label: 영상 파일 (업로드 또는 경로, 예: /videos/파일.mp4), type: image, options: { media: videos } }
+          - { name: video, label: 영상 파일 (mp4 선택 또는 경로, 예: /videos/파일.mp4), type: file, options: { media: videos } }
           - { name: youtube, label: 또는 YouTube 영상 ID (파일 대신 사용, 예: eCuJvyyHrsQ), type: string }
           - { name: poster, label: 썸네일 이미지 (선택 · 업로드 또는 경로), type: string }
           - { name: titleKo, label: 제목 (한국어), type: string }
