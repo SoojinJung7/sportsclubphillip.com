@@ -105,8 +105,10 @@ const embed = (s) => YT + s.youtube + '?rel=0&modestbranding=1';
       if (vid) {
         vid.muted = !soundOn;
         vid.addEventListener('ended', () => show(cur + 1, true));
-        // remember it if the viewer mutes/unmutes with the built-in controls
-        vid.addEventListener('volumechange', () => { if (engaged) soundOn = !vid.muted; });
+        // remember it if the viewer mutes/unmutes — incl. the built-in control
+        // (that button lives in shadow DOM and its click never reaches us, but
+        //  the volumechange event always fires, so we track sound state here).
+        vid.addEventListener('volumechange', () => { soundOn = !vid.muted; });
         if (autoplay) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
       }
       if (indexEl) indexEl.textContent = String(cur + 1).padStart(2, '0') + ' / ' + total;
