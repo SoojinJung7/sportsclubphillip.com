@@ -74,11 +74,16 @@ const embed = (s) => YT + s.youtube + '?rel=0&modestbranding=1';
     const total = String(SLIDES.length).padStart(2, '0');
     const esc = (t) => (t || '').replace(/"/g, '&quot;');
     let cur = 0;
+    // Browsers only allow *muted* autoplay. So the section starts muted; the first
+    // time the viewer presses play (or picks a clip), sound turns on and STAYS on
+    // for every following clip — including ones that auto-advance when one ends.
+    let engaged = false;   // has the viewer interacted yet?
+    let soundOn = false;   // desired audio state, carried across clips
 
     function playerHTML(s, autoplay) {
       const title = esc(lang() === 'en' ? s.titleEn : s.titleKo);
       if (s.youtube) {
-        const ap = autoplay ? 'autoplay=1&mute=1&' : '';
+        const ap = autoplay ? ('autoplay=1&' + (soundOn ? '' : 'mute=1&')) : '';
         return '<iframe class="h-full w-full" src="' + YT + s.youtube + '?' + ap + 'rel=0&modestbranding=1" title="' + title +
           '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"' +
           ' referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>';
@@ -95,10 +100,13 @@ const embed = (s) => YT + s.youtube + '?rel=0&modestbranding=1';
     function show(i, autoplay) {
       cur = (i + SLIDES.length) % SLIDES.length;
       player.innerHTML = playerHTML(SLIDES[cur], autoplay);
-      // native <video>: play now + advance to the next clip when it ends
+      // native <video>: carry sound state, advance to the next clip when it ends
       const vid = player.querySelector('video');
       if (vid) {
+        vid.muted = !soundOn;
         vid.addEventListener('ended', () => show(cur + 1, true));
+        // remember it if the viewer mutes/unmutes with the built-in controls
+        vid.addEventListener('volumechange', () => { if (engaged) soundOn = !vid.muted; });
         if (autoplay) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
       }
       if (indexEl) indexEl.textContent = String(cur + 1).padStart(2, '0') + ' / ' + total;
@@ -108,8 +116,18 @@ const embed = (s) => YT + s.youtube + '?rel=0&modestbranding=1';
       });
     }
 
-    // click a dot → jump to that clip and play it
-    dots.forEach((d, i) => d.addEventListener('click', () => show(i, true)));
+    // first press/tap on the player → turn sound on and keep the clip playing
+    function engage() {
+      if (engaged) return;
+      engaged = true;
+      soundOn = true;
+      const vid = player.querySelector('video');
+      if (vid) { vid.muted = false; const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
+    }
+    player.addEventListener('click', engage);
+
+    // click a dot → jump to that clip and play it with sound
+    dots.forEach((d, i) => d.addEventListener('click', () => { engaged = true; soundOn = true; show(i, true); }));
     document.querySelectorAll('[data-lang-btn]').forEach((b) => b.addEventListener('click', () => setTimeout(() => { const s = SLIDES[cur]; if (s.youtube) player.innerHTML = playerHTML(s, false); paintText(); }, 0)));
 
     // start on a random clip each visit
@@ -124,7 +142,7 @@ const embed = (s) => YT + s.youtube + '?rel=0&modestbranding=1';
           if (e.isIntersecting && !started) {
             started = true;
             const vid = player.querySelector('video');
-            if (vid) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
+            if (vid) { vid.muted = !soundOn; const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
           }
         });
       }, { threshold: 0.5 });
