@@ -72,36 +72,63 @@ const embed = (s) => YT + s.youtube + '?rel=0&modestbranding=1';
 
     const lang = () => { try { return localStorage.getItem('scp-lang') === 'en' ? 'en' : 'ko'; } catch (e) { return 'ko'; } };
     const total = String(SLIDES.length).padStart(2, '0');
+    const esc = (t) => (t || '').replace(/"/g, '&quot;');
     let cur = 0;
 
-    const esc = (t) => (t || '').replace(/"/g, '&quot;');
-    function playerHTML(s) {
+    function playerHTML(s, autoplay) {
       const title = esc(lang() === 'en' ? s.titleEn : s.titleKo);
       if (s.youtube) {
-        return '<iframe class="h-full w-full" src="' + YT + s.youtube + '?rel=0&modestbranding=1" title="' + title +
+        const ap = autoplay ? 'autoplay=1&mute=1&' : '';
+        return '<iframe class="h-full w-full" src="' + YT + s.youtube + '?' + ap + 'rel=0&modestbranding=1" title="' + title +
           '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"' +
           ' referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>';
       }
       return '<video class="h-full w-full object-cover" src="' + s.video + '"' + (s.poster ? ' poster="' + s.poster + '"' : '') +
-        ' controls muted playsinline preload="metadata" controlslist="nodownload" disablepictureinpicture></video>';
+        (autoplay ? ' autoplay' : '') + ' controls muted playsinline preload="metadata" controlslist="nodownload" disablepictureinpicture></video>';
     }
     function paintText() {
       const s = SLIDES[cur], en = lang() === 'en';
       titleEl.textContent = en ? s.titleEn : s.titleKo;
       bodyEl.textContent = en ? s.bodyEn : s.bodyKo;
     }
-    function show(i) {
-      cur = i;
-      player.innerHTML = playerHTML(SLIDES[i]);
-      if (indexEl) indexEl.textContent = String(i + 1).padStart(2, '0') + ' / ' + total;
+    // i can wrap past the ends → seamless looping playlist
+    function show(i, autoplay) {
+      cur = (i + SLIDES.length) % SLIDES.length;
+      player.innerHTML = playerHTML(SLIDES[cur], autoplay);
+      // native <video>: play now + advance to the next clip when it ends
+      const vid = player.querySelector('video');
+      if (vid) {
+        vid.addEventListener('ended', () => show(cur + 1, true));
+        if (autoplay) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
+      }
+      if (indexEl) indexEl.textContent = String(cur + 1).padStart(2, '0') + ' / ' + total;
       paintText();
       dots.forEach((d, j) => {
-        d.className = 'pl-dot h-2.5 rounded-full transition-all ' + (j === i ? 'w-8 bg-sand' : 'w-2.5 bg-white/25 hover:bg-white/50');
+        d.className = 'pl-dot h-2.5 rounded-full transition-all ' + (j === cur ? 'w-8 bg-sand' : 'w-2.5 bg-white/25 hover:bg-white/50');
       });
     }
 
-    dots.forEach((d, i) => d.addEventListener('click', () => show(i)));
-    document.querySelectorAll('[data-lang-btn]').forEach((b) => b.addEventListener('click', () => setTimeout(() => { if (SLIDES[cur].youtube) player.innerHTML = playerHTML(SLIDES[cur]); paintText(); }, 0)));
-    paintText();
+    // click a dot → jump to that clip and play it
+    dots.forEach((d, i) => d.addEventListener('click', () => show(i, true)));
+    document.querySelectorAll('[data-lang-btn]').forEach((b) => b.addEventListener('click', () => setTimeout(() => { const s = SLIDES[cur]; if (s.youtube) player.innerHTML = playerHTML(s, false); paintText(); }, 0)));
+
+    // start on a random clip each visit
+    const start = SLIDES.length > 1 ? Math.floor(Math.random() * SLIDES.length) : 0;
+    show(start, false);
+
+    // muted autoplay once the section scrolls into view (mobile-friendly)
+    if ('IntersectionObserver' in window) {
+      let started = false;
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && !started) {
+            started = true;
+            const vid = player.querySelector('video');
+            if (vid) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
+          }
+        });
+      }, { threshold: 0.5 });
+      io.observe(player);
+    }
   })();
 </script>
