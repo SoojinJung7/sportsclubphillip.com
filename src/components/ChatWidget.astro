@@ -20,7 +20,8 @@ const STRINGS = {
     subtitle: '궁금한 점을 남겨주시면 답변드려요',
     close: '닫기',
     namePh: '성함',
-    contactPh: '전화번호',
+    contactPh: '전화번호 (예: 010-1234-5678)',
+    phoneHint: '전화번호를 정확히 입력해 주세요. (예: 010-1234-5678)',
     start: '상담 시작',
     inputPh: '메시지를 입력하세요…',
     send: '보내기',
@@ -39,7 +40,8 @@ const STRINGS = {
     subtitle: 'Leave a message and we’ll reply',
     close: 'Close',
     namePh: 'Name',
-    contactPh: 'Phone number',
+    contactPh: 'Phone number (e.g. 010-1234-5678)',
+    phoneHint: 'Please enter a complete phone number. (e.g. 010-1234-5678)',
     start: 'Start chat',
     inputPh: 'Type a message…',
     send: 'Send',
@@ -105,7 +107,8 @@ const STRINGS = {
     <form id="scp-chat-intro" class="space-y-2 border-t border-line bg-white px-3.5 py-3">
       <p data-t="intro" class="text-[12px] leading-snug text-muted">원활한 상담을 위해 성함과 전화번호를 남겨주세요. 상담 중 연결이 끊겨도 상담원이 남겨주신 번호로 이어서 도와드릴 수 있어요.</p>
       <input id="scp-chat-name" type="text" placeholder="성함" autocomplete="name" required aria-required="true" class="w-full rounded-lg border border-line bg-cream px-3 py-2 text-[14px] text-ink outline-none focus:border-sand" />
-      <input id="scp-chat-contact" type="tel" inputmode="tel" placeholder="전화번호" autocomplete="tel" required aria-required="true" class="w-full rounded-lg border border-line bg-cream px-3 py-2 text-[14px] text-ink outline-none focus:border-sand" />
+      <input id="scp-chat-contact" type="tel" inputmode="tel" placeholder="전화번호 (예: 010-1234-5678)" autocomplete="tel" required aria-required="true" class="w-full rounded-lg border border-line bg-cream px-3 py-2 text-[14px] text-ink outline-none focus:border-sand" />
+      <p id="scp-chat-phone-hint" data-t="phoneHint" class="hidden text-[11px] leading-snug text-red-500">전화번호를 정확히 입력해 주세요. (예: 010-1234-5678)</p>
       <button data-t="start" type="submit" disabled class="w-full rounded-lg bg-sand px-3 py-2 text-[14px] font-semibold text-white transition hover:bg-sand-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-sand">상담 시작</button>
     </form>
 
@@ -190,7 +193,15 @@ const STRINGS = {
     var sendForm = document.getElementById('scp-chat-send');
     var nameInput = document.getElementById('scp-chat-name');
     var contactInput = document.getElementById('scp-chat-contact');
+    var phoneHint = document.getElementById('scp-chat-phone-hint');
     var textInput = document.getElementById('scp-chat-input');
+
+    // 전화번호 유효성: 숫자만 추린 뒤 한국 휴대폰/유선번호 형식을 만족해야 함.
+    // (예: 010-1234-5678 → 01012345678). 미완성 번호는 통과 못 함.
+    function validPhone(v) {
+      var d = (v || '').replace(/\D/g, '');
+      return /^(01[016789]\d{7,8}|0[2-6]\d{7,8})$/.test(d);
+    }
 
     // ---- 언어 (상단 토글이 바꾸는 <html lang>을 따라감) -------------------
     function lang() { return document.documentElement.lang === 'en' ? 'en' : 'ko'; }
@@ -393,8 +404,12 @@ const STRINGS = {
     // 형식 검증은 하지 않고 빈 값만 막는다(요건: 빈 값 유실 방지).
     var startBtn = introForm.querySelector('button[type="submit"]');
     function updateStartBtn() {
-      var filled = (nameInput.value || '').trim() && (contactInput.value || '').trim();
-      if (startBtn) startBtn.disabled = !filled;
+      var nameOk = (nameInput.value || '').trim().length > 0;
+      var phoneOk = validPhone(contactInput.value);
+      if (startBtn) startBtn.disabled = !(nameOk && phoneOk);
+      // 전화번호를 입력했는데 형식이 아직 안 맞으면 안내를 보여준다.
+      var typed = (contactInput.value || '').trim().length > 0;
+      if (phoneHint) phoneHint.classList.toggle('hidden', !(typed && !phoneOk));
     }
     nameInput.addEventListener('input', updateStartBtn);
     contactInput.addEventListener('input', updateStartBtn);
@@ -408,7 +423,7 @@ const STRINGS = {
       e.preventDefault();
       var nm = (nameInput.value || '').trim();
       var ct = (contactInput.value || '').trim();
-      if (!nm || !ct) { updateStartBtn(); return; } // 빈 값 방어(버튼 우회 대비)
+      if (!nm || !validPhone(ct)) { updateStartBtn(); return; } // 형식 방어(버튼 우회 대비)
       custName = nm;
       custContact = ct;
       hasInfo = true;
