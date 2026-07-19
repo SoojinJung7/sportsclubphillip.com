@@ -19,14 +19,14 @@ const STRINGS = {
     title: '스포츠클럽필립',
     subtitle: '궁금한 점을 남겨주시면 답변드려요',
     close: '닫기',
-    namePh: '이름 (선택)',
-    contactPh: '연락처 — 전화 또는 이메일 (선택)',
+    namePh: '성함',
+    contactPh: '전화번호',
     start: '상담 시작',
     inputPh: '메시지를 입력하세요…',
     send: '보내기',
     greeting: '안녕하세요! 스포츠클럽필립입니다 😊 무엇을 도와드릴까요?',
     offline: '지금은 상담 가능 시간이 아니에요. 메시지를 남겨주시면 곧 답변드릴게요.',
-    intro: '이름과 연락처를 남겨주시면 더 빠르게 도와드릴 수 있어요. (건너뛰어도 됩니다)',
+    intro: '원활한 상담을 위해 성함과 전화번호를 남겨주세요. 상담 중 연결이 끊겨도 상담원이 남겨주신 번호로 이어서 도와드릴 수 있어요.',
     sending: '전송 중…',
     error: '전송에 실패했어요. 잠시 후 다시 시도해 주세요.',
     statusOnline: '보통 몇 분 내 답장',
@@ -38,14 +38,14 @@ const STRINGS = {
     title: 'Sports Club Phillip',
     subtitle: 'Leave a message and we’ll reply',
     close: 'Close',
-    namePh: 'Name (optional)',
-    contactPh: 'Contact — phone or email (optional)',
+    namePh: 'Name',
+    contactPh: 'Phone number',
     start: 'Start chat',
     inputPh: 'Type a message…',
     send: 'Send',
     greeting: 'Hello! This is Sports Club Phillip 😊 How can we help?',
     offline: 'We’re outside consultation hours right now. Leave a message and we’ll reply soon.',
-    intro: 'Share your name and contact so we can help faster. (You can skip this.)',
+    intro: 'Please leave your name and phone number for a smooth consultation. If the chat disconnects, our staff can continue helping you at the number you leave.',
     sending: 'Sending…',
     error: 'Failed to send. Please try again in a moment.',
     statusOnline: 'Usually replies in a few minutes',
@@ -101,12 +101,12 @@ const STRINGS = {
     <!-- 메시지 영역 -->
     <div id="scp-chat-log" class="flex-1 space-y-2.5 overflow-y-auto px-3.5 py-3.5"></div>
 
-    <!-- 첫 문의 폼 (이름/연락처) -->
+    <!-- 첫 문의 폼 (이름/전화번호 — 필수) -->
     <form id="scp-chat-intro" class="space-y-2 border-t border-line bg-white px-3.5 py-3">
-      <p data-t="intro" class="text-[12px] leading-snug text-muted">이름과 연락처를 남겨주시면 더 빠르게 도와드릴 수 있어요. (건너뛰어도 됩니다)</p>
-      <input id="scp-chat-name" type="text" placeholder="이름 (선택)" autocomplete="name" class="w-full rounded-lg border border-line bg-cream px-3 py-2 text-[14px] text-ink outline-none focus:border-sand" />
-      <input id="scp-chat-contact" type="text" placeholder="연락처 — 전화 또는 이메일 (선택)" autocomplete="tel" class="w-full rounded-lg border border-line bg-cream px-3 py-2 text-[14px] text-ink outline-none focus:border-sand" />
-      <button data-t="start" type="submit" class="w-full rounded-lg bg-sand px-3 py-2 text-[14px] font-semibold text-white transition hover:bg-sand-dark">상담 시작</button>
+      <p data-t="intro" class="text-[12px] leading-snug text-muted">원활한 상담을 위해 성함과 전화번호를 남겨주세요. 상담 중 연결이 끊겨도 상담원이 남겨주신 번호로 이어서 도와드릴 수 있어요.</p>
+      <input id="scp-chat-name" type="text" placeholder="성함" autocomplete="name" required aria-required="true" class="w-full rounded-lg border border-line bg-cream px-3 py-2 text-[14px] text-ink outline-none focus:border-sand" />
+      <input id="scp-chat-contact" type="tel" inputmode="tel" placeholder="전화번호" autocomplete="tel" required aria-required="true" class="w-full rounded-lg border border-line bg-cream px-3 py-2 text-[14px] text-ink outline-none focus:border-sand" />
+      <button data-t="start" type="submit" disabled class="w-full rounded-lg bg-sand px-3 py-2 text-[14px] font-semibold text-white transition hover:bg-sand-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-sand">상담 시작</button>
     </form>
 
     <!-- 메시지 입력 -->
@@ -223,6 +223,16 @@ const STRINGS = {
       if (!t) { t = makeToken(); try { localStorage.setItem(TOKEN_KEY, t); } catch (e) {} }
       return t;
     }
+
+    // ---- 손님 이름·전화번호 (첫 문의 폼에서 받아 저장, 이후 모든 전송에 실림) --
+    var NAME_KEY = 'scp-chat-name';
+    var CONTACT_KEY = 'scp-chat-contact';
+    var custName = '', custContact = '';
+    try {
+      custName = localStorage.getItem(NAME_KEY) || '';
+      custContact = localStorage.getItem(CONTACT_KEY) || '';
+    } catch (e) {}
+    var hasInfo = !!(custName && custContact); // 이미 받아둔 방문자 → 폼 스킵
 
     // ---- 상담 가능 시간 (KST). 프론트 데스크 기준: 평일 09–22, 토 09–21, --
     // 일 12–18. 휴관일(매월 1·3·5째주 일요일)은 상담 불가 안내. 안내일 뿐,
@@ -372,33 +382,56 @@ const STRINGS = {
     });
     closeBtn.addEventListener('click', close);
 
-    // 이전에 대화한 적 있으면(토큰 존재) 바로 대화 모드로 복원
-    var hadToken = false;
-    try { hadToken = !!localStorage.getItem(TOKEN_KEY); } catch (e) {}
     function enterChat() {
       started = true;
       introForm.classList.add('hidden');
       sendForm.classList.remove('hidden');
       sendForm.classList.add('flex');
     }
-    if (hadToken) { enterChat(); greet(); }
-    else { greet(); }
 
-    // ---- 첫 문의 폼 제출 → 대화 모드 ------------------------------------
+    // 두 칸(성함·전화번호)이 모두 채워지기 전에는 '상담 시작' 버튼 비활성화.
+    // 형식 검증은 하지 않고 빈 값만 막는다(요건: 빈 값 유실 방지).
+    var startBtn = introForm.querySelector('button[type="submit"]');
+    function updateStartBtn() {
+      var filled = (nameInput.value || '').trim() && (contactInput.value || '').trim();
+      if (startBtn) startBtn.disabled = !filled;
+    }
+    nameInput.addEventListener('input', updateStartBtn);
+    contactInput.addEventListener('input', updateStartBtn);
+    updateStartBtn();
+
+    // 이미 이름·전화를 받아둔 방문자면 폼을 건너뛰고 바로 대화로 복원
+    if (hasInfo) { enterChat(); greet(); }
+
+    // ---- 첫 문의 폼 제출 → 이름·전화 저장 후 대화 모드 -------------------
     introForm.addEventListener('submit', function (e) {
       e.preventDefault();
+      var nm = (nameInput.value || '').trim();
+      var ct = (contactInput.value || '').trim();
+      if (!nm || !ct) { updateStartBtn(); return; } // 빈 값 방어(버튼 우회 대비)
+      custName = nm;
+      custContact = ct;
+      hasInfo = true;
+      try {
+        localStorage.setItem(NAME_KEY, nm);
+        localStorage.setItem(CONTACT_KEY, ct);
+      } catch (e2) {}
       enterChat();
+      greet();
       if (panel.classList.contains('scp-open')) startPolling();
       textInput.focus();
     });
 
     // ---- 전송 -----------------------------------------------------------
     function sendText(text) {
-      var body = { token: token(), text: text, page: location.pathname };
-      var nm = (nameInput.value || '').trim();
-      var ct = (contactInput.value || '').trim();
-      if (nm) body.name = nm;      // 서버가 처음 한 번만 채움(덮어쓰지 않음)
-      if (ct) body.contact = ct;
+      // 폼에서 받아둔 이름·전화번호를 이후 모든 메시지에 항상 실어 보낸다.
+      var body = {
+        token: token(),
+        text: text,
+        name: custName,
+        contact: custContact, // 전화번호 (이메일 아님)
+        page: location.pathname,
+      };
       return fetch(API + '/api/webchat/message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -412,8 +445,9 @@ const STRINGS = {
     function doSend(text) {
       text = (text || '').trim();
       if (!text) return;
+      if (!hasInfo) { open(); nameInput.focus(); return; } // 이름·전화 먼저
       removeQuicks();
-      if (!started) enterChat(); // 빠른질문만 눌러도 대화 모드로 전환
+      if (!started) enterChat();
       var sendBtn = sendForm.querySelector('button');
       if (sendBtn) sendBtn.disabled = true;
       sendText(text)
