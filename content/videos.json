@@ -3,7 +3,6 @@
   "subtitle": "스포츠클럽필립의 생생한 순간들",
   "items": [
     {
-      "youtube": "",
       "video": "/videos/phillip-life-01.mp4",
       "poster": "/videos/phillip-life-01.jpg",
       "titleKo": "꾸준함이 곧 실력입니다.",
@@ -12,22 +11,32 @@
       "bodyEn": "Experience a PT session with trainer Ahn Seung-eun of Helpy Gym — your health partner at Sports Club Phillip."
     },
     {
-      "youtube": "",
       "video": "/videos/helpygym-kim-youngin-480.mp4",
-      "poster": "",
       "titleKo": "나에게 맞는 운동을 찾다.",
       "titleEn": "Find the training that fits you.",
       "bodyKo": "스포츠클럽필립과 함께하는 건강파트너, 헬피짐 김영인 트레이너의 PT 현장을 영상으로 만나보세요.",
       "bodyEn": "Meet trainer Kim Young-in of Helpy Gym — your health partner at Sports Club Phillip — in a real PT session."
     },
     {
-      "youtube": "",
       "video": "/videos/helpygym-kim-yujeong-480.mp4",
-      "poster": "",
       "titleKo": "오늘의 한 걸음이 내일을 만듭니다.",
       "titleEn": "Today's step shapes tomorrow.",
       "bodyKo": "스포츠클럽필립과 함께하는 건강파트너, 헬피짐 김유정 트레이너의 PT 현장을 영상으로 만나보세요.",
       "bodyEn": "Meet trainer Kim Yu-jeong of Helpy Gym — your health partner at Sports Club Phillip — in a real PT session."
+    },
+    {
+      "video": "/videos/PL EB.mp4",
+      "titleKo": "섬세한 움직임, 건강한 변화",
+      "titleEn": "Move Better, Feel Better",
+      "bodyKo": "스포츠클럽필립과 함께하는 건강파트너, 필라인필립 은빈 강사의 세심한 티칭으로 몸의 균형을 바로잡고, 통증 없는 건강한 움직임을 경험해 보세요.",
+      "bodyEn": "Experience balanced, pain-free movement through Eunbin's attentive and personalized Pilates instruction."
+    },
+    {
+      "video": "/videos/PL LINA.mp4",
+      "titleKo": "건강한 움직임의 시작",
+      "titleEn": "Where Healthy Movement Begins",
+      "bodyKo": "스포츠클럽필립과 함께하는 건강파트너, 필라인필립 리나 강사와 함께하는 필라테스 & 자이로토닉® 레슨으로 몸의 균형을 회복하고 편안한 움직임을 경험해 보세요.",
+      "bodyEn": "Experience balanced, comfortable movement through personalized Pilates and Gyrotonic® sessions with Instructor Lina."
     }
   ]
 }
