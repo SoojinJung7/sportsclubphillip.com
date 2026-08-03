@@ -1,5 +1,5 @@
 {
-  "month": "7월",
+  "month": "8월",
   "note": "수영장 시설 및 프로그램은 멤버십만 이용 가능합니다.",
   "days": {
     "mon": [
@@ -30,14 +30,14 @@
       {
         "start": "07:00",
         "name": "성인 수영",
-        "level": "교정1",
-        "instructor": "주재인"
+        "level": "교정",
+        "instructor": ""
       },
       {
         "start": "07:00",
         "name": "성인 수영",
-        "level": "교정2",
-        "instructor": "윤형민"
+        "level": "초급~중급",
+        "instructor": ""
       },
       {
         "start": "09:00",
@@ -107,9 +107,21 @@
       },
       {
         "start": "14:00",
-        "name": "싱크로빅",
+        "name": "아쿠아로빅",
         "level": "",
         "instructor": "김은영"
+      },
+      {
+        "start": "15:00",
+        "name": "성인 건강반",
+        "level": "",
+        "instructor": "한인수"
+      },
+      {
+        "start": "15:00",
+        "name": "성인 건강반",
+        "level": "",
+        "instructor": "안기범"
       },
       {
         "start": "16:00",
@@ -168,8 +180,8 @@
       {
         "start": "20:30",
         "name": "성인 수영",
-        "level": "상급",
-        "instructor": "안기범"
+        "level": "교정",
+        "instructor": ""
       },
       {
         "start": "20:30",
@@ -243,19 +255,19 @@
         "start": "09:00",
         "name": "성인 수영",
         "level": "연수",
-        "instructor": "윤형민"
+        "instructor": "정종화"
       },
       {
         "start": "09:00",
         "name": "성인 수영",
-        "level": "상급",
-        "instructor": "주재인"
+        "level": "중상급",
+        "instructor": ""
       },
       {
         "start": "09:00",
         "name": "성인 수영",
-        "level": "초급~상급",
-        "instructor": "윤형민"
+        "level": "신규~중급",
+        "instructor": ""
       },
       {
         "start": "10:00",
@@ -277,21 +289,39 @@
       },
       {
         "start": "11:00",
-        "name": "싱크로빅",
+        "name": "아쿠아로빅",
         "level": "",
         "instructor": "최영규"
       },
       {
         "start": "12:00",
-        "name": "싱크로빅",
+        "name": "아쿠아로빅",
         "level": "",
         "instructor": "최영규"
+      },
+      {
+        "start": "15:00",
+        "name": "성인 건강반",
+        "level": "",
+        "instructor": "한인수"
+      },
+      {
+        "start": "15:00",
+        "name": "성인 건강반",
+        "level": "",
+        "instructor": "안기범"
       },
       {
         "start": "16:00",
         "name": "어린이 수영",
         "level": "초급",
         "instructor": "강솔"
+      },
+      {
+        "start": "16:00",
+        "name": "어린이 수영",
+        "level": "초급",
+        "instructor": "최윤정"
       },
       {
         "start": "17:00",
@@ -309,7 +339,7 @@
         "start": "17:00",
         "name": "어린이 수영",
         "level": "중급",
-        "instructor": "안기범"
+        "instructor": ""
       },
       {
         "start": "19:30",
@@ -320,14 +350,14 @@
       {
         "start": "19:30",
         "name": "성인 수영",
-        "level": "교정",
-        "instructor": "강솔"
+        "level": "교정1",
+        "instructor": ""
       },
       {
         "start": "19:30",
         "name": "성인 수영",
-        "level": "상급",
-        "instructor": "최윤정"
+        "level": "교정2",
+        "instructor": ""
       },
       {
         "start": "19:30",
@@ -352,6 +382,12 @@
         "name": "성인 수영",
         "level": "초급~상급",
         "instructor": "강솔"
+      },
+      {
+        "start": "20:30",
+        "name": "성인 수영",
+        "level": "초급",
+        "instructor": "한인수"
       },
       {
         "start": "21:30",
@@ -406,14 +442,14 @@
       {
         "start": "07:00",
         "name": "성인 수영",
-        "level": "교정1",
-        "instructor": "주재인"
+        "level": "교정",
+        "instructor": ""
       },
       {
         "start": "07:00",
         "name": "성인 수영",
-        "level": "교정2",
-        "instructor": "윤형민"
+        "level": "초급~중급",
+        "instructor": ""
       },
       {
         "start": "09:00",
@@ -483,9 +519,21 @@
       },
       {
         "start": "14:00",
-        "name": "싱크로빅",
+        "name": "아쿠아로빅",
         "level": "",
         "instructor": "김은영"
+      },
+      {
+        "start": "15:00",
+        "name": "성인 건강반",
+        "level": "",
+        "instructor": "한인수"
+      },
+      {
+        "start": "15:00",
+        "name": "성인 건강반",
+        "level": "",
+        "instructor": "안기범"
       },
       {
         "start": "16:00",
@@ -544,8 +592,8 @@
       {
         "start": "20:30",
         "name": "성인 수영",
-        "level": "상급",
-        "instructor": "안기범"
+        "level": "교정",
+        "instructor": ""
       },
       {
         "start": "20:30",
@@ -619,19 +667,19 @@
         "start": "09:00",
         "name": "성인 수영",
         "level": "연수",
-        "instructor": "윤형민"
+        "instructor": "정종화"
       },
       {
         "start": "09:00",
         "name": "성인 수영",
-        "level": "상급",
-        "instructor": "주재인"
+        "level": "중상급",
+        "instructor": ""
       },
       {
         "start": "09:00",
         "name": "성인 수영",
-        "level": "초급~상급",
-        "instructor": "윤형민"
+        "level": "신규~중급",
+        "instructor": ""
       },
       {
         "start": "10:00",
@@ -653,21 +701,39 @@
       },
       {
         "start": "11:00",
-        "name": "싱크로빅",
+        "name": "아쿠아로빅",
         "level": "",
         "instructor": "최영규"
       },
       {
         "start": "12:00",
-        "name": "싱크로빅",
+        "name": "아쿠아로빅",
         "level": "",
         "instructor": "최영규"
+      },
+      {
+        "start": "15:00",
+        "name": "성인 건강반",
+        "level": "",
+        "instructor": "한인수"
+      },
+      {
+        "start": "15:00",
+        "name": "성인 건강반",
+        "level": "",
+        "instructor": "안기범"
       },
       {
         "start": "16:00",
         "name": "어린이 수영",
         "level": "초급",
         "instructor": "강솔"
+      },
+      {
+        "start": "16:00",
+        "name": "어린이 수영",
+        "level": "초급",
+        "instructor": "최윤정"
       },
       {
         "start": "17:00",
@@ -685,7 +751,7 @@
         "start": "17:00",
         "name": "어린이 수영",
         "level": "중급",
-        "instructor": "안기범"
+        "instructor": ""
       },
       {
         "start": "19:30",
@@ -696,14 +762,14 @@
       {
         "start": "19:30",
         "name": "성인 수영",
-        "level": "교정",
-        "instructor": "강솔"
+        "level": "교정1",
+        "instructor": ""
       },
       {
         "start": "19:30",
         "name": "성인 수영",
-        "level": "상급",
-        "instructor": "최윤정"
+        "level": "교정2",
+        "instructor": ""
       },
       {
         "start": "19:30",
@@ -728,6 +794,12 @@
         "name": "성인 수영",
         "level": "초급~상급",
         "instructor": "강솔"
+      },
+      {
+        "start": "20:30",
+        "name": "성인 수영",
+        "level": "초급",
+        "instructor": "한인수"
       },
       {
         "start": "21:30",
@@ -782,14 +854,14 @@
       {
         "start": "07:00",
         "name": "성인 수영",
-        "level": "교정1",
-        "instructor": "주재인"
+        "level": "교정",
+        "instructor": ""
       },
       {
         "start": "07:00",
         "name": "성인 수영",
-        "level": "교정2",
-        "instructor": "윤형민"
+        "level": "초급~중급",
+        "instructor": ""
       },
       {
         "start": "09:00",
@@ -859,33 +931,39 @@
       },
       {
         "start": "14:00",
-        "name": "싱크로빅",
+        "name": "아쿠아로빅",
         "level": "",
         "instructor": "김은영"
       },
       {
+        "start": "15:00",
+        "name": "어린이 수영",
+        "level": "초급",
+        "instructor": ""
+      },
+      {
         "start": "16:00",
         "name": "어린이 수영",
         "level": "연수",
-        "instructor": "강솔"
+        "instructor": ""
       },
       {
         "start": "16:00",
         "name": "어린이 수영",
         "level": "상급",
-        "instructor": "최윤정"
+        "instructor": ""
       },
       {
         "start": "17:00",
         "name": "어린이 수영",
         "level": "연수",
-        "instructor": "최윤정"
+        "instructor": ""
       },
       {
         "start": "17:00",
         "name": "어린이 수영",
         "level": "상급",
-        "instructor": "강솔"
+        "instructor": ""
       },
       {
         "start": "19:30",
@@ -920,8 +998,8 @@
       {
         "start": "20:30",
         "name": "성인 수영",
-        "level": "상급",
-        "instructor": "안기범"
+        "level": "교정",
+        "instructor": ""
       },
       {
         "start": "20:30",
@@ -957,7 +1035,7 @@
     "sat": [
       {
         "start": "11:00",
-        "name": "싱크로빅",
+        "name": "아쿠아로빅",
         "level": "",
         "instructor": "최영규"
       }
