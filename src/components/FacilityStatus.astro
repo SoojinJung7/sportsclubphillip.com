@@ -1,17 +1,12 @@
 ---
 // 실시간 시설별 영업 현황 (KST) — 헬스장 / 사우나 / 수영장 각각의 오픈 여부.
-// 시간은 월간 운영 안내 기준이며 여기 배열만 고치면 됩니다. 상세 시간표는 우측 포스터 참고.
-// hours: 요일 인덱스(0=일 … 6=토)별 [오픈, 마감], 없으면 def 사용. 휴관일=매월 1·3·5째주 일요일.
-const FACILITIES = [
-  { label: '헬스장', color: '#9a7c4d', hours: { def: ['05:30', '23:00'] } },
-  { label: '사우나', color: '#d98a3d', hours: { def: ['05:30', '23:00'] } },
-  { label: '수영장', color: '#22c1cc', hours: { 0: ['09:00', '20:30'], 6: ['06:00', '22:00'], def: ['06:00', '22:20'] } },
-];
+// 시간·휴관일은 content/operating-calendar.json 한 곳에서만 관리합니다.
+import { facilities } from '../data/operating';
 ---
 
 <div id="fac-status" class="overflow-hidden rounded-2xl border border-line/80 bg-white/70 shadow-sm backdrop-blur-sm divide-y divide-line">
-  {FACILITIES.map((f) => (
-    <div data-fac class="flex items-center justify-between gap-4 px-5 py-3.5">
+  {facilities.map((f) => (
+    <div data-fac={f.label} class="flex items-center justify-between gap-4 px-5 py-3.5">
       <div class="flex items-center gap-3">
         <span class="h-2.5 w-2.5 shrink-0 rounded-full" style={`background:${f.color}`}></span>
         <span class="text-[14px] font-semibold text-ink">{f.label}</span>
@@ -21,31 +16,29 @@ const FACILITIES = [
   ))}
 </div>
 
-<script is:inline define:vars={{ FAC: FACILITIES }}>
-  (function () {
-    const root = document.getElementById('fac-status');
-    if (!root) return;
-    const rows = [...root.querySelectorAll('[data-fac]')];
-    const toMin = (t) => { const p = t.split(':'); return +p[0] * 60 + +p[1]; };
-    const kst = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+<script>
+  import { facilityBy, isClosedDay, isFacilityOpen, kstNow } from '../data/operating';
 
-    function render() {
-      const d = kst();
-      const day = d.getDay();
-      const now = d.getHours() * 60 + d.getMinutes();
-      const nth = Math.ceil(d.getDate() / 7);
-      const closedDay = day === 0 && (nth === 1 || nth === 3 || nth === 5);
+  const root = document.getElementById('fac-status');
+  if (root) {
+    const rows = [...root.querySelectorAll<HTMLElement>('[data-fac]')];
 
-      FAC.forEach((f, i) => {
-        const h = f.hours[day] || f.hours.def;
-        const open = !closedDay && now >= toMin(h[0]) && now < toMin(h[1]);
-        const badge = rows[i].querySelector('.fac-badge');
-        badge.textContent = closedDay ? '휴관일' : open ? '● 영업 중' : '영업 종료';
+    const render = () => {
+      const d = kstNow();
+      const closed = isClosedDay(d);
+
+      for (const row of rows) {
+        const f = facilityBy(row.dataset.fac || '');
+        const badge = row.querySelector('.fac-badge');
+        if (!f || !badge) continue;
+        const open = isFacilityOpen(f, d);
+        badge.textContent = closed && !f.openOnClosedDay ? '휴관일' : open ? '● 영업 중' : '영업 종료';
         badge.className = 'fac-badge rounded-full px-3 py-1 text-[12px] font-bold '
           + (open ? 'bg-emerald-500/15 text-emerald-700' : 'bg-line/60 text-muted');
-      });
-    }
+      }
+    };
+
     render();
     setInterval(render, 30000);
-  })();
+  }
 </script>

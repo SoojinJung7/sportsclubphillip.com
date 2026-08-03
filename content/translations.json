@@ -638,5 +638,13 @@
   {
     "ko": "홈으로 돌아가기",
     "en": "Back to Home"
+  },
+  {
+    "ko": "일·공휴일 09:00 ~ 21:00",
+    "en": "Sun / Holidays 09:00 – 21:00"
+  },
+  {
+    "ko": "공휴일",
+    "en": "Public holidays"
   }
 ]

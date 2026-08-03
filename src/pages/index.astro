@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PromoPopup from '../components/PromoPopup.astro';
+import PromoCarousel from '../components/PromoCarousel.astro';
 import LiveToday from '../components/LiveToday.astro';
 import VideoShowcase from '../components/VideoShowcase.astro';
 import FacilityStatus from '../components/FacilityStatus.astro';
@@ -9,6 +10,9 @@ import Img from '../components/Img.astro';
 import c from '../../content/pages/home.json';
 // 운영시간·휴관 안내는 운영시간 페이지와 동일 소스를 재사용 (한 곳만 고치면 양쪽 반영)
 import op from '../../content/pages/operating.json';
+// 이번 달 실제 휴관일·공휴일 (content/operating-calendar.json). 없으면 일반 문구로 폴백.
+import { closedNotice } from '../data/operating';
+const monthNotice = closedNotice();
 
 const facilities = [
   { key: 'facilityHealth', href: '/projects' },
@@ -132,7 +136,7 @@ const programs = [
   </section>
 
   <!-- ============================ PROMOTION ============================ -->
-  <section class="py-20 lg:py-28 bg-ink text-white">
+  <section id="this-month" class="py-20 lg:py-28 bg-ink text-white">
     <div class="mx-auto max-w-7xl px-5 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
       <div class="reveal">
         <p class="eyebrow text-[12px] text-sand font-semibold">This Month</p>
@@ -142,9 +146,8 @@ const programs = [
           {c.promo.cta} <span aria-hidden="true">→</span>
         </a>
       </div>
-      <a href="/promotion" class="reveal block rounded-xl overflow-hidden shadow-2xl">
-        <Img k="promoCurrent" class="w-full h-auto" />
-      </a>
+      <!-- 팝업과 같은 포스터 캐러셀 — 팝업을 닫아도 여기서 계속 돌아갑니다 -->
+      <PromoCarousel class="reveal mx-auto w-full max-w-[420px] lg:max-w-none" />
     </div>
   </section>
 
@@ -201,8 +204,15 @@ const programs = [
           <div class="mt-6 rounded-xl border border-sand/30 bg-sand/[0.06] px-5 py-4">
             <p class="flex flex-wrap items-baseline gap-x-1.5 text-[13px]">
               <span class="font-semibold text-sand-dark">{op.notice.closedTitle}</span>
-              <span class="text-ink-soft">{op.notice.closedText}</span>
+              <span class="text-ink-soft">
+                {monthNotice ? ` · ${monthNotice.month} ${monthNotice.closed}` : op.notice.closedText}
+              </span>
             </p>
+            {monthNotice?.holidays && (
+              <p class="mt-1.5 text-[13px] leading-relaxed text-ink-soft">
+                공휴일 · {monthNotice.holidays}
+              </p>
+            )}
             <p class="mt-1.5 text-[13px] leading-relaxed text-ink-soft">{op.notice.holiday}</p>
           </div>
 

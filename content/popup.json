@@ -1,6 +1,12 @@
 {
   "enabled": true,
   "title": "이달의 프로모션",
-  "image": "promoCurrent",
-  "link": "/promotion"
+  "link": "/promotion",
+  "intervalMs": 3000,
+  "slides": [
+    { "image": "promoCurrent", "alt": "8월 프로모션 · 뜨거운 여름 COOL한 혜택", "link": "/promotion" },
+    { "image": "promoPilates", "alt": "필라인필립 출석 프로모션 · 10회 레슨비로 12회", "link": "/promotion" },
+    { "image": "promoHealth1", "alt": "헬스팀 여름한정 출석 프로모션", "link": "/promotion" },
+    { "image": "promoHealth2", "alt": "헬스팀 여름한정 출석 프로모션", "link": "/promotion" }
+  ]
 }

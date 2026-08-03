@@ -4,7 +4,11 @@ import PageHero from '../components/PageHero.astro';
 import { SITE, EXTERNAL } from '../data/site';
 import c from '../../content/pages/operating.json';
 
+import { closedNotice } from '../data/operating';
+
 const facilityHours = c.facilityHours;
+// 이번 달 실제 휴관일·공휴일 (content/operating-calendar.json). 없으면 일반 문구로 폴백.
+const monthNotice = closedNotice();
 const mapEmbed = 'https://www.google.com/maps?q=' + encodeURIComponent('경기도 성남시 내정로58') + '&output=embed';
 ---
 
@@ -42,7 +46,11 @@ const mapEmbed = 'https://www.google.com/maps?q=' + encodeURIComponent('경기�
           ))}
         </div>
         <div class="mt-5 p-4 bg-cream rounded-lg text-[13px] text-ink-soft leading-relaxed">
-          <p><strong class="text-ink">{c.notice.closedTitle}</strong>{c.notice.closedText}</p>
+          <p>
+            <strong class="text-ink">{c.notice.closedTitle}</strong>
+            {monthNotice ? ` · ${monthNotice.month} ${monthNotice.closed}` : c.notice.closedText}
+          </p>
+          {monthNotice?.holidays && <p class="mt-1">공휴일 · {monthNotice.holidays}</p>}
           <p class="mt-1">{c.notice.holiday}</p>
         </div>
 

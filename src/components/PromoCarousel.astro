@@ -1,0 +1,105 @@
+---
+// 이달의 프로모션 포스터 캐러셀 — 팝업과 홈 'This Month' 섹션이 함께 씁니다.
+//  · 슬라이드 순서·간격은 content/popup.json (slides / intervalMs) 에서 CMS 편집.
+//  · 항상 첫 번째 슬라이드부터 시작하고, intervalMs(기본 3초)마다 다음 장으로 넘어갑니다.
+//  · 마우스를 올리면(또는 점 버튼을 누르면) 자동 넘김이 멈춥니다.
+import popup from '../../content/popup.json';
+import { type ImgKey } from '../data/site';
+import Img from './Img.astro';
+
+interface Props {
+  /** 캐러셀 바깥 래퍼 클래스 */
+  class?: string;
+  /** 포스터 프레임(모서리·그림자 등) 클래스 */
+  frameClass?: string;
+  /** 첫 화면에 바로 보이는 자리면 eager */
+  loading?: 'lazy' | 'eager';
+  /** 점 표시 여부 */
+  dots?: boolean;
+}
+const { class: className, frameClass = 'rounded-xl shadow-2xl', loading = 'lazy', dots = true } = Astro.props;
+
+const slides = popup.slides ?? [];
+const interval = popup.intervalMs ?? 3000;
+const fallbackLink = popup.link ?? '/promotion';
+---
+
+<div class={className} data-promo-carousel data-interval={interval}>
+  <div class={`relative overflow-hidden bg-ink/20 aspect-[1754/2480] ${frameClass}`}>
+    {slides.map((s, i) => (
+      <a
+        href={s.link || fallbackLink}
+        data-slide
+        aria-hidden={i === 0 ? undefined : 'true'}
+        tabindex={i === 0 ? undefined : -1}
+        class:list={[
+          'absolute inset-0 block transition-opacity duration-700 motion-reduce:transition-none',
+          i === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none',
+        ]}
+      >
+        <Img k={s.image as ImgKey} alt={s.alt} class="h-full w-full object-contain" loading={i === 0 ? loading : 'lazy'} />
+      </a>
+    ))}
+  </div>
+
+  {dots && slides.length > 1 && (
+    <div class="mt-3 flex justify-center gap-2">
+      {slides.map((s, i) => (
+        <button
+          type="button"
+          data-dot
+          aria-label={`${i + 1}번째 포스터 보기`}
+          aria-current={i === 0 ? 'true' : undefined}
+          class:list={[
+            'h-2 w-2 rounded-full transition-all',
+            i === 0 ? 'w-5 bg-white' : 'bg-white/45 hover:bg-white/70',
+          ]}
+        ></button>
+      ))}
+    </div>
+  )}
+</div>
+
+<script>
+  // 페이지 안의 모든 프로모션 캐러셀을 각각 독립적으로 돌립니다.
+  for (const root of document.querySelectorAll<HTMLElement>('[data-promo-carousel]')) {
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+    const dots = [...root.querySelectorAll<HTMLElement>('[data-dot]')];
+    if (slides.length < 2) continue;
+
+    const interval = Number(root.dataset.interval) || 3000;
+    let index = 0;
+    let timer = 0;
+
+    const show = (next: number) => {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((el, i) => {
+        const on = i === index;
+        el.classList.toggle('opacity-100', on);
+        el.classList.toggle('opacity-0', !on);
+        el.classList.toggle('pointer-events-none', !on);
+        if (on) { el.removeAttribute('aria-hidden'); el.removeAttribute('tabindex'); }
+        else { el.setAttribute('aria-hidden', 'true'); el.setAttribute('tabindex', '-1'); }
+      });
+      dots.forEach((d, i) => {
+        const on = i === index;
+        d.classList.toggle('w-5', on);
+        d.classList.toggle('bg-white', on);
+        d.classList.toggle('bg-white/45', !on);
+        if (on) d.setAttribute('aria-current', 'true');
+        else d.removeAttribute('aria-current');
+      });
+    };
+
+    const start = () => { stop(); timer = window.setInterval(() => show(index + 1), interval); };
+    const stop = () => { if (timer) { clearInterval(timer); timer = 0; } };
+
+    dots.forEach((d, i) => d.addEventListener('click', () => { show(i); stop(); }));
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+    // 탭이 백그라운드일 땐 굳이 돌리지 않습니다.
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+
+    start();
+  }
+</script>

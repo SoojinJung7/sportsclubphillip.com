@@ -95,7 +95,11 @@ export const IMAGES = {
   // home
   homeAiWide: D('6f7ec1_0b3ec96462a2449ea8e5e1d82f1d48d3~mv2.jpg', 'home-ai-circuit-wide.jpg', 'AI 서킷 트레이닝룸'),
   homeAiTall: D('6f7ec1_347a878ba06d495db94a00b7b18917ee~mv2.jpg', 'home-ai-circuit-tall.jpg', 'AI 서킷 트레이닝룸'),
+  // 이달의 프로모션 포스터 — 팝업/홈 캐러셀이 content/popup.json 의 slides 순서대로 돌립니다.
   promoCurrent: D('6f7ec1_d64ec402a8dd4a67b4d1211581ad60ec~mv2.jpg', 'promo-current.jpg', '이달의 프로모션'),
+  promoPilates: D('', 'promo-pilates.jpg', '필라인필립 출석 프로모션'),
+  promoHealth1: D('', 'promo-health-1.jpg', '헬스팀 여름한정 출석 프로모션'),
+  promoHealth2: D('', 'promo-health-2.jpg', '헬스팀 여름한정 출석 프로모션'),
   homeFeatureFitness: D('6f7ec1_67c088c6c79b45f6a5212653a9ce779c~mv2.jpg', 'home-feature-fitness.jpg', 'GYM & FITNESS'),
   homeGxIcon: D('6f7ec1_93315331483248beb23b4d3b2a07df79~mv2.jpg', 'home-gx-icon.jpg', 'GROUP EXERCISE'),
   homeKpaIcon: D('6f7ec1_e4df173498994d86808d72e45713bcb8~mv2.jpg', 'home-kpa-icon.jpg', '대한필라테스협회'),

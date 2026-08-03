@@ -3,12 +3,12 @@
 //  · 웹(데스크톱): 히어로 우측에 포스터 '사진만' 착 부착(제목 바 없음). 스크롤 시 함께 지나감.
 //  · 모바일: 화면 중앙에 크게(≈전체의 60%) 짠 뜨는 모달 + 딤 배경.
 //  · 닫기: 아래 '닫기' 버튼(모바일은 배경 탭으로도) → 이번 방문 동안 다시 안 뜸(sessionStorage).
-// 내용은 content/popup.json 에서 CMS 편집(enabled / image / link).
+//  · 포스터는 여러 장이 3초마다 자동으로 넘어갑니다(PromoCarousel). 팝업을 닫아도
+//    홈 'This Month' 섹션에서 같은 캐러셀이 계속 돌아갑니다.
+// 내용은 content/popup.json 에서 CMS 편집(enabled / slides / intervalMs / link).
 import popup from '../../content/popup.json';
-import { type ImgKey } from '../data/site';
-import Img from './Img.astro';
-const { enabled, image, link } = popup;
-const imgKey = image as ImgKey;
+import PromoCarousel from './PromoCarousel.astro';
+const { enabled } = popup;
 ---
 
 {enabled && (
@@ -19,9 +19,7 @@ const imgKey = image as ImgKey;
   <!-- 포스터: 모바일=화면 중앙 모달(약 60%), 데스크톱=히어로 우측 '착' 부착 -->
   <div class="fixed left-1/2 top-1/2 z-[60] w-[80vw] max-w-[360px] -translate-x-1/2 -translate-y-1/2
               lg:absolute lg:left-auto lg:right-8 lg:top-1/2 lg:w-[360px] lg:max-w-none lg:translate-x-0 lg:-translate-y-1/2">
-    <a id="promo-poster" href={link} class="block overflow-hidden rounded-2xl shadow-2xl ring-1 ring-black/10">
-      <Img k={imgKey} class="w-full h-auto" />
-    </a>
+    <PromoCarousel frameClass="rounded-2xl shadow-2xl ring-1 ring-black/10" loading="eager" />
     <div class="mt-2.5 flex justify-center">
       <button id="promo-close" aria-label="닫기"
         class="rounded-full bg-white/15 px-5 py-1.5 text-[12.5px] font-medium text-white backdrop-blur transition hover:bg-white/30 lg:bg-black/45 lg:hover:bg-black/65">
@@ -33,15 +31,15 @@ const imgKey = image as ImgKey;
 )}
 
 <style>
-  #promo-poster.promo-anim { animation: promo-pop 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  #promo-popup .promo-anim { animation: promo-pop 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
   @keyframes promo-pop { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
-  @media (prefers-reduced-motion: reduce) { #promo-poster.promo-anim { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { #promo-popup .promo-anim { animation: none; } }
 </style>
 
 <script>
   const KEY = 'scp-promo-closed'; // 이번 방문(탭) 동안 닫힘 유지
   const popup = document.getElementById('promo-popup');
-  const poster = document.getElementById('promo-poster');
+  const poster = popup?.querySelector('[data-promo-carousel]');
   function hide() { popup?.classList.add('hidden'); try { sessionStorage.setItem(KEY, '1'); } catch (e) {} }
   let closed = false;
   try { closed = sessionStorage.getItem(KEY) === '1'; } catch (e) {}

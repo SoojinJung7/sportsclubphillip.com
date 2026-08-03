@@ -20,6 +20,21 @@
     "src": ""
   },
   {
+    "key": "promoPilates",
+    "alt": "필라인필립 출석 프로모션",
+    "src": ""
+  },
+  {
+    "key": "promoHealth1",
+    "alt": "헬스팀 여름한정 출석 프로모션",
+    "src": ""
+  },
+  {
+    "key": "promoHealth2",
+    "alt": "헬스팀 여름한정 출석 프로모션",
+    "src": ""
+  },
+  {
     "key": "homeFeatureFitness",
     "alt": "GYM & FITNESS",
     "src": ""
