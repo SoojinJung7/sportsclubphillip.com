@@ -31,13 +31,13 @@
         "start": "07:00",
         "name": "성인 수영",
         "level": "교정",
-        "instructor": ""
+        "instructor": "주재인"
       },
       {
         "start": "07:00",
         "name": "성인 수영",
         "level": "초급~중급",
-        "instructor": ""
+        "instructor": "윤형민"
       },
       {
         "start": "09:00",
@@ -114,13 +114,13 @@
       {
         "start": "15:00",
         "name": "성인 건강반",
-        "level": "",
+        "level": "건강반",
         "instructor": "한인수"
       },
       {
         "start": "15:00",
         "name": "성인 건강반",
-        "level": "",
+        "level": "건강반",
         "instructor": "안기범"
       },
       {
@@ -181,7 +181,7 @@
         "start": "20:30",
         "name": "성인 수영",
         "level": "교정",
-        "instructor": ""
+        "instructor": "안기범"
       },
       {
         "start": "20:30",
@@ -261,13 +261,13 @@
         "start": "09:00",
         "name": "성인 수영",
         "level": "중상급",
-        "instructor": ""
+        "instructor": "주재인"
       },
       {
         "start": "09:00",
         "name": "성인 수영",
         "level": "신규~중급",
-        "instructor": ""
+        "instructor": "윤형민"
       },
       {
         "start": "10:00",
@@ -302,24 +302,18 @@
       {
         "start": "15:00",
         "name": "성인 건강반",
-        "level": "",
+        "level": "건강반",
         "instructor": "한인수"
       },
       {
         "start": "15:00",
         "name": "성인 건강반",
-        "level": "",
+        "level": "건강반",
         "instructor": "안기범"
       },
       {
         "start": "16:00",
-        "name": "어린이 수영",
-        "level": "초급",
-        "instructor": "강솔"
-      },
-      {
-        "start": "16:00",
-        "name": "어린이 수영",
+        "name": "성인 건강반",
         "level": "초급",
         "instructor": "최윤정"
       },
@@ -351,13 +345,13 @@
         "start": "19:30",
         "name": "성인 수영",
         "level": "교정1",
-        "instructor": ""
+        "instructor": "강솔"
       },
       {
         "start": "19:30",
         "name": "성인 수영",
         "level": "교정2",
-        "instructor": ""
+        "instructor": "최윤정"
       },
       {
         "start": "19:30",
@@ -443,13 +437,13 @@
         "start": "07:00",
         "name": "성인 수영",
         "level": "교정",
-        "instructor": ""
+        "instructor": "주재인"
       },
       {
         "start": "07:00",
         "name": "성인 수영",
         "level": "초급~중급",
-        "instructor": ""
+        "instructor": "윤형민"
       },
       {
         "start": "09:00",
@@ -526,13 +520,13 @@
       {
         "start": "15:00",
         "name": "성인 건강반",
-        "level": "",
+        "level": "건강반",
         "instructor": "한인수"
       },
       {
         "start": "15:00",
         "name": "성인 건강반",
-        "level": "",
+        "level": "건강반",
         "instructor": "안기범"
       },
       {
@@ -593,7 +587,7 @@
         "start": "20:30",
         "name": "성인 수영",
         "level": "교정",
-        "instructor": ""
+        "instructor": "안기범"
       },
       {
         "start": "20:30",
@@ -673,13 +667,13 @@
         "start": "09:00",
         "name": "성인 수영",
         "level": "중상급",
-        "instructor": ""
+        "instructor": "주재인"
       },
       {
         "start": "09:00",
         "name": "성인 수영",
         "level": "신규~중급",
-        "instructor": ""
+        "instructor": "윤형민"
       },
       {
         "start": "10:00",
@@ -714,24 +708,18 @@
       {
         "start": "15:00",
         "name": "성인 건강반",
-        "level": "",
+        "level": "건강반",
         "instructor": "한인수"
       },
       {
         "start": "15:00",
         "name": "성인 건강반",
-        "level": "",
+        "level": "건강반",
         "instructor": "안기범"
       },
       {
         "start": "16:00",
-        "name": "어린이 수영",
-        "level": "초급",
-        "instructor": "강솔"
-      },
-      {
-        "start": "16:00",
-        "name": "어린이 수영",
+        "name": "성인 건강반",
         "level": "초급",
         "instructor": "최윤정"
       },
@@ -763,13 +751,13 @@
         "start": "19:30",
         "name": "성인 수영",
         "level": "교정1",
-        "instructor": ""
+        "instructor": "강솔"
       },
       {
         "start": "19:30",
         "name": "성인 수영",
         "level": "교정2",
-        "instructor": ""
+        "instructor": "최윤정"
       },
       {
         "start": "19:30",
@@ -855,13 +843,13 @@
         "start": "07:00",
         "name": "성인 수영",
         "level": "교정",
-        "instructor": ""
+        "instructor": "주재인"
       },
       {
         "start": "07:00",
         "name": "성인 수영",
         "level": "초급~중급",
-        "instructor": ""
+        "instructor": "윤형민"
       },
       {
         "start": "09:00",
@@ -937,7 +925,7 @@
       },
       {
         "start": "15:00",
-        "name": "어린이 수영",
+        "name": "성인 건강반",
         "level": "초급",
         "instructor": ""
       },
@@ -999,7 +987,7 @@
         "start": "20:30",
         "name": "성인 수영",
         "level": "교정",
-        "instructor": ""
+        "instructor": "안기범"
       },
       {
         "start": "20:30",

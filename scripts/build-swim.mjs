@@ -1,57 +1,54 @@
-// Builds content/swimming-schedule.json from the 8월 수영 강습 스케줄 포스터,
+// Builds content/swimming-schedule.json from the 8월 수영 강습 스케줄 (최종본),
 // and refreshes the swimming_schedule block in .pages.yml.
 // Run: node scripts/build-swim.mjs
 //
-// 출처: 포스터 `_8월-수영강습스케줄.png` (시간 · 반 · 요일의 확정본).
-// 강사명은 포스터에 없어서 내부 배정 시트(8월 성인,어린이)에서 **반 이름과 시간이
-// 정확히 일치하는 칸만** 채웠습니다. 일치하지 않는 칸은 빈 값으로 두어
-// 잘못된 강사명이 노출되지 않게 합니다 (사이트는 강사가 비어도 정상 표시).
+// 출처 (두 개를 합친 것):
+//  1) 포스터 `_8월 수영강습스케줄.jpg` — 시간 · 요일 · **반 이름**의 확정본 (회원 공지용).
+//  2) `8월 성인,어린이예상_최종본.260803.xlsx` — **강사 배정**의 확정본 (내부용, 반 이름은
+//     구 명칭이 일부 남아 있음).
+// 두 자료는 시간대별 행 수와 순서가 일치하므로, **반 이름은 포스터 / 강사는 엑셀의 같은 순번**
+// 으로 맞췄습니다. 엑셀에 아예 없는 칸(금요일 어린이·건강반, 화목 17:00 중급)만 강사가 빈 값이며,
+// 사이트는 강사가 비어도 반 이름만 정상 표시합니다.
 import { readFileSync, writeFileSync } from 'node:fs';
 
-// slot -> [[반(level), 강사], ...]   강사 '' = 확정 정보 없음
+// slot -> [[반(level), 강사], ...]   강사 '' = 배정표에 없음
 const adultMWF = {
   '06:00': [['연수', '정종화'], ['교정', '주재인'], ['초급~중급', '윤형민']],
-  '07:00': [['연수', '정종화'], ['교정', ''], ['초급~중급', '']],
+  '07:00': [['연수', '정종화'], ['교정', '주재인'], ['초급~중급', '윤형민']],
   '09:00': [['연수', '윤형민'], ['교정1', '정종화'], ['교정2', '주재인']],
   '10:00': [['연수', '윤형민'], ['교정1', '주재인'], ['교정2', '정종화'], ['교정3', '홍진호']],
   '11:00': [['연수', '윤형민'], ['교정1', '홍진호'], ['교정2', '정종화'], ['초급~중급', '주재인']],
   '19:30': [['연수', '최윤정'], ['교정', '안기범'], ['초급~상급', '한인수']],
-  '20:30': [['연수1', '최윤정'], ['연수2', '강솔'], ['교정', ''], ['초급~중급', '한인수']],
+  '20:30': [['연수1', '최윤정'], ['연수2', '강솔'], ['교정', '안기범'], ['초급~중급', '한인수']],
   '21:30': [['연수', '한인수'], ['교정', '안기범'], ['상급', '강솔'], ['초급~중급', '최윤정']],
 };
 const adultTT = {
   '06:00': [['연수', '윤형민'], ['교정', '정종화'], ['초급~상급', '주재인']],
   '07:00': [['연수', '주재인'], ['교정', '윤형민'], ['초급~상급', '정종화']],
-  '09:00': [['연수', '정종화'], ['중상급', ''], ['신규~중급', '']],
+  '09:00': [['연수', '정종화'], ['중상급', '주재인'], ['신규~중급', '윤형민']],
   '10:00': [['연수', '정종화'], ['교정1', '주재인'], ['교정2', '윤형민']],
-  '19:30': [['연수', '한인수'], ['교정1', ''], ['교정2', ''], ['초급~중급', '안기범']],
+  '19:30': [['연수', '한인수'], ['교정1', '강솔'], ['교정2', '최윤정'], ['초급~중급', '안기범']],
   '20:30': [['연수', '최윤정'], ['교정', '안기범'], ['초급~상급', '강솔'], ['초급', '한인수']],
   '21:30': [['연수1', '한인수'], ['연수2', '강솔'], ['상급', '최윤정'], ['초급~중급', '안기범']],
 };
 
-// 아쿠아로빅 (포스터 하단 파란 띠)
+// 아쿠아로빅 (포스터 분홍 띠) — 엑셀에는 '싱크로빅' 으로 표기
 const aquaMWF = { '14:00': [['', '김은영']] };
 const aquaTT = { '11:00': [['', '최영규']], '12:00': [['', '최영규']] };
 const aquaSat = { '11:00': [['', '최영규']] };
 
-// 성인 건강반
-const wellMW = { '15:00': [['', '한인수'], ['', '안기범']] };
-const wellTT = { '15:00': [['', '한인수'], ['', '안기범']] };
+// 성인 수영 건강반 (포스터 우측 상단 표)
+const wellMW = { '15:00': [['건강반', '한인수'], ['건강반', '안기범']] };
+const wellTT = { '15:00': [['건강반', '한인수'], ['건강반', '안기범']], '16:00': [['초급', '최윤정']] };
+const wellF = { '15:00': [['초급', '']] };
 
 // 어린이 수영 (8세~13세)
 const childMW = {
   '16:00': [['연수', '최윤정'], ['상급', '강솔']],
   '17:00': [['연수', '강솔'], ['교정', '안기범']],
 };
-const childTT = {
-  '16:00': [['초급', '강솔'], ['초급', '최윤정']],
-  '17:00': [['연수', '강솔'], ['상급', '최윤정'], ['중급', '']],
-};
-const childF = {
-  '15:00': [['초급', '']],
-  '16:00': [['연수', ''], ['상급', '']],
-  '17:00': [['연수', ''], ['상급', '']],
-};
+const childTT = { '17:00': [['연수', '강솔'], ['상급', '최윤정'], ['중급', '']] };
+const childF = { '16:00': [['연수', ''], ['상급', '']], '17:00': [['연수', ''], ['상급', '']] };
 
 function add(out, slots, name) {
   for (const [start, rows] of Object.entries(slots))
@@ -63,13 +60,18 @@ function day(sets) {
   return out.sort((a, b) => a.start.localeCompare(b.start));
 }
 
+const ADULT = '성인 수영';
+const WELL = '성인 건강반';
+const CHILD = '어린이 수영';
+const AQUA = '아쿠아로빅';
+
 const days = {
-  mon: day([[adultMWF, '성인 수영'], [aquaMWF, '아쿠아로빅'], [wellMW, '성인 건강반'], [childMW, '어린이 수영']]),
-  tue: day([[adultTT, '성인 수영'], [aquaTT, '아쿠아로빅'], [wellTT, '성인 건강반'], [childTT, '어린이 수영']]),
-  wed: day([[adultMWF, '성인 수영'], [aquaMWF, '아쿠아로빅'], [wellMW, '성인 건강반'], [childMW, '어린이 수영']]),
-  thu: day([[adultTT, '성인 수영'], [aquaTT, '아쿠아로빅'], [wellTT, '성인 건강반'], [childTT, '어린이 수영']]),
-  fri: day([[adultMWF, '성인 수영'], [aquaMWF, '아쿠아로빅'], [childF, '어린이 수영']]),
-  sat: day([[aquaSat, '아쿠아로빅']]),
+  mon: day([[adultMWF, ADULT], [aquaMWF, AQUA], [wellMW, WELL], [childMW, CHILD]]),
+  tue: day([[adultTT, ADULT], [aquaTT, AQUA], [wellTT, WELL], [childTT, CHILD]]),
+  wed: day([[adultMWF, ADULT], [aquaMWF, AQUA], [wellMW, WELL], [childMW, CHILD]]),
+  thu: day([[adultTT, ADULT], [aquaTT, AQUA], [wellTT, WELL], [childTT, CHILD]]),
+  fri: day([[adultMWF, ADULT], [aquaMWF, AQUA], [wellF, WELL], [childF, CHILD]]),
+  sat: day([[aquaSat, AQUA]]),
   sun: [],
 };
 
@@ -110,4 +112,6 @@ ${dayFields}
 writeFileSync('.pages.yml', yml);
 
 const total = Object.values(days).reduce((n, d) => n + d.length, 0);
-console.log('swim entries:', total, '| per day:', Object.fromEntries(Object.entries(days).map(([k, v]) => [k, v.length])));
+const blank = Object.values(days).flat().filter((e) => !e.instructor).length;
+console.log('swim entries:', total, '| 강사 미배정:', blank,
+  '| per day:', Object.fromEntries(Object.entries(days).map(([k, v]) => [k, v.length])));
