@@ -1,7 +1,7 @@
 ---
 // ---------------------------------------------------------------------------
 // 홈페이지 실시간 채팅 위젯 (손님용).
-// 규격: 필립톡 저장소 specs/WEBCHAT_CONTRACT.md v1 (2026-07-03).
+// 규격: 필립톡 저장소 specs/WEBCHAT_CONTRACT.md v3 (2026-08-16).
 //   · 위젯은 필립톡의 HTTP API만 호출한다 (Supabase는 전혀 모름).
 //   · POST {PHILLIPTALK_URL}/api/webchat/message    — 손님 메시지 보내기
 //   · GET  {PHILLIPTALK_URL}/api/webchat/messages    — 답장 폴링(3초)
@@ -32,6 +32,7 @@ const STRINGS = {
     error: '전송에 실패했어요. 잠시 후 다시 시도해 주세요.',
     statusOnline: '보통 몇 분 내 답장',
     statusOffline: '지금은 상담 시간이 아니에요',
+    edited: '수정됨',
     quicks: ['이용시간', '수영 강습', 'PT 상담', '가격 문의'],
   },
   en: {
@@ -52,6 +53,7 @@ const STRINGS = {
     error: 'Failed to send. Please try again in a moment.',
     statusOnline: 'Usually replies in a few minutes',
     statusOffline: 'Outside consultation hours',
+    edited: 'Edited',
     quicks: ['Hours', 'Swim lessons', 'PT consult', 'Pricing'],
   },
 };
@@ -260,7 +262,9 @@ const STRINGS = {
     }
 
     // ---- 메시지 렌더 -----------------------------------------------------
-    var seen = {};          // 서버 메시지 id 중복 방지
+    // id → { bubble, timeEl, body }. 같은 id가 다시 오면(상담원이 오타를 고친 경우)
+    // 새 말풍선을 만들지 않고 기존 본문을 교체한다 — 규격 v3 upsert.
+    var seen = {};
     var since = '';         // 마지막으로 받은 createdAt → 다음 폴링의 since
     var started = false;    // 폼 제출 후 대화 모드
     var poller = null;
@@ -301,8 +305,9 @@ const STRINGS = {
       b.className = 'scp-bubble ' + (dir === 'in' ? 'scp-in' : 'scp-out');
       b.textContent = body;
       col.appendChild(b);
+      var t = null;
       if (iso) {
-        var t = document.createElement('div');
+        t = document.createElement('div');
         t.className = 'scp-time';
         t.style.textAlign = dir === 'in' ? 'right' : 'left';
         t.textContent = fmtTime(iso);
@@ -311,7 +316,15 @@ const STRINGS = {
       row.appendChild(col);
       log.appendChild(row);
       regroupAvatars();
-      return b;
+      return { bubble: b, timeEl: t, body: body };
+    }
+    // 수정된 말풍선의 시간 줄에 "· 수정됨"을 한 번만 붙인다(폴링마다 반복 호출돼도 안전).
+    function markEdited(entry) {
+      if (!entry.timeEl || entry.timeEl.querySelector('.scp-edited')) return;
+      var tag = document.createElement('span');
+      tag.className = 'scp-edited';
+      tag.textContent = ' · ' + STRINGS[lang()].edited;
+      entry.timeEl.appendChild(tag);
     }
     function scrollDown() { log.scrollTop = log.scrollHeight; }
 
@@ -334,7 +347,7 @@ const STRINGS = {
       if (q) q.remove();
     }
     function greet() {
-      var gb = addBubble('out', STRINGS[lang()].greeting);
+      var gb = addBubble('out', STRINGS[lang()].greeting).bubble;
       gb.setAttribute('data-t', 'greeting');
       log.appendChild(buildQuicks());
       regroupAvatars();
@@ -359,9 +372,19 @@ const STRINGS = {
           if (!data || !data.messages) return;
           var added = false, gotReply = false;
           data.messages.forEach(function (m) {
-            if (m.id && seen[m.id]) return;
-            if (m.id) seen[m.id] = true;
-            addBubble(m.direction, m.body, m.createdAt);
+            var known = m.id ? seen[m.id] : null;
+            if (known) {
+              // 이미 그린 메시지가 다시 옴 = 상담원이 오타를 고침 → 본문 교체 + 수정됨 표시.
+              if (m.body !== known.body) {
+                known.body = m.body;
+                known.bubble.textContent = m.body;
+                markEdited(known);
+              }
+              return;
+            }
+            var entry = addBubble(m.direction, m.body, m.createdAt);
+            if (m.id) seen[m.id] = entry;
+            if (m.editedAt) markEdited(entry); // 복원(since 없음) 시에도 수정 여부 표시
             if (m.createdAt && m.createdAt > since) since = m.createdAt;
             added = true;
             if (m.direction === 'out') gotReply = true;
