@@ -1,0 +1,291 @@
+---
+// 필라테스 / 자이로토닉® 시설 안내 서브페이지 (/pilates)
+// - 본문(한국어): content/pages/pilates.json  (CMS: 페이지 · pilates)
+// - 갤러리 사진: CMS 업로드(gallery.images)가 있으면 그것을, 없으면
+//   src/assets/images/pilates-gallery-*.jpg (번호순) 내장 사진을 씁니다.
+//   사진 추가 = 파일을 pilates-gallery-2.jpg, -3.jpg … 로 넣기만 하면 됩니다.
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Img from '../components/Img.astro';
+import { EXTERNAL } from '../data/site';
+import c from '../../content/pages/pilates.json';
+import videosJson from '../../content/videos.json';
+
+// 홈 PHILLIP LIFE 영상(content/videos.json) 중 필라테스 관련 영상만 자동 선별
+// (설명에 '필라테스' 또는 '필라인필립'이 들어간 항목). 홈에서 영상을 바꾸면 여기도 따라갑니다.
+type Clip = { video?: string; youtube?: string; poster?: string; titleKo: string; titleEn: string; bodyKo: string; bodyEn: string };
+// videos.featured 에 적은 영상(파일 경로 또는 YouTube ID)이 있으면 맨 앞(왼쪽·모바일 첫 번째)으로.
+const featured = ((c.videos as { featured?: string }).featured || '').trim();
+const clips = (videosJson.items as Clip[])
+  .filter((v) => (v.video || v.youtube) && /필라테스|필라인필립/.test(`${v.titleKo} ${v.bodyKo}`))
+  .sort((a, b) => Number(featured && (b.video === featured || b.youtube === featured)) - Number(featured && (a.video === featured || a.youtube === featured)));
+
+const galleryAssets = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/images/pilates-gallery-*.jpg',
+  { eager: true },
+);
+const byNumber = (p: string) => Number(p.match(/pilates-gallery-(\d+)/)?.[1] ?? 0);
+const galleryDefault = Object.keys(galleryAssets)
+  .sort((a, b) => byNumber(a) - byNumber(b))
+  .map((k) => galleryAssets[k].default);
+const galleryUploads = ((c.gallery as { images?: string[] }).images || []).filter(Boolean);
+
+// 라이트박스(크게 보기)용 원본 크기 URL. 내장 사진은 빌드 시 WebP로 변환.
+type Slide = { thumb: ImageMetadata | string; full: string };
+const slides: Slide[] = galleryUploads.length
+  ? galleryUploads.map((src) => ({ thumb: src, full: src }))
+  : await Promise.all(
+      galleryDefault.map(async (meta) => ({
+        thumb: meta,
+        full: (await getImage({ src: meta, width: 1800, format: 'webp' })).src,
+      })),
+    );
+
+// logoScale: 원본 PNG 에 여백이 많은 로고(대한필라테스협회·필라인필립)를 같은 체감 크기로 키움
+const partners = [
+  { key: 'academyKpa', href: '/kpa', logoScale: 'scale-[2.3]' },
+  { key: 'academySpiral', href: '/thespiralbundang', logoScale: '' },
+  { key: 'academyPilatesInPhillip', href: undefined, logoScale: 'scale-[2.6]' },
+] as const;
+---
+
+<Base title={c.title}>
+  <PageHero eyebrow="Pilates & Gyrotonic®" title={c.hero.title} subtitle={c.hero.subtitle} />
+
+  <!-- Intro -->
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-6xl px-5 lg:px-8 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+      <div class="reveal">
+        <p class="eyebrow text-[12px] text-sand-dark font-semibold">{c.intro.eyebrow}</p>
+        <h2 class="mt-3 text-2xl lg:text-3xl font-bold text-ink leading-snug">{c.intro.heading}</h2>
+        <div class="mt-4 w-10 h-px bg-sand"></div>
+        <div class="mt-6 space-y-4 text-[15px] lg:text-base leading-loose text-ink-soft">
+          {c.intro.paragraphs.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 lg:gap-4 reveal">
+        {c.highlights.map((h) => (
+          <div class="bg-cream rounded-xl p-5 lg:p-6">
+            <p class="text-base lg:text-lg font-bold text-ink">{h.label}</p>
+            <p class="mt-1.5 text-[13px] lg:text-[14px] text-ink-soft">{h.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="py-16 lg:py-24 bg-cream">
+    <div class="mx-auto max-w-6xl px-5 lg:px-8">
+      <p class="eyebrow text-[12px] text-sand-dark font-semibold text-center reveal">{c.gallery.eyebrow}</p>
+      <h2 class="mt-3 text-center text-2xl lg:text-3xl font-bold text-ink reveal">{c.gallery.heading}</h2>
+      <p class="mt-3 text-center text-[13px] text-muted reveal">{c.gallery.hint}</p>
+
+      <div id="pilates-gallery" class="mt-12 grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4">
+        {slides.map((s, i) => (
+          <button
+            type="button"
+            data-index={i}
+            data-full={s.full}
+            class:list={[
+              'group relative block w-full rounded-xl overflow-hidden shadow-sm bg-white reveal focus:outline-none focus-visible:ring-2 focus-visible:ring-sand',
+              i === 0 ? 'col-span-2 md:row-span-2 aspect-[4/3]' : 'aspect-[4/3]',
+            ]}
+            aria-label={`${c.gallery.caption} ${i + 1}`}
+          >
+            {typeof s.thumb === 'string' ? (
+              <img src={s.thumb} alt={c.gallery.caption} loading={i === 0 ? 'eager' : 'lazy'}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            ) : (
+              <Image src={s.thumb} alt={c.gallery.caption} loading={i === 0 ? 'eager' : 'lazy'}
+                widths={[480, 800, 1200]} sizes="(min-width: 768px) 50vw, 100vw"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            )}
+            <span class="absolute inset-0 bg-ink/0 group-hover:bg-ink/10 transition-colors" aria-hidden="true"></span>
+            <span class="absolute right-3 bottom-3 w-8 h-8 rounded-full bg-white/90 text-ink flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Videos (홈 PHILLIP LIFE 중 필라테스 영상) -->
+  {clips.length > 0 && (
+    <section class="py-16 lg:py-24 bg-ink text-white">
+      <div class="mx-auto max-w-6xl px-5 lg:px-8">
+        <p class="eyebrow text-[12px] text-sand font-semibold text-center reveal">{c.videos.eyebrow}</p>
+        <h2 class="mt-3 text-center text-2xl lg:text-3xl font-bold reveal">{c.videos.heading}</h2>
+        <p class="mt-3 text-center text-[14px] text-white/55 reveal">{c.videos.desc}</p>
+        <div class:list={['mt-12 grid gap-6 lg:gap-8', clips.length > 1 ? 'md:grid-cols-2' : 'max-w-3xl mx-auto']}>
+          {clips.map((v) => (
+            <figure class="reveal">
+              <div class="aspect-video overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl">
+                {v.youtube ? (
+                  <iframe class="h-full w-full" src={`https://www.youtube-nocookie.com/embed/${v.youtube}?rel=0&modestbranding=1`} title={v.titleKo}
+                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+                ) : (
+                  <video class="h-full w-full object-cover pl-clip" src={v.video} poster={v.poster || undefined}
+                    controls playsinline preload="metadata" controlslist="nodownload" disablepictureinpicture></video>
+                )}
+              </div>
+              <figcaption class="mt-5">
+                <h3 class="text-lg font-bold leading-snug" data-ko={v.titleKo} data-en={v.titleEn}>{v.titleKo}</h3>
+                <p class="mt-2 text-[14px] leading-relaxed text-white/70" data-ko={v.bodyKo} data-en={v.bodyEn}>{v.bodyKo}</p>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Equipment -->
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-6xl px-5 lg:px-8">
+      <p class="eyebrow text-[12px] text-sand-dark font-semibold text-center reveal">{c.equipment.eyebrow}</p>
+      <h2 class="mt-3 text-center text-2xl lg:text-3xl font-bold text-ink reveal">{c.equipment.heading}</h2>
+      <div class="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
+        {c.equipment.items.map((it, i) => (
+          <div class="border border-line rounded-xl p-6 lg:p-7 hover:border-sand hover:shadow-md transition-all reveal">
+            <p class="text-[11px] font-semibold text-sand-dark tracking-widest">{String(i + 1).padStart(2, '0')}</p>
+            <h3 class="mt-2 text-lg font-bold text-ink">{it.name}</h3>
+            <p class="mt-3 text-[14px] leading-relaxed text-ink-soft">{it.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Partners -->
+  <section class="py-16 lg:py-24 bg-cream">
+    <div class="mx-auto max-w-5xl px-5 lg:px-8">
+      <p class="eyebrow text-[12px] text-sand-dark font-semibold text-center reveal">{c.partners.eyebrow}</p>
+      <h2 class="mt-3 text-center text-2xl lg:text-3xl font-bold text-ink reveal">{c.partners.heading}</h2>
+      <div class="mt-12 grid sm:grid-cols-3 gap-4 lg:gap-5">
+        {partners.map((p, i) => {
+          const Tag = p.href ? 'a' : 'div';
+          return (
+            <Tag href={p.href} class:list={['group bg-white border border-line rounded-xl p-6 flex flex-col items-center text-center reveal', p.href && 'hover:shadow-lg hover:border-sand transition-all']}>
+              <div class="h-20 flex items-center justify-center">
+                <Img k={p.key} class:list={['max-h-14 w-auto object-contain origin-center', p.logoScale]} />
+              </div>
+              <h3 class="mt-4 text-[14px] font-semibold text-ink">{c.partners.items[i].name}</h3>
+              <p class="mt-1.5 text-[12px] text-muted">{c.partners.items[i].desc}</p>
+              {p.href && <span class="mt-2 text-[11px] text-sand-dark opacity-0 group-hover:opacity-100 transition-opacity">{c.partners.more}</span>}
+            </Tag>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-3xl px-5 lg:px-8 text-center reveal">
+      <h2 class="text-2xl lg:text-3xl font-bold text-ink">{c.cta.heading}</h2>
+      <p class="mt-4 text-[15px] lg:text-base leading-relaxed text-ink-soft">{c.cta.desc}</p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href={EXTERNAL.kakao} target="_blank" rel="noopener" class="px-8 py-3.5 text-[14px] font-semibold text-white bg-ink hover:bg-sand-dark rounded-full transition-colors">{c.cta.kakao}</a>
+        <a href="/book-online" class="px-8 py-3.5 text-[14px] font-semibold text-ink border border-line hover:border-sand rounded-full transition-colors">{c.cta.book}</a>
+      </div>
+      <a href="/projects" class="inline-block mt-8 text-[13px] text-muted hover:text-ink transition-colors"><span aria-hidden="true">← </span><span>{c.cta.back}</span></a>
+    </div>
+  </section>
+
+  <!-- Lightbox (크게 보기) -->
+  <div id="lightbox" class="fixed inset-0 z-[100] hidden items-center justify-center bg-ink/90 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label={c.gallery.caption}>
+    <button type="button" data-lb="close" class="absolute top-4 right-4 lg:top-6 lg:right-6 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors" aria-label="닫기">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <button type="button" data-lb="prev" class="absolute left-2 lg:left-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors" aria-label="이전 사진">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button type="button" data-lb="next" class="absolute right-2 lg:right-6 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors" aria-label="다음 사진">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+    <figure class="max-w-[92vw] max-h-[88vh] flex flex-col items-center gap-3 px-2">
+      <img id="lightbox-img" src="" alt={c.gallery.caption} class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl select-none" />
+      <figcaption class="text-white/70 text-[13px]"><span>{c.gallery.caption}</span> <span id="lightbox-count" class="text-white/50"></span></figcaption>
+    </figure>
+  </div>
+</Base>
+
+<script>
+  // 영상 제목/설명은 videos.json 의 titleKo/En·bodyKo/En 을 직접 씀 → 언어 토글 시 교체
+  {
+    const paint = () => {
+      let en = false;
+      try { en = localStorage.getItem('scp-lang') === 'en'; } catch {}
+      document.querySelectorAll<HTMLElement>('[data-ko][data-en]').forEach((el) => {
+        el.textContent = (en ? el.dataset.en : el.dataset.ko) || '';
+      });
+    };
+    paint();
+    document.querySelectorAll('[data-lang-btn]').forEach((b) => b.addEventListener('click', () => setTimeout(paint, 0)));
+    // 한 영상을 재생하면 다른 영상은 일시정지
+    const vids = Array.from(document.querySelectorAll<HTMLVideoElement>('video.pl-clip'));
+    vids.forEach((v) => v.addEventListener('play', () => vids.forEach((o) => { if (o !== v) o.pause(); })));
+  }
+
+  // 갤러리 라이트박스: 클릭 → 크게 보기, ←/→ 이동, ESC/배경 클릭 닫기, 모바일 스와이프
+  const gallery = document.getElementById('pilates-gallery');
+  const box = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img') as HTMLImageElement | null;
+  const count = document.getElementById('lightbox-count');
+  if (gallery && box && img && count) {
+    const fulls = Array.from(gallery.querySelectorAll<HTMLButtonElement>('button[data-full]')).map((b) => b.dataset.full!);
+    let cur = 0;
+    const single = fulls.length < 2;
+    box.querySelectorAll<HTMLElement>('[data-lb="prev"],[data-lb="next"]').forEach((b) => b.classList.toggle('hidden', single));
+
+    const show = (i: number) => {
+      cur = (i + fulls.length) % fulls.length;
+      img.src = fulls[cur];
+      count.textContent = single ? '' : `${cur + 1} / ${fulls.length}`;
+    };
+    const open = (i: number) => {
+      show(i);
+      box.classList.remove('hidden');
+      box.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    };
+    const close = () => {
+      box.classList.add('hidden');
+      box.classList.remove('flex');
+      document.body.style.overflow = '';
+    };
+
+    gallery.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-full]');
+      if (btn) open(Number(btn.dataset.index));
+    });
+    box.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      const act = t.closest<HTMLElement>('[data-lb]')?.dataset.lb;
+      if (act === 'close') close();
+      else if (act === 'prev') show(cur - 1);
+      else if (act === 'next') show(cur + 1);
+      else if (t === box) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (box.classList.contains('hidden')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') show(cur - 1);
+      else if (e.key === 'ArrowRight') show(cur + 1);
+    });
+    // 스와이프
+    let x0: number | null = null;
+    box.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+    box.addEventListener('touchend', (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      x0 = null;
+      if (Math.abs(dx) > 40) show(dx < 0 ? cur + 1 : cur - 1);
+    });
+  }
+</script>

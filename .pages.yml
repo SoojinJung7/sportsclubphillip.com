@@ -569,6 +569,150 @@ content:
       - name: supportHeading
         label: supportHeading
         type: string
+  - name: page_pilates
+    label: 페이지 · pilates (필라테스 시설)
+    type: file
+    path: content/pages/pilates.json
+    fields:
+      - name: title
+        label: title
+        type: string
+      - name: hero
+        label: hero
+        type: object
+        fields:
+          - name: title
+            label: title
+            type: string
+          - name: subtitle
+            label: subtitle
+            type: text
+      - name: intro
+        label: intro
+        type: object
+        fields:
+          - name: eyebrow
+            label: eyebrow
+            type: string
+          - name: heading
+            label: heading
+            type: string
+          - name: paragraphs
+            label: paragraphs
+            type: text
+            list: true
+      - name: highlights
+        label: highlights
+        type: object
+        list: true
+        fields:
+          - name: label
+            label: label
+            type: string
+          - name: desc
+            label: desc
+            type: string
+      - name: gallery
+        label: gallery
+        type: object
+        fields:
+          - name: eyebrow
+            label: eyebrow
+            type: string
+          - name: heading
+            label: heading
+            type: string
+          - name: caption
+            label: caption
+            type: string
+          - name: hint
+            label: hint
+            type: string
+          - name: images
+            label: 갤러리 사진 (업로드 · 비우면 내장 사진)
+            type: image
+            list: true
+            options: { media: images }
+      - name: videos
+        label: videos (영상은 홈 PHILLIP LIFE 목록 중 필라테스 영상이 자동으로 표시됩니다)
+        type: object
+        fields:
+          - name: eyebrow
+            label: eyebrow
+            type: string
+          - name: heading
+            label: heading
+            type: string
+          - name: desc
+            label: desc
+            type: string
+          - name: featured
+            label: 맨 앞에 둘 영상 (홈 영상 목록의 파일 경로, 예 /videos/PL LINA.mp4)
+            type: string
+      - name: equipment
+        label: equipment
+        type: object
+        fields:
+          - name: eyebrow
+            label: eyebrow
+            type: string
+          - name: heading
+            label: heading
+            type: string
+          - name: items
+            label: items
+            type: object
+            list: true
+            fields:
+              - name: name
+                label: name
+                type: string
+              - name: desc
+                label: desc
+                type: text
+      - name: partners
+        label: partners
+        type: object
+        fields:
+          - name: eyebrow
+            label: eyebrow
+            type: string
+          - name: heading
+            label: heading
+            type: string
+          - name: items
+            label: items
+            type: object
+            list: true
+            fields:
+              - name: name
+                label: name
+                type: string
+              - name: desc
+                label: desc
+                type: string
+          - name: more
+            label: more
+            type: string
+      - name: cta
+        label: cta
+        type: object
+        fields:
+          - name: heading
+            label: heading
+            type: string
+          - name: desc
+            label: desc
+            type: text
+          - name: kakao
+            label: kakao
+            type: string
+          - name: book
+            label: book
+            type: string
+          - name: back
+            label: back
+            type: string
   - name: page_projects
     label: 페이지 · projects
     type: file
@@ -598,6 +742,9 @@ content:
           - name: desc
             label: desc
             type: text
+          - name: cta
+            label: 버튼 문구 (필라테스 항목만 · 비우면 버튼 숨김)
+            type: string
   - name: page_promotion
     label: 페이지 · promotion
     type: file

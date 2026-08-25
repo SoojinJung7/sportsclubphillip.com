@@ -34,7 +34,10 @@ export const NAV: NavItem[] = [
   {
     label: 'PROGRAMS / FACILITIES',
     href: '/projects',
-    children: [{ label: '프로그램 / 시설 둘러보기', href: '/projects' }],
+    children: [
+      { label: '프로그램 / 시설 둘러보기', href: '/projects' },
+      { label: '필라테스 / 자이로토닉® 시설', href: '/pilates' },
+    ],
   },
   {
     label: 'PROMOTION / SCHEDULE',
@@ -111,7 +114,7 @@ export const IMAGES = {
   facilitySwim: D('6f7ec1_dfb4c3e7baaf41759e0edcb3d75e593d~mv2.jpg', 'facility-swim.jpg', '수영 / 아쿠아'),
   facilityGx: D('6f7ec1_447d81b14a594df296e5b1e0d723d0a6~mv2.jpg', 'facility-gx.jpg', 'GX'),
   facilityAiCircuit: D('6f7ec1_7582796142ec4322b1a670773d96865c~mv2.jpg', 'facility-aicircuit.jpg', 'AI 서킷 트레이닝'),
-  facilityPilates: D('6f7ec1_fa75302454fd4f9580f2389576ec533a~mv2.jpg', 'facility-pilates.jpg', '필라테스 / 자이로토닉'),
+  facilityPilates: D('6f7ec1_fa75302454fd4f9580f2389576ec533a~mv2.jpg', 'facility-pilates.jpg', '필라테스 / 자이로토닉®'),
   facilityYouth: D('6f7ec1_05372ada15864abc9ca0bdc901825904~mv2.jpg', 'facility-youth.jpg', '유소년스포츠'),
   facilitySauna: D('6f7ec1_8b83f197098a4aeb9a164cdfcdbfc8f6~mv2.jpg', 'facility-sauna.jpg', '사우나'),
   // about / brand

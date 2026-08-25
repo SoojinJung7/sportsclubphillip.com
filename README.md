@@ -21,7 +21,7 @@ src/
   layouts/Base.astro    ← 공통 HTML/head/헤더/푸터 골격
   components/           ← Header, Footer, PageHero, BrandPage
   pages/                ← 각 페이지 (index, about, operating, projects, promotion,
-                          schedule, swimminglesson, academy, kpa, bally,
+                          pilates, schedule, swimminglesson, academy, kpa, bally,
                           thespiralbundang, challenges, blog, book-online, 404)
 public/
   images/               ← Wix 원본 백업 (대용량, git 제외 — 재최적화용 소스)
