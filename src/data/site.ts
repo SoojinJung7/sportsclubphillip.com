@@ -10,6 +10,11 @@ import mediaJson from '../../content/media.json';
 const MEDIA: Record<string, { src: string; alt: string }> = Object.fromEntries(
   (mediaJson as { key: string; src: string; alt: string }[]).map((m) => [m.key, { src: m.src, alt: m.alt }]),
 );
+// 매달 교체하는 포스터(GX·수영·영업안내·프로모션)는 CMS "📅 이달의 포스터" 페이지에서
+// 업로드합니다 → content/posters.json (키 → /uploads/… 경로). 비어 있으면 무시되고
+// 기존 media.json / 번들 이미지가 그대로 쓰입니다.
+import postersJson from '../../content/posters.json';
+const POSTERS = postersJson as Record<string, string>;
 
 export const SITE = {
   ...settings.site,
@@ -155,11 +160,14 @@ export type ImgKey = keyof typeof IMAGES;
 export function localImg(key: ImgKey): ImageMetadata | undefined {
   return LOCAL[IMAGES[key].local];
 }
-// CMS upload / override: if content/media.json has a real src for this key
-// (an uploaded /uploads/… path or a custom URL — NOT the vestigial Wix default
-// and not empty), that wins over the built-in optimized asset. This is what
-// makes every photo replaceable from Pages CMS. Returns null when unset.
+// CMS upload / override — 우선순위:
+//   1) content/posters.json — "📅 이달의 포스터" 페이지에서 올린 이번 달 포스터
+//   2) content/media.json 의 src — '사진' 목록에서 올린 파일이나 직접 넣은 URL
+//      (빈 값이나 남아 있는 Wix 기본 URL 은 무시)
+// 둘 다 없으면 null → Img.astro 가 번들된 최적화 이미지(localImg)를 씁니다.
 export function imgOverride(key: ImgKey): string | null {
+  const poster = POSTERS[key]?.trim();
+  if (poster) return poster;
   const src = MEDIA[key]?.src?.trim();
   if (src && !src.startsWith(WIX)) return src;
   return null;

@@ -17,6 +17,20 @@ media:
     categories: [video]
 
 content:
+  - name: monthly_posters
+    label: "📅 이달의 포스터 (매달 교체)"
+    type: file
+    path: content/posters.json
+    fields:
+      - { name: scheduleOperating, label: "영업 안내 포스터 — 홈 '영업 안내' + 시간표 페이지", type: image, options: { media: images } }
+      - { name: scheduleGx, label: "GX 강습 스케줄 포스터 — 시간표 페이지", type: image, options: { media: images } }
+      - { name: swimmingSchedule, label: "수영 강습 스케줄 포스터 — 수영강습 페이지", type: image, options: { media: images } }
+      - { name: swimmingNotice, label: "수영 강습 안내 포스터 — 수영강습 페이지 (자주 안 바뀜)", type: image, options: { media: images } }
+      - { name: promoCurrent, label: "프로모션 포스터 1 — 홈 팝업·이달의 프로모션 + 프로모션 페이지", type: image, options: { media: images } }
+      - { name: promoPilates, label: "프로모션 포스터 2 — 홈 팝업·이달의 프로모션", type: image, options: { media: images } }
+      - { name: promoHealth1, label: "프로모션 포스터 3 — 홈 팝업·이달의 프로모션", type: image, options: { media: images } }
+      - { name: promoHealth2, label: "프로모션 포스터 4 — 홈 팝업·이달의 프로모션 (지금은 미사용)", type: image, options: { media: images } }
+
   - name: settings
     label: 사이트 설정 (연락처·시간·SNS)
     type: file
