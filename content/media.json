@@ -1,222 +1,178 @@
 [
   {
     "key": "logo",
-    "alt": "스포츠클럽필립",
-    "src": ""
+    "alt": "스포츠클럽필립"
   },
   {
     "key": "homeAiWide",
-    "alt": "AI 서킷 트레이닝룸",
-    "src": ""
+    "alt": "AI 서킷 트레이닝룸"
   },
   {
     "key": "homeAiTall",
-    "alt": "AI 서킷 트레이닝룸",
-    "src": ""
+    "alt": "AI 서킷 트레이닝룸"
   },
   {
     "key": "promoCurrent",
-    "alt": "이달의 프로모션",
-    "src": ""
+    "alt": "이달의 프로모션"
   },
   {
     "key": "promoPilates",
-    "alt": "필라인필립 출석 프로모션",
-    "src": ""
+    "alt": "필라인필립 프로모션"
   },
   {
     "key": "promoHealth1",
-    "alt": "헬스팀 여름한정 출석 프로모션",
-    "src": ""
+    "alt": "헬스&필라 9월 프로모션"
   },
   {
     "key": "promoHealth2",
-    "alt": "헬스팀 여름한정 출석 프로모션",
-    "src": ""
+    "alt": "헬스팀 여름한정 출석 프로모션"
   },
   {
     "key": "homeFeatureFitness",
-    "alt": "GYM & FITNESS",
-    "src": ""
+    "alt": "GYM & FITNESS"
   },
   {
     "key": "homeGxIcon",
-    "alt": "GROUP EXERCISE",
-    "src": ""
+    "alt": "GROUP EXERCISE"
   },
   {
     "key": "homeKpaIcon",
-    "alt": "대한필라테스협회",
-    "src": ""
+    "alt": "대한필라테스협회"
   },
   {
     "key": "homeAcademyIcon",
-    "alt": "ACADEMY",
-    "src": ""
+    "alt": "ACADEMY"
   },
   {
     "key": "homeWellnessHero",
-    "alt": "Total Wellness",
-    "src": ""
+    "alt": "Total Wellness"
   },
   {
     "key": "facilityHealth",
-    "alt": "헬스 / PT",
-    "src": ""
+    "alt": "헬스 / PT"
   },
   {
     "key": "facilityGolf",
-    "alt": "스크린 골프",
-    "src": ""
+    "alt": "스크린 골프"
   },
   {
     "key": "facilitySwim",
-    "alt": "수영 / 아쿠아",
-    "src": ""
+    "alt": "수영 / 아쿠아"
   },
   {
     "key": "facilityGx",
-    "alt": "GX",
-    "src": ""
+    "alt": "GX"
   },
   {
     "key": "facilityAiCircuit",
-    "alt": "AI 서킷 트레이닝",
-    "src": ""
+    "alt": "AI 서킷 트레이닝"
   },
   {
     "key": "facilityPilates",
-    "alt": "필라테스 / 자이로토닉®",
-    "src": ""
+    "alt": "필라테스 / 자이로토닉®"
   },
   {
     "key": "facilityYouth",
-    "alt": "유소년스포츠",
-    "src": ""
+    "alt": "유소년스포츠"
   },
   {
     "key": "facilitySauna",
-    "alt": "사우나",
-    "src": ""
+    "alt": "사우나"
   },
   {
     "key": "brandStory",
-    "alt": "필립 브랜드 스토리",
-    "src": ""
+    "alt": "필립 브랜드 스토리"
   },
   {
     "key": "brandBally",
-    "alt": "발리토탈휘트니스",
-    "src": ""
+    "alt": "발리토탈휘트니스"
   },
   {
     "key": "brandPivot",
-    "alt": "아카데미 피봇",
-    "src": ""
+    "alt": "아카데미 피봇"
   },
   {
     "key": "brandWellnesphilia",
-    "alt": "웰니스필리아",
-    "src": ""
+    "alt": "웰니스필리아"
   },
   {
     "key": "scheduleOperating",
-    "alt": "영업 안내 스케줄",
-    "src": ""
+    "alt": "영업 안내 스케줄"
   },
   {
     "key": "scheduleGx",
-    "alt": "GX 강습 스케줄",
-    "src": ""
+    "alt": "GX 강습 스케줄"
   },
   {
     "key": "swimmingNotice",
-    "alt": "수영 강습 안내",
-    "src": ""
+    "alt": "수영 강습 안내"
   },
   {
     "key": "swimmingSchedule",
-    "alt": "수영 강습 스케줄",
-    "src": ""
+    "alt": "수영 강습 스케줄"
   },
   {
     "key": "academyPivot",
-    "alt": "아카데미 피봇",
-    "src": ""
+    "alt": "아카데미 피봇"
   },
   {
     "key": "academyKpa",
-    "alt": "사단법인대한필라테스협회",
-    "src": ""
+    "alt": "사단법인대한필라테스협회"
   },
   {
     "key": "academySfm",
-    "alt": "SFM 스포츠과학센터",
-    "src": ""
+    "alt": "SFM 스포츠과학센터"
   },
   {
     "key": "academySpiral",
-    "alt": "더스파이럴분당",
-    "src": ""
+    "alt": "더스파이럴분당"
   },
   {
     "key": "academyKcpt",
-    "alt": "SFM_KCPT 트레이너 아카데미",
-    "src": ""
+    "alt": "SFM_KCPT 트레이너 아카데미"
   },
   {
     "key": "academyBally",
-    "alt": "발리유소년스포츠클럽",
-    "src": ""
+    "alt": "발리유소년스포츠클럽"
   },
   {
     "key": "academyPilatesInPhillip",
-    "alt": "필라인필립",
-    "src": ""
+    "alt": "필라인필립"
   },
   {
     "key": "kpaAssociation",
-    "alt": "사단법인대한필라테스협회",
-    "src": ""
+    "alt": "사단법인대한필라테스협회"
   },
   {
     "key": "ballyLogo",
-    "alt": "발리유소년스포츠클럽",
-    "src": ""
+    "alt": "발리유소년스포츠클럽"
   },
   {
     "key": "spiralLogo",
-    "alt": "더스파이럴분당",
-    "src": ""
+    "alt": "더스파이럴분당"
   },
   {
     "key": "challenge",
-    "alt": "프로그램",
-    "src": ""
+    "alt": "프로그램"
   },
   {
     "key": "iconKakao",
-    "alt": "KakaoTalk",
-    "src": ""
+    "alt": "KakaoTalk"
   },
   {
     "key": "iconInstagram",
-    "alt": "Instagram",
-    "src": ""
+    "alt": "Instagram"
   },
   {
     "key": "iconFacebook",
-    "alt": "Facebook",
-    "src": ""
+    "alt": "Facebook"
   },
   {
     "key": "iconNaverBlog",
-    "alt": "Naver Blog",
-    "src": ""
+    "alt": "Naver Blog"
   },
   {
     "key": "iconNaverMap",
-    "alt": "Naver Map",
-    "src": ""
+    "alt": "Naver Map"
   }
 ]
