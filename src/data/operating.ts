@@ -88,17 +88,36 @@ export function isClubOpen(d: Date): boolean {
 /**
  * 빌드 시점(=배포한 달)의 실제 휴관일·공휴일 안내 문구.
  * 해당 월이 operating-calendar.json 에 없으면 null → 페이지는 기존 일반 문구로 폴백합니다.
- * 월을 문구에 함께 넣으므로("8월 휴관일 …") 다음 달에 재배포가 늦어도 오해 소지가 없습니다.
+ * 월을 문구에 함께 넣으므로("9월 휴관일 …") 다음 달에 재배포가 늦어도 오해 소지가 없습니다.
+ *
+ * 운영안내 포스터가 '정기 휴관'(흰색)과 '명절휴관'(빨강)을 구분해 표기하므로 여기서도
+ * closed 를 세 갈래로 나눕니다 — 추석처럼 휴관이면서 공휴일인 날이 '정기 휴관'으로
+ * 묶여 버리면 안 되기 때문입니다.
+ *   regular       휴관이지만 공휴일은 아닌 날      → 정기 휴관
+ *   holidayClosed 휴관이면서 공휴일인 날            → 명절·공휴일 휴관 (라벨 표기)
+ *   openHolidays  공휴일이지만 휴관은 아닌 날       → 영업하되 GX·수영 강습 미운영
  */
-export function closedNotice(): { month: string; closed: string; holidays: string } | null {
+export function closedNotice(): {
+  month: string;
+  regular: string;
+  holidayClosed: string;
+  openHolidays: string;
+} | null {
   const d = kstNow();
   const m = monthEntry(d);
   if (!m) return null;
   const day = (iso: string) => `${Number(iso.slice(8, 10))}일`;
-  const closed = (m.closed ?? []).map(day).join(' · ');
-  const holidays = (m.holidays ?? []).map((h) => `${day(h.date)}(${h.label})`).join(' · ');
-  if (!closed && !holidays) return null;
-  return { month: `${d.getMonth() + 1}월`, closed, holidays };
+  const closedDates = m.closed ?? [];
+  const holidays = m.holidays ?? [];
+  const holidayDates = new Set(holidays.map((h) => h.date));
+
+  const regular = closedDates.filter((x) => !holidayDates.has(x)).map(day).join(' · ');
+  const withLabel = (h: { date: string; label: string }) => `${day(h.date)}(${h.label})`;
+  const holidayClosed = holidays.filter((h) => closedDates.includes(h.date)).map(withLabel).join(' · ');
+  const openHolidays = holidays.filter((h) => !closedDates.includes(h.date)).map(withLabel).join(' · ');
+
+  if (!regular && !holidayClosed && !openHolidays) return null;
+  return { month: `${d.getMonth() + 1}월`, regular, holidayClosed, openHolidays };
 }
 
 /** 라벨로 시설 찾기 (사우나 배지 등) */

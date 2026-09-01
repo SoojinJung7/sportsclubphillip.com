@@ -205,12 +205,18 @@ const programs = [
             <p class="flex flex-wrap items-baseline gap-x-1.5 text-[13px]">
               <span class="font-semibold text-sand-dark">{op.notice.closedTitle}</span>
               <span class="text-ink-soft">
-                {monthNotice ? ` · ${monthNotice.month} ${monthNotice.closed}` : op.notice.closedText}
+                {monthNotice?.regular ? ` · ${monthNotice.month} ${monthNotice.regular}` : op.notice.closedText}
               </span>
             </p>
-            {monthNotice?.holidays && (
+            {monthNotice?.holidayClosed && (
+              <p class="mt-1.5 flex flex-wrap items-baseline gap-x-1.5 text-[13px] leading-relaxed">
+                <span class="font-semibold text-sand-dark">명절 휴관</span>
+                <span class="text-ink-soft">· {monthNotice.holidayClosed}</span>
+              </p>
+            )}
+            {monthNotice?.openHolidays && (
               <p class="mt-1.5 text-[13px] leading-relaxed text-ink-soft">
-                공휴일 · {monthNotice.holidays}
+                공휴일 · {monthNotice.openHolidays}
               </p>
             )}
             <p class="mt-1.5 text-[13px] leading-relaxed text-ink-soft">{op.notice.holiday}</p>

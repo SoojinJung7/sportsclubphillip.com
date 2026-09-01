@@ -48,9 +48,12 @@ const mapEmbed = 'https://www.google.com/maps?q=' + encodeURIComponent('경기�
         <div class="mt-5 p-4 bg-cream rounded-lg text-[13px] text-ink-soft leading-relaxed">
           <p>
             <strong class="text-ink">{c.notice.closedTitle}</strong>
-            {monthNotice ? ` · ${monthNotice.month} ${monthNotice.closed}` : c.notice.closedText}
+            {monthNotice?.regular ? ` · ${monthNotice.month} ${monthNotice.regular}` : c.notice.closedText}
           </p>
-          {monthNotice?.holidays && <p class="mt-1">공휴일 · {monthNotice.holidays}</p>}
+          {monthNotice?.holidayClosed && (
+            <p class="mt-1"><strong class="text-ink">명절 휴관</strong> · {monthNotice.holidayClosed}</p>
+          )}
+          {monthNotice?.openHolidays && <p class="mt-1">공휴일 · {monthNotice.openHolidays}</p>}
           <p class="mt-1">{c.notice.holiday}</p>
         </div>
 
