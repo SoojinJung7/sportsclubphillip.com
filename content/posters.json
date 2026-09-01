@@ -1,10 +1,8 @@
 {
-  "scheduleOperating": "",
-  "scheduleGx": "",
-  "swimmingSchedule": "",
-  "swimmingNotice": "",
-  "promoCurrent": "",
-  "promoPilates": "",
-  "promoHealth1": "",
-  "promoHealth2": ""
+  "scheduleOperating": "/uploads/_9월-영업안내-포스터_정자본점SNS.jpg",
+  "scheduleGx": "/uploads/_9월-GX스케쥴-포스터_3.jpg",
+  "swimmingSchedule": "/uploads/_9월 수영강습스케줄-1.png",
+  "promoCurrent": "/uploads/1.jpg",
+  "promoPilates": "/uploads/2.png",
+  "promoHealth1": "/uploads/3.png"
 }
