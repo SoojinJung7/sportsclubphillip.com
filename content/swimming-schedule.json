@@ -1,5 +1,5 @@
 {
-  "month": "8월",
+  "month": "9월",
   "note": "수영장 시설 및 프로그램은 멤버십만 이용 가능합니다.",
   "days": {
     "mon": [
@@ -180,7 +180,7 @@
       {
         "start": "20:30",
         "name": "성인 수영",
-        "level": "교정",
+        "level": "상급",
         "instructor": "안기범"
       },
       {
@@ -260,7 +260,7 @@
       {
         "start": "09:00",
         "name": "성인 수영",
-        "level": "중상급",
+        "level": "상급",
         "instructor": "주재인"
       },
       {
@@ -318,6 +318,12 @@
         "instructor": "최윤정"
       },
       {
+        "start": "16:00",
+        "name": "성인 건강반",
+        "level": "초급",
+        "instructor": "강솔"
+      },
+      {
         "start": "17:00",
         "name": "어린이 수영",
         "level": "연수",
@@ -333,7 +339,7 @@
         "start": "17:00",
         "name": "어린이 수영",
         "level": "중급",
-        "instructor": ""
+        "instructor": "안기범"
       },
       {
         "start": "19:30",
@@ -586,7 +592,7 @@
       {
         "start": "20:30",
         "name": "성인 수영",
-        "level": "교정",
+        "level": "상급",
         "instructor": "안기범"
       },
       {
@@ -666,7 +672,7 @@
       {
         "start": "09:00",
         "name": "성인 수영",
-        "level": "중상급",
+        "level": "상급",
         "instructor": "주재인"
       },
       {
@@ -724,6 +730,12 @@
         "instructor": "최윤정"
       },
       {
+        "start": "16:00",
+        "name": "성인 건강반",
+        "level": "초급",
+        "instructor": "강솔"
+      },
+      {
         "start": "17:00",
         "name": "어린이 수영",
         "level": "연수",
@@ -739,7 +751,7 @@
         "start": "17:00",
         "name": "어린이 수영",
         "level": "중급",
-        "instructor": ""
+        "instructor": "안기범"
       },
       {
         "start": "19:30",
@@ -926,32 +938,32 @@
       {
         "start": "15:00",
         "name": "성인 건강반",
-        "level": "초급",
-        "instructor": ""
+        "level": "소수반",
+        "instructor": "강솔"
       },
       {
         "start": "16:00",
         "name": "어린이 수영",
         "level": "연수",
-        "instructor": ""
+        "instructor": "강솔"
       },
       {
         "start": "16:00",
         "name": "어린이 수영",
         "level": "상급",
-        "instructor": ""
+        "instructor": "최윤정"
       },
       {
         "start": "17:00",
         "name": "어린이 수영",
         "level": "연수",
-        "instructor": ""
+        "instructor": "최윤정"
       },
       {
         "start": "17:00",
         "name": "어린이 수영",
         "level": "상급",
-        "instructor": ""
+        "instructor": "강솔"
       },
       {
         "start": "19:30",
@@ -986,7 +998,7 @@
       {
         "start": "20:30",
         "name": "성인 수영",
-        "level": "교정",
+        "level": "상급",
         "instructor": "안기범"
       },
       {
