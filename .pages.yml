@@ -118,8 +118,7 @@ content:
     type: file
     path: content/chat-mascot.json
     fields:
-      - { name: enabled, label: "마스코트 켜기 — 끄면 평소의 오렌지 '상담 문의' 버튼으로 돌아갑니다 (영어 화면에서는 항상 평소 버튼)", type: boolean }
-      - { name: alt, label: 설명 (대체 텍스트), type: string }
+      - { name: enabled, label: "마스코트 켜기 — 끄면 평소의 오렌지 '상담 문의' 버튼으로 돌아갑니다 (영어 화면에서는 알약 문구가 Chat 인 영상이 나갑니다)", type: boolean }
 
   - name: operating_calendar
     label: 운영 캘린더 (휴관일 · 공휴일 · 시설 시간)

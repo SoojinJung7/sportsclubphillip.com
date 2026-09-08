@@ -13,6 +13,8 @@
 const PHILLIPTALK_URL = 'https://to-philip.vercel.app';
 
 // 시즌 마스코트(추석 토끼)가 '상담 문의' 알약을 들고 있는 영상으로 버튼을 대체합니다.
+// 파일은 `${MASCOT}-{ko|en}.{webm,mp4,webp}` 여섯 벌 — 알약 문구가 영상에 박혀 있어
+// 한/영을 따로 만들었습니다(영문판은 같은 알약에 'Chat').
 // CMS "💬 상담 버튼 마스코트"에서 켜고 끕니다 → content/chat-mascot.json (enabled).
 // 끄면 원래의 오렌지 알약 버튼이 그대로 나옵니다.
 import mascot from '../../content/chat-mascot.json';
@@ -78,11 +80,12 @@ const STRINGS = {
     class="group relative flex items-center gap-2 rounded-full bg-[#ef7622] px-4 py-3 text-white shadow-[0_0_18px_rgba(239,118,34,0.45)] transition hover:bg-[#d9631a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ef7622]"
   >
     {mascot.enabled && (
-      <!-- 마스코트 영상. 알약(상담 문의)이 영상 안에 들어 있어 아래 아이콘·글씨를 대신합니다.
-           src는 스크립트가 붙입니다 — Safari만 알파 HEVC(mp4), 나머지는 알파 VP9(webm).
-           재생이 막히거나(자동재생 차단·동작 최소화) src가 안 붙으면 poster 정지컷이 남습니다. -->
-      <span class="scp-mascot" aria-hidden="true" data-webm={`${MASCOT}.webm`} data-mp4={`${MASCOT}.mp4`}>
-        <video class="scp-mascot-video" poster={`${MASCOT}.webp`} autoplay loop muted playsinline preload="none"></video>
+      <!-- 마스코트 영상. 알약(상담 문의 / Chat)이 영상 안에 들어 있어 아래 아이콘·글씨를 대신합니다.
+           한/영 두 벌이라 스크립트가 `-ko`·`-en` 을 붙여 고릅니다. 확장자도 스크립트가 고름 —
+           Safari만 알파 HEVC(mp4), 나머지는 알파 VP9(webm).
+           재생이 막히면(자동재생 차단·동작 최소화) poster 정지컷이 남습니다. -->
+      <span class="scp-mascot" aria-hidden="true" data-src={MASCOT}>
+        <video class="scp-mascot-video" poster={`${MASCOT}-ko.webp`} autoplay loop muted playsinline preload="none"></video>
       </span>
     )}
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="scp-toggle-icon h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12Z"/></svg>
@@ -154,8 +157,7 @@ const STRINGS = {
   /* ---- 시즌 마스코트(추석 토끼) 상담 버튼 -------------------------------
      영상 안에 오렌지 알약('상담 문의')이 이미 그려져 있으므로, 켜지면
      버튼의 배경·아이콘·글씨를 걷어내고 영상만 남긴다.
-     'scp-mascot-on' 은 CMS에서 켜 두면 빌드 때 붙고(= 깜빡임 없음),
-     영어로 전환할 때만 스크립트가 떼어낸다.
+     'scp-mascot-on' 은 CMS에서 켜 두면 빌드 때 붙는다(= 깜빡임 없음).
      ── 크기 맞춤 (실측) ──
      영상 원본 292×330 을 146px 폭으로 그리면 그 안의 알약이 119×44px 로
      원래 버튼(약 120×45px)과 같아진다. 알약은 영상 오른쪽에서 3px,
@@ -252,20 +254,24 @@ const STRINGS = {
     }
 
     // ---- 시즌 마스코트(추석 토끼) ----------------------------------------
-    // 알약 안의 '상담 문의'가 영상에 한글로 박혀 있어 한국어일 때만 띄운다.
+    // 알약의 문구가 영상에 박혀 있어 한국어('상담 문의')·영어('Chat') 두 벌을 두고
+    // 언어 토글에 맞춰 갈아끼운다. 필요한 한 벌만 내려받는다.
     // 영상은 배경이 투명해야 하는데 Safari는 WebM의 알파를 무시하고 검게 칠하므로
     // Safari에만 알파 HEVC(mp4)를, 나머지 브라우저엔 알파 VP9(webm)를 준다.
-    // 동작 최소화를 켠 방문자에겐 src를 붙이지 않아 poster(정지컷)만 보인다.
+    // 동작 최소화를 켠 방문자에겐 src를 붙이지 않아 poster(정지컷)만 남는다.
     var mascot = root.querySelector('.scp-mascot');
     function loadMascot() {
-      if (!mascot || mascot.dataset.loaded) return;
-      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduce) return;
-      var ua = navigator.userAgent;
-      var isWebKit = /^((?!chrome|chromium|android|crios|fxios|edgios|opr).)*safari/i.test(ua);
+      if (!mascot) return;
+      var want = lang();
+      if (mascot.dataset.loaded === want) return;
       var v = mascot.querySelector('video');
-      v.src = mascot.dataset[isWebKit ? 'mp4' : 'webm'];
-      mascot.dataset.loaded = '1';
+      var base = mascot.dataset.src + '-' + want;
+      v.poster = base + '.webp';
+      mascot.dataset.loaded = want;
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) { v.removeAttribute('src'); v.load(); return; }
+      var isWebKit = /^((?!chrome|chromium|android|crios|fxios|edgios|opr).)*safari/i.test(navigator.userAgent);
+      v.src = base + (isWebKit ? '.mp4' : '.webm');
       var p = v.play();               // 자동재생이 막히면 poster가 그대로 남는다
       if (p && p.catch) p.catch(function () {});
     }
@@ -282,9 +288,7 @@ const STRINGS = {
       contactInput.placeholder = s.contactPh;
       textInput.placeholder = s.inputPh;
       toggle.setAttribute('aria-label', s.open);
-      var useMascot = !!mascot && lang() === 'ko';
-      root.classList.toggle('scp-mascot-on', useMascot);
-      if (useMascot) loadMascot();    // 영어로만 보는 방문자는 영상을 받지 않는다
+      loadMascot();                   // 언어에 맞는 영상으로 (없으면 아무 것도 안 함)
       updatePresence();
     }
     new MutationObserver(applyStrings).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
