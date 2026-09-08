@@ -113,6 +113,14 @@ content:
           - { name: alt, label: 설명 (대체 텍스트), type: string }
           - { name: link, label: 링크 주소 (비우면 기본 링크), type: string }
 
+  - name: chat_mascot
+    label: 💬 상담 버튼 마스코트 (시즌 한정)
+    type: file
+    path: content/chat-mascot.json
+    fields:
+      - { name: enabled, label: "마스코트 켜기 — 끄면 평소의 오렌지 '상담 문의' 버튼으로 돌아갑니다 (영어 화면에서는 항상 평소 버튼)", type: boolean }
+      - { name: alt, label: 설명 (대체 텍스트), type: string }
+
   - name: operating_calendar
     label: 운영 캘린더 (휴관일 · 공휴일 · 시설 시간)
     type: file
