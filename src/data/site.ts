@@ -34,6 +34,7 @@ export const NAV: NavItem[] = [
     children: [
       { label: '회사소개', href: '/about' },
       { label: '운영시간 / 오시는길', href: '/operating' },
+      { label: '채용 안내', href: '/career' },
     ],
   },
   {

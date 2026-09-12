@@ -734,6 +734,96 @@ content:
           - name: back
             label: back
             type: string
+  - name: page_career
+    label: 페이지 · career (채용 안내)
+    type: file
+    path: content/pages/career.json
+    fields:
+      - name: title
+        label: 브라우저 탭 제목
+        type: string
+      - name: hero
+        label: 상단 히어로
+        type: object
+        fields:
+          - { name: title, label: 제목, type: string }
+          - { name: subtitle, label: 부제, type: text }
+      - name: intro
+        label: 소개
+        type: object
+        fields:
+          - { name: eyebrow, label: 작은 영문 라벨, type: string }
+          - { name: heading, label: 제목, type: string }
+          - { name: paragraphs, label: 문단, type: text, list: true }
+      - name: highlights
+        label: 필립에서 일하는 이유 (4개 카드)
+        type: object
+        list: true
+        fields:
+          - { name: label, label: 제목, type: string }
+          - { name: desc, label: 설명, type: string }
+      - name: positions
+        label: 채용 분야
+        type: object
+        fields:
+          - { name: eyebrow, label: 작은 영문 라벨, type: string }
+          - { name: heading, label: 제목, type: string }
+          - { name: desc, label: 설명, type: text }
+          - name: items
+            label: "포지션 목록 (status 에 '마감' 이라고 쓰면 회색으로 표시)"
+            type: object
+            list: true
+            fields:
+              - { name: title, label: 직무명, type: string }
+              - { name: type, label: 고용 형태, type: string }
+              - { name: area, label: 근무 부서, type: string }
+              - { name: desc, label: 업무 설명, type: text }
+              - { name: status, label: "상태 (상시 모집 / 모집 중 / 마감)", type: string }
+      - name: process
+        label: 지원 절차
+        type: object
+        fields:
+          - { name: eyebrow, label: 작은 영문 라벨, type: string }
+          - { name: heading, label: 제목, type: string }
+          - name: steps
+            label: 단계
+            type: object
+            list: true
+            fields:
+              - { name: title, label: 단계명, type: string }
+              - { name: desc, label: 설명, type: text }
+      - name: apply
+        label: 지원 방법 (이메일)
+        type: object
+        fields:
+          - { name: heading, label: 제목, type: string }
+          - { name: desc, label: 설명, type: text }
+          - { name: email, label: 지원 접수 이메일, type: string }
+          - { name: subjectPrefix, label: "메일 제목 앞머리 (예: [지원])", type: string }
+          - { name: subjectHint, label: 메일 제목 예시 문구, type: string }
+          - { name: documentsLabel, label: 제출 서류 라벨, type: string }
+          - { name: documents, label: 제출 서류 목록, type: string, list: true }
+          - { name: button, label: 지원 버튼 문구, type: string }
+          - { name: copy, label: 이메일 복사 버튼 문구, type: string }
+          - { name: copied, label: 복사 완료 문구, type: string }
+      - name: faq
+        label: 자주 묻는 질문
+        type: object
+        fields:
+          - { name: eyebrow, label: 작은 영문 라벨, type: string }
+          - { name: heading, label: 제목, type: string }
+          - name: items
+            label: 질문 목록
+            type: object
+            list: true
+            fields:
+              - { name: q, label: 질문, type: string }
+              - { name: a, label: 답변, type: text }
+      - name: cta
+        label: 하단 링크
+        type: object
+        fields:
+          - { name: back, label: 돌아가기 링크 문구, type: string }
   - name: page_projects
     label: 페이지 · projects
     type: file

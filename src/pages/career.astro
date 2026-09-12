@@ -1,0 +1,170 @@
+---
+// 채용 안내 서브페이지 (/career)
+// - 본문(한국어): content/pages/career.json  (CMS: 페이지 · career)
+// - 지원은 이메일(apply.email)로 받습니다. 포지션 목록(positions.items)은 CMS에서
+//   추가/삭제하고, status 를 '마감' 으로 바꾸면 회색으로 표시됩니다.
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { SITE } from '../data/site';
+import c from '../../content/pages/career.json';
+
+type Position = { title: string; type: string; area: string; desc: string; status: string };
+const positions = c.positions.items as Position[];
+const isClosed = (s: string) => /마감/.test(s);
+
+const email = c.apply.email.trim();
+const mailto = `mailto:${email}?subject=${encodeURIComponent(`${c.apply.subjectPrefix} 지원 분야 - 성함`)}`;
+const description = `${SITE.name} 채용 안내 — 헬스 트레이너, 수영·GX·필라테스 강사, 프런트 상시 모집. 이메일 ${email} 로 지원해 주세요.`;
+---
+
+<Base title={c.title} description={description}>
+  <PageHero eyebrow="Career" title={c.hero.title} subtitle={c.hero.subtitle} />
+
+  <!-- Intro + highlights -->
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-6xl px-5 lg:px-8 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+      <div class="reveal">
+        <p class="eyebrow text-[12px] text-sand-dark font-semibold">{c.intro.eyebrow}</p>
+        <h2 class="mt-3 text-2xl lg:text-3xl font-bold text-ink leading-snug">{c.intro.heading}</h2>
+        <div class="mt-4 w-10 h-px bg-sand"></div>
+        <div class="mt-6 space-y-4 text-[15px] lg:text-base leading-loose text-ink-soft">
+          {c.intro.paragraphs.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 lg:gap-4 reveal">
+        {c.highlights.map((h) => (
+          <div class="bg-cream rounded-xl p-5 lg:p-6">
+            <p class="text-base lg:text-lg font-bold text-ink">{h.label}</p>
+            <p class="mt-1.5 text-[13px] lg:text-[14px] text-ink-soft">{h.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Positions -->
+  <section id="positions" class="py-16 lg:py-24 bg-cream scroll-mt-24">
+    <div class="mx-auto max-w-6xl px-5 lg:px-8">
+      <p class="eyebrow text-[12px] text-sand-dark font-semibold text-center reveal">{c.positions.eyebrow}</p>
+      <h2 class="mt-3 text-center text-2xl lg:text-3xl font-bold text-ink reveal">{c.positions.heading}</h2>
+      <p class="mt-3 max-w-2xl mx-auto text-center text-[14px] text-ink-soft reveal">{c.positions.desc}</p>
+
+      <div class="mt-12 grid md:grid-cols-2 gap-4 lg:gap-5">
+        {positions.map((p) => {
+          const closed = isClosed(p.status);
+          return (
+            <article class:list={[
+              'bg-white border border-line rounded-xl p-6 lg:p-7 flex flex-col reveal transition-all',
+              closed ? 'opacity-60' : 'hover:border-sand hover:shadow-md',
+            ]}>
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="text-lg font-bold text-ink leading-snug">{p.title}</h3>
+                <span class:list={[
+                  'shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide',
+                  closed ? 'bg-line text-muted' : 'bg-ink text-white',
+                ]}>{p.status}</span>
+              </div>
+              <p class="mt-2 text-[12px] text-muted">
+                <span>{p.area}</span><span class="mx-2 text-line" aria-hidden="true">|</span><span>{p.type}</span>
+              </p>
+              <p class="mt-4 text-[14px] leading-relaxed text-ink-soft flex-1">{p.desc}</p>
+              {!closed && (
+                <a href={`mailto:${email}?subject=${encodeURIComponent(`${c.apply.subjectPrefix} ${p.title} - 성함`)}`}
+                   class="mt-5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-sand-dark hover:text-ink transition-colors self-start">
+                  <span>{c.apply.button}</span><span aria-hidden="true">→</span>
+                </a>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-6xl px-5 lg:px-8">
+      <p class="eyebrow text-[12px] text-sand-dark font-semibold text-center reveal">{c.process.eyebrow}</p>
+      <h2 class="mt-3 text-center text-2xl lg:text-3xl font-bold text-ink reveal">{c.process.heading}</h2>
+      <ol class="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+        {c.process.steps.map((s, i) => (
+          <li class="relative border border-line rounded-xl p-6 lg:p-7 reveal">
+            <p class="text-[11px] font-semibold text-sand-dark tracking-widest">STEP {String(i + 1).padStart(2, '0')}</p>
+            <h3 class="mt-2 text-lg font-bold text-ink">{s.title}</h3>
+            <p class="mt-3 text-[14px] leading-relaxed text-ink-soft">{s.desc}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Apply (email) -->
+  <section id="apply" class="py-16 lg:py-24 bg-ink text-white scroll-mt-24">
+    <div class="mx-auto max-w-3xl px-5 lg:px-8 text-center reveal">
+      <h2 class="text-2xl lg:text-3xl font-bold">{c.apply.heading}</h2>
+      <p class="mt-4 text-[15px] lg:text-base leading-relaxed text-white/70">{c.apply.desc}</p>
+
+      <div class="mt-8 inline-flex flex-wrap items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-2xl px-5 py-4">
+        <a href={mailto} class="text-lg lg:text-2xl font-semibold tracking-wide text-white hover:text-sand transition-colors break-all">{email}</a>
+        <button type="button" id="copy-email" data-email={email} data-copied={c.apply.copied}
+                class="ml-1 px-3 py-1.5 rounded-full text-[12px] font-semibold bg-white/10 hover:bg-white/20 text-white/80 transition-colors">
+          <span>{c.apply.copy}</span>
+        </button>
+      </div>
+      <p class="mt-3 text-[13px] text-white/50">{c.apply.subjectHint}</p>
+
+      <div class="mt-10 text-left max-w-md mx-auto">
+        <p class="text-[11px] tracking-[0.25em] text-sand font-semibold">{c.apply.documentsLabel}</p>
+        <ul class="mt-3 space-y-2 text-[14px] text-white/75">
+          {c.apply.documents.map((d) => (
+            <li class="flex gap-3"><span class="text-sand" aria-hidden="true">•</span><span>{d}</span></li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="mt-10">
+        <a href={mailto} class="inline-block px-8 py-3.5 text-[14px] font-semibold text-ink bg-white hover:bg-sand rounded-full transition-colors">{c.apply.button}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-16 lg:py-24">
+    <div class="mx-auto max-w-3xl px-5 lg:px-8">
+      <p class="eyebrow text-[12px] text-sand-dark font-semibold text-center reveal">{c.faq.eyebrow}</p>
+      <h2 class="mt-3 text-center text-2xl lg:text-3xl font-bold text-ink reveal">{c.faq.heading}</h2>
+      <div class="mt-12 divide-y divide-line border-y border-line">
+        {c.faq.items.map((f) => (
+          <details class="group py-5 reveal">
+            <summary class="flex items-start justify-between gap-4 cursor-pointer list-none text-[15px] lg:text-base font-semibold text-ink [&::-webkit-details-marker]:hidden">
+              <span>{f.q}</span>
+              <span class="shrink-0 mt-1 w-5 h-5 rounded-full border border-line flex items-center justify-center text-muted transition-transform group-open:rotate-45" aria-hidden="true">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              </span>
+            </summary>
+            <p class="mt-3 pr-9 text-[14px] leading-relaxed text-ink-soft">{f.a}</p>
+          </details>
+        ))}
+      </div>
+      <div class="mt-12 text-center">
+        <a href="/about" class="inline-block text-[13px] text-muted hover:text-ink transition-colors"><span aria-hidden="true">← </span><span>{c.cta.back}</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // 이메일 주소 복사 버튼
+  const btn = document.getElementById('copy-email') as HTMLButtonElement | null;
+  if (btn) {
+    const label = btn.querySelector('span')!;
+    btn.addEventListener('click', async () => {
+      const original = label.textContent;
+      try {
+        await navigator.clipboard.writeText(btn.dataset.email || '');
+        label.textContent = btn.dataset.copied || '';
+        setTimeout(() => { label.textContent = original; }, 1600);
+      } catch {}
+    });
+  }
+</script>
