@@ -792,6 +792,7 @@ content:
               - { name: desc, label: 업무 설명, type: text }
               - { name: status, label: "상태 (상시 모집 / 모집 중 / 마감)", type: string }
               - { name: poster, label: "모집 공고 포스터 (선택 · 업로드하면 '모집 공고 보기' 버튼이 생깁니다)", type: image, options: { media: images } }
+              - { name: hidden, label: "노출 안 함 — 켜면 이 공고는 페이지에서 사라집니다 (보류용)", type: boolean }
       - name: process
         label: 지원 절차
         type: object

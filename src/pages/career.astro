@@ -8,8 +8,9 @@ import PageHero from '../components/PageHero.astro';
 import { SITE } from '../data/site';
 import c from '../../content/pages/career.json';
 
-type Position = { title: string; type: string; area: string; desc: string; status: string; poster?: string };
-const positions = c.positions.items as Position[];
+type Position = { title: string; type: string; area: string; desc: string; status: string; poster?: string; hidden?: boolean };
+// hidden: true 인 공고는 페이지에 나오지 않습니다 (승인 대기 등 보류용 · CMS '노출 안 함')
+const positions = (c.positions.items as Position[]).filter((p) => !p.hidden);
 // '마감'으로 끝난 공고는 회색. ('안내데스크 마감 스탭'처럼 직무명에 '마감'이 들어가는 건 status 만 봅니다)
 const isClosed = (s: string) => /마감/.test(s);
 // 상시 모집이 아닌, 지금 열려 있는 공고(status '모집 중' 등)는 살짝 강조
