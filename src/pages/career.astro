@@ -8,9 +8,12 @@ import PageHero from '../components/PageHero.astro';
 import { SITE } from '../data/site';
 import c from '../../content/pages/career.json';
 
-type Position = { title: string; type: string; area: string; desc: string; status: string };
+type Position = { title: string; type: string; area: string; desc: string; status: string; poster?: string };
 const positions = c.positions.items as Position[];
+// '마감'으로 끝난 공고는 회색. ('안내데스크 마감 스탭'처럼 직무명에 '마감'이 들어가는 건 status 만 봅니다)
 const isClosed = (s: string) => /마감/.test(s);
+// 상시 모집이 아닌, 지금 열려 있는 공고(status '모집 중' 등)는 살짝 강조
+const isOpenNow = (s: string) => !isClosed(s) && !/상시/.test(s);
 
 const email = c.apply.email.trim();
 const mailto = `mailto:${email}?subject=${encodeURIComponent(`${c.apply.subjectPrefix} 지원 분야 - 성함`)}`;
@@ -43,7 +46,7 @@ const description = `${SITE.name} 채용 안내 — 헬스 트레이너, 수영�
   </section>
 
   <!-- Positions -->
-  <section id="positions" class="py-16 lg:py-24 bg-cream scroll-mt-24">
+  <section id="positions" class="py-16 lg:py-24 bg-cream scroll-mt-32 lg:scroll-mt-40">
     <div class="mx-auto max-w-6xl px-5 lg:px-8">
       <p class="eyebrow text-[12px] text-sand-dark font-semibold text-center reveal">{c.positions.eyebrow}</p>
       <h2 class="mt-3 text-center text-2xl lg:text-3xl font-bold text-ink reveal">{c.positions.heading}</h2>
@@ -54,14 +57,15 @@ const description = `${SITE.name} 채용 안내 — 헬스 트레이너, 수영�
           const closed = isClosed(p.status);
           return (
             <article class:list={[
-              'bg-white border border-line rounded-xl p-6 lg:p-7 flex flex-col reveal transition-all',
-              closed ? 'opacity-60' : 'hover:border-sand hover:shadow-md',
+              'bg-white border rounded-xl p-6 lg:p-7 flex flex-col reveal transition-all',
+              closed ? 'opacity-60 border-line' : 'hover:shadow-md',
+              !closed && (isOpenNow(p.status) ? 'border-sand' : 'border-line hover:border-sand'),
             ]}>
               <div class="flex items-start justify-between gap-3">
                 <h3 class="text-lg font-bold text-ink leading-snug">{p.title}</h3>
                 <span class:list={[
                   'shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wide',
-                  closed ? 'bg-line text-muted' : 'bg-ink text-white',
+                  closed ? 'bg-line text-muted' : isOpenNow(p.status) ? 'bg-sand-dark text-white' : 'bg-ink text-white',
                 ]}>{p.status}</span>
               </div>
               <p class="mt-2 text-[12px] text-muted">
@@ -69,10 +73,19 @@ const description = `${SITE.name} 채용 안내 — 헬스 트레이너, 수영�
               </p>
               <p class="mt-4 text-[14px] leading-relaxed text-ink-soft flex-1">{p.desc}</p>
               {!closed && (
-                <a href={`mailto:${email}?subject=${encodeURIComponent(`${c.apply.subjectPrefix} ${p.title} - 성함`)}`}
-                   class="mt-5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-sand-dark hover:text-ink transition-colors self-start">
-                  <span>{c.apply.button}</span><span aria-hidden="true">→</span>
-                </a>
+                <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
+                  {p.poster && (
+                    <button type="button" data-poster={p.poster} data-title={p.title}
+                            class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink hover:text-sand-dark transition-colors">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/></svg>
+                      <span>{c.positions.posterLabel}</span>
+                    </button>
+                  )}
+                  <a href={`mailto:${email}?subject=${encodeURIComponent(`${c.apply.subjectPrefix} ${p.title} - 성함`)}`}
+                     class="inline-flex items-center gap-1.5 text-[13px] font-semibold text-sand-dark hover:text-ink transition-colors">
+                    <span>{c.apply.button}</span><span aria-hidden="true">→</span>
+                  </a>
+                </div>
               )}
             </article>
           );
@@ -99,7 +112,7 @@ const description = `${SITE.name} 채용 안내 — 헬스 트레이너, 수영�
   </section>
 
   <!-- Apply (email) -->
-  <section id="apply" class="py-16 lg:py-24 bg-ink text-white scroll-mt-24">
+  <section id="apply" class="py-16 lg:py-24 bg-ink text-white scroll-mt-32 lg:scroll-mt-40">
     <div class="mx-auto max-w-3xl px-5 lg:px-8 text-center reveal">
       <h2 class="text-2xl lg:text-3xl font-bold">{c.apply.heading}</h2>
       <p class="mt-4 text-[15px] lg:text-base leading-relaxed text-white/70">{c.apply.desc}</p>
@@ -151,9 +164,44 @@ const description = `${SITE.name} 채용 안내 — 헬스 트레이너, 수영�
       </div>
     </div>
   </section>
+  <!-- 모집 공고 포스터 크게 보기 -->
+  <div id="poster-box" class="fixed inset-0 z-[100] hidden bg-ink/90 backdrop-blur-sm overflow-y-auto" role="dialog" aria-modal="true" aria-label={c.positions.posterCaption}>
+    <button type="button" data-pb="close" class="fixed top-4 right-4 lg:top-6 lg:right-6 z-10 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors" aria-label="닫기">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <figure class="min-h-full flex flex-col items-center gap-4 px-3 py-16 lg:py-20">
+      <img id="poster-img" src="" alt="" class="w-full max-w-3xl h-auto rounded-lg shadow-2xl select-none" />
+      <figcaption class="text-white/70 text-[13px]"><span id="poster-title"></span></figcaption>
+    </figure>
+  </div>
 </Base>
 
 <script>
+  // 모집 공고 포스터 크게 보기 (세로로 긴 포스터라 스크롤로 봅니다)
+  {
+    const box = document.getElementById('poster-box');
+    const img = document.getElementById('poster-img') as HTMLImageElement | null;
+    const title = document.getElementById('poster-title');
+    if (box && img && title) {
+      const open = (src: string, t: string) => {
+        img.src = src; img.alt = t; title.textContent = t;
+        box.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      };
+      const close = () => {
+        box.classList.add('hidden');
+        document.body.style.overflow = '';
+      };
+      document.querySelectorAll<HTMLButtonElement>('button[data-poster]').forEach((b) =>
+        b.addEventListener('click', () => open(b.dataset.poster!, b.dataset.title || '')));
+      box.addEventListener('click', (e) => {
+        const t = e.target as HTMLElement;
+        if (t.closest('[data-pb="close"]') || t === box || t.tagName === 'FIGURE') close();
+      });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !box.classList.contains('hidden')) close(); });
+    }
+  }
+
   // 이메일 주소 복사 버튼
   const btn = document.getElementById('copy-email') as HTMLButtonElement | null;
   if (btn) {

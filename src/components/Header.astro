@@ -2,11 +2,23 @@
 import { NAV, EXTERNAL, imgAlt } from '../data/site';
 import Img from './Img.astro';
 import LangToggle from '../i18n/LangToggle.astro';
+// 헤더 상단 얇은 띠 배너 (채용 등 공지). CMS "📢 상단 띠 배너"에서 켜고 끕니다 → content/banner.json
+import banner from '../../content/banner.json';
 const { pathname } = Astro.url;
+const showBanner = banner.enabled && (banner.text || '').trim();
 const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
 ---
 
 <header id="site-header" class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur border-b border-line/60 transition-shadow duration-300">
+  {showBanner && (
+    <a href={banner.href} class="block bg-ink text-white/90 hover:text-white transition-colors">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8 h-9 flex items-center justify-center gap-2 text-[12px] lg:text-[13px] tracking-wide">
+        <span class="w-1.5 h-1.5 rounded-full bg-sand shrink-0" aria-hidden="true"></span>
+        <span class="truncate">{banner.text}</span>
+        <span class="hidden sm:inline text-sand shrink-0">{banner.linkText}<span aria-hidden="true"> →</span></span>
+      </div>
+    </a>
+  )}
   <div class="mx-auto max-w-7xl px-5 lg:px-8">
     <div class="flex items-center justify-between h-20 lg:h-24">
       <!-- Logo -->
