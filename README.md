@@ -30,6 +30,15 @@ scripts/download-images.sh    ← Wix 원본 이미지 일괄 다운로드 (백�
 scripts/optimize-images.mjs   ← public/images 원본 → src/assets/images 리사이즈/재인코딩
 ```
 
+## 보안 헤더 / CSP
+
+- 호스팅(GitHub Pages)은 HTTP 헤더를 못 붙이므로 **HSTS·X-Frame-Options 등 보안 헤더는 Cloudflare 대시보드**(Rules → `security-headers`, SSL/TLS → HSTS)에서 관리합니다. 저장소 밖 설정입니다.
+- **CSP(Content-Security-Policy)** 는 빌드 때 `scripts/csp-integration.mjs` 가 각 HTML 에 `<meta http-equiv>` 로 주입합니다.
+  인라인 스크립트는 페이지별 SHA-256 해시로 허용되며 빌드마다 자동 갱신됩니다.
+  - 새 외부 서비스(폰트·임베드·API 등)를 붙일 때는 그 파일의 `ALLOW` 목록에 도메인을 추가하세요.
+  - HTML 속성에 `onclick=` 같은 인라인 핸들러는 CSP 에 막히므로 쓰지 말고 `addEventListener` 로 처리하세요.
+  - 확인: `npm run build && npx astro preview` 후 `node scripts/csp-check.mjs` (Playwright 필요, 선택 사항).
+
 ## CMS — 디자이너가 코드 없이 편집하기 (Pages CMS)
 
 이 저장소에는 **[Pages CMS](https://pagescms.org)** 설정(`.pages.yml`)이 포함되어 있습니다.

@@ -88,6 +88,11 @@ const ogImage = logoPng ? new URL(logoPng.src, site).href : imgSrc('logo');
           try { localStorage.setItem(KEY, lang); } catch (e) {}
           apply(lang);
         };
+        // 언어 버튼 클릭 (인라인 onclick 대신 위임 — CSP 대응)
+        document.addEventListener('click', function (ev) {
+          const btn = ev.target && ev.target.closest ? ev.target.closest('[data-lang-btn]') : null;
+          if (btn) window.__setLang(btn.getAttribute('data-lang-btn'));
+        });
         const saved = (function () { try { return localStorage.getItem(KEY); } catch (e) { return null; } })() || 'ko';
         if (document.readyState !== 'loading') apply(saved);
         else document.addEventListener('DOMContentLoaded', function () { apply(saved); });

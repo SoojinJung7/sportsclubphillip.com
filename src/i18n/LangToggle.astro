@@ -1,12 +1,13 @@
 ---
 // Client-side KR / EN toggle. Flags + label. Persists to localStorage.
+// 클릭 처리는 Base.astro 의 토글 스크립트가 data-lang-btn 으로 위임 처리 (CSP: 인라인 onclick 금지)
 ---
 <div class="flex items-center rounded-full border border-line overflow-hidden text-[12px] font-semibold select-none">
-  <button type="button" data-lang-btn="ko" onclick="window.__setLang && window.__setLang('ko')"
+  <button type="button" data-lang-btn="ko"
     class="lang-btn px-2.5 py-1.5 flex items-center gap-1 transition-colors" aria-label="한국어">
     <span aria-hidden="true">🇰🇷</span><span>KR</span>
   </button>
-  <button type="button" data-lang-btn="en" onclick="window.__setLang && window.__setLang('en')"
+  <button type="button" data-lang-btn="en"
     class="lang-btn px-2.5 py-1.5 flex items-center gap-1 transition-colors" aria-label="English">
     <span aria-hidden="true">🇺🇸</span><span>EN</span>
   </button>
