@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /book-online
+
+Sitemap: https://www.sportsclubphillip.com/sitemap-index.xml

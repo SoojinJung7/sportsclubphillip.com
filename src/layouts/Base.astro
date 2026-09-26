@@ -4,7 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ChatWidget from '../components/ChatWidget.astro';
 import { getImage } from 'astro:assets';
-import { SITE, imgSrc, localImg } from '../data/site';
+import { SITE, EXTERNAL, imgSrc, localImg } from '../data/site';
 import { EN } from '../i18n/dict';
 
 interface Props {
@@ -23,6 +23,39 @@ const logoPng = logoMeta ? await getImage({ src: logoMeta, format: 'png', width:
 // 파비콘은 public/favicon.png (빨간 '필립' 아이콘). og:image는 로고 유지.
 const faviconHref = '/favicon.png';
 const ogImage = logoPng ? new URL(logoPng.src, site).href : imgSrc('logo');
+
+// 검색엔진용 업체 정보(JSON-LD). 업종은 스포츠클럽·체력단련장·수영장 세 타입을 함께 선언하고
+// (schema.org 에 사우나 타입은 없어 amenityFeature 로 표기). 주소·전화·SNS 는 content/settings.json,
+// 이용시간은 운영시간 페이지(헬스장 기준: 월~토 06:00-23:00, 일 09:00-21:00)와 맞춰 둔다.
+// 1·3·5째주 일요일 휴관은 이 형식으로 표현할 수 없어 description 에만 적는다.
+const localBusiness = {
+  '@context': 'https://schema.org',
+  '@type': ['SportsClub', 'HealthClub', 'PublicSwimmingPool'],
+  name: SITE.name,
+  alternateName: SITE.nameEn,
+  description: '분당 정자동 토탈 휘트니스 스포츠클럽. 헬스장, 수영장, 사우나, PT, GX, 기구 필라테스, 스크린 골프, 유소년 스포츠. 매월 1·3·5째주 일요일 휴관.',
+  keywords: '정자동 스포츠클럽, 정자동 수영장, 정자동 사우나, 정자동 헬스장, 분당 수영장, 분당 헬스장, 분당 필라테스, 분당 스크린골프',
+  amenityFeature: ['수영장 (Swimming pool)', '사우나 (Sauna)', '헬스장 (Fitness gym)', '스크린 골프', '기구 필라테스 · 자이로토닉', 'GX 스튜디오', '유소년 스포츠'].map(
+    (name) => ({ '@type': 'LocationFeatureSpecification', name, value: true }),
+  ),
+  url: site.toString(),
+  image: ogImage,
+  logo: ogImage,
+  telephone: '+82-31-728-7777',
+  email: SITE.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '내정로 58',
+    addressLocality: '성남시',
+    addressRegion: '경기도',
+    addressCountry: 'KR',
+  },
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '06:00', closes: '23:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Sunday', opens: '09:00', closes: '21:00' },
+  ],
+  sameAs: [EXTERNAL.instagram, EXTERNAL.facebook, EXTERNAL.naverBlog, EXTERNAL.kakao, EXTERNAL.naverMap],
+};
 ---
 
 <!doctype html>
@@ -39,6 +72,7 @@ const ogImage = logoPng ? new URL(logoPng.src, site).href : imgSrc('logo');
     <meta property="og:image" content={ogImage} />
     <meta property="og:locale" content="ko_KR" />
     <meta name="theme-color" content="#16130f" />
+    <script type="application/ld+json" set:html={JSON.stringify(localBusiness)} />
     <link rel="icon" type="image/png" href={faviconHref} />
     <link rel="apple-touch-icon" href={faviconHref} />
     <link
